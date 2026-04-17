@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "type-check": "tsc --noEmit",
-    "test": "tsx --test src/services/products.test.ts src/app/api/products/route.test.ts src/app/api/settings/public/route.test.ts src/app/\\(site\\)/page.test.ts src/app/\\(site\\)/products/page.test.ts src/hooks/use-selected-products.test.ts src/hooks/use-quick-order.test.ts"
+    "test": "tsx --test src/services/products.test.ts src/services/orders.test.ts src/app/api/products/route.test.ts src/app/api/orders/route.test.ts src/app/api/settings/public/route.test.ts src/app/\\(site\\)/page.test.ts src/app/\\(site\\)/products/page.test.ts src/hooks/use-selected-products.test.ts src/hooks/use-quick-order.test.ts"
   },
   "engines": {
     "node": ">=20.0.0"

@@ -89,3 +89,82 @@ export interface QuickOrderFormValues {
   name: string;
   note: string;
 }
+
+export type OrderStatus =
+  | "new"
+  | "contacted"
+  | "confirmed"
+  | "closed"
+  | "cancelled"
+  | "duplicate"
+  | "invalid";
+
+export interface OrderRequestPayload {
+  phone: string;
+  customerName?: string;
+  selectedProductIds: string[];
+  note?: string;
+  sourcePage?: string;
+  sourceCampaign?: string;
+}
+
+export interface NormalizedOrderRequestPayload {
+  phone: string;
+  customerName: string;
+  selectedProductIds: string[];
+  note: string;
+  sourcePage: string;
+  sourceCampaign: string;
+}
+
+export interface OrderRowSnapshot {
+  orderId: string;
+  createdAt: string;
+  phone: string;
+  customerName: string;
+  selectedProductIds: string[];
+  selectedProductNames: string[];
+  itemCount: number;
+  customerNote: string;
+  status: OrderStatus;
+  adminNote: string;
+  sourcePage: string;
+  sourceCampaign: string;
+  duplicateFlag: boolean;
+  clientFingerprint: string;
+  processedAt: string;
+}
+
+export interface RawOrderRow extends RawSheetRow {
+  order_id: string;
+  created_at: string;
+  phone: string;
+  customer_name: string;
+  selected_product_ids: string;
+  selected_product_names: string;
+  item_count: string;
+  customer_note: string;
+  status: string;
+  admin_note: string;
+  source_page: string;
+  source_campaign: string;
+  duplicate_flag: string;
+  client_fingerprint: string;
+  processed_at: string;
+}
+
+export interface OrderSubmissionResult {
+  ok: true;
+  orderId: string;
+  status: Extract<OrderStatus, "new" | "duplicate">;
+  duplicate: boolean;
+  normalizedPhone: string;
+  itemCount: number;
+  createdAt: string;
+  message: string;
+}
+
+export interface OrderErrorResponse {
+  error: string;
+  code?: string;
+}

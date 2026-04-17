@@ -3,7 +3,7 @@ import { google } from "googleapis";
 import { assertRequiredEnv } from "@/lib/validation";
 import type { RawSheetRow } from "@/types";
 
-const GOOGLE_SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"];
+const GOOGLE_SCOPES = ["https://www.googleapis.com/auth/spreadsheets"];
 
 function getSheetsConfig() {
   return {
@@ -81,4 +81,18 @@ export function assertRequiredHeaders(rows: RawSheetRow[], requiredHeaders: stri
   if (missing.length > 0) {
     throw new Error(`Missing required sheet columns: ${missing.join(", ")}`);
   }
+}
+
+export async function appendSheetRow(tabName: string, row: string[]) {
+  const { client, sheetId } = await getSheetsClient();
+
+  await client.spreadsheets.values.append({
+    spreadsheetId: sheetId,
+    range: tabName,
+    valueInputOption: "USER_ENTERED",
+    insertDataOption: "INSERT_ROWS",
+    requestBody: {
+      values: [row],
+    },
+  });
 }

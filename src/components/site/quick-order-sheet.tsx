@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useQuickOrder, validateQuickOrderForm } from "@/hooks/use-quick-order";
 import { useSelectedProducts } from "@/hooks/use-selected-products";
-import type { QuickOrderFormValues } from "@/types";
+import type { OrderSubmissionResult, QuickOrderFormValues } from "@/types";
 
 const initialValues: QuickOrderFormValues = {
   phone: "",
@@ -21,19 +21,23 @@ function formatPrice(value: number) {
 }
 
 export function QuickOrderSheet() {
-  const { isOpen, closeQuickOrder } = useQuickOrder();
+  const { isOpen, closeQuickOrder, source } = useQuickOrder();
   const { items, removeProduct, clearProducts } = useSelectedProducts();
   const [values, setValues] = useState<QuickOrderFormValues>(initialValues);
-  const [submitted, setSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState<OrderSubmissionResult | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validation = useMemo(() => validateQuickOrderForm(values, items), [items, values]);
 
   const handleClose = () => {
     closeQuickOrder();
-    setSubmitted(false);
+    setSubmitted(null);
+    setSubmitError(null);
+    setIsSubmitting(false);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const result = validateQuickOrderForm(values, items);
@@ -41,9 +45,41 @@ export function QuickOrderSheet() {
       return;
     }
 
-    setSubmitted(true);
-    clearProducts();
-    setValues(initialValues);
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          phone: values.phone,
+          customerName: values.name,
+          selectedProductIds: items.map((item) => item.id),
+          note: values.note,
+          sourcePage: source ?? "cta",
+        }),
+      });
+
+      const payload = (await response.json()) as
+        | OrderSubmissionResult
+        | { error?: string };
+
+      if (!response.ok) {
+        setSubmitError(payload && "error" in payload ? payload.error ?? "Không thể gửi yêu cầu." : "Không thể gửi yêu cầu.");
+        return;
+      }
+
+      setSubmitted(payload as OrderSubmissionResult);
+      clearProducts();
+      setValues(initialValues);
+    } catch {
+      setSubmitError("Không thể kết nối để gửi yêu cầu. Vui lòng thử lại sau ít phút.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -51,8 +87,12 @@ export function QuickOrderSheet() {
       {submitted ? (
         <div className="space-y-4">
           <p className="text-sm leading-7 text-[var(--color-foreground-soft)]">
-            Cảm ơn bạn đã để lại thông tin. LanEm Glow sẽ liên hệ sớm để xác nhận lựa chọn và
-            tư vấn thêm nếu cần. Bạn chưa cần thanh toán online trước.
+            {submitted.duplicate
+              ? "LanEm Glow đã ghi nhận yêu cầu này và thấy bạn vừa gửi lựa chọn tương tự gần đây. Đội ngũ vẫn sẽ liên hệ để xác nhận và hỗ trợ tiếp."
+              : "Cảm ơn bạn đã để lại thông tin. LanEm Glow sẽ liên hệ sớm để xác nhận lựa chọn và tư vấn thêm nếu cần. Bạn chưa cần thanh toán online trước."}
+          </p>
+          <p className="text-xs uppercase tracking-[0.16em] text-[var(--color-muted)]">
+            Mã tham chiếu: {submitted.orderId}
           </p>
           <Button onClick={handleClose}>Đóng</Button>
         </div>
@@ -95,6 +135,7 @@ export function QuickOrderSheet() {
                     <button
                       type="button"
                       onClick={() => removeProduct(item.id)}
+                      disabled={isSubmitting}
                       className="text-sm font-medium text-[var(--color-accent)] transition hover:opacity-80"
                     >
                       Xóa
@@ -118,6 +159,7 @@ export function QuickOrderSheet() {
                 id="phone"
                 value={values.phone}
                 hasError={Boolean(validation.errors.phone)}
+                disabled={isSubmitting}
                 onChange={(event) =>
                   setValues((current) => ({ ...current, phone: event.target.value }))
                 }
@@ -135,6 +177,7 @@ export function QuickOrderSheet() {
               <Input
                 id="name"
                 value={values.name}
+                disabled={isSubmitting}
                 onChange={(event) =>
                   setValues((current) => ({ ...current, name: event.target.value }))
                 }
@@ -149,6 +192,7 @@ export function QuickOrderSheet() {
               <Textarea
                 id="note"
                 value={values.note}
+                disabled={isSubmitting}
                 onChange={(event) =>
                   setValues((current) => ({ ...current, note: event.target.value }))
                 }
@@ -157,11 +201,15 @@ export function QuickOrderSheet() {
             </div>
           </div>
 
+          {submitError ? (
+            <p className="text-sm text-[var(--color-danger)]">{submitError}</p>
+          ) : null}
+
           <div className="flex flex-wrap gap-3">
-            <Button type="submit" disabled={!validation.isValid}>
+            <Button type="submit" disabled={!validation.isValid || isSubmitting} loading={isSubmitting}>
               Gửi yêu cầu
             </Button>
-            <Button type="button" variant="ghost" onClick={handleClose}>
+            <Button type="button" variant="ghost" onClick={handleClose} disabled={isSubmitting}>
               Đóng
             </Button>
           </div>
