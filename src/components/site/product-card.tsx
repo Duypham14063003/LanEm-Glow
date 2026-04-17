@@ -1,8 +1,12 @@
+"use client";
+
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useQuickOrder } from "@/hooks/use-quick-order";
+import { useSelectedProducts } from "@/hooks/use-selected-products";
 import type { Product } from "@/types";
 
 function formatPrice(value: number) {
@@ -20,7 +24,10 @@ export function ProductCard({
   actionLabel = "Xem chi tiết",
   href = `/products/${product.slug}`,
 }: ProductCardProps) {
+  const { toggleProduct, isSelected } = useSelectedProducts();
+  const { openQuickOrder } = useQuickOrder();
   const isOutOfStock = product.stockStatus === "out_of_stock";
+  const selected = isSelected(product.id);
 
   return (
     <Card className="flex h-full flex-col overflow-hidden p-0">
@@ -76,15 +83,27 @@ export function ProductCard({
             </div>
           </div>
 
-          {isOutOfStock ? (
-            <Button disabled variant="secondary">
-              Tạm hết hàng
-            </Button>
-          ) : (
-            <Button asChild variant="secondary">
-              <Link href={href}>{actionLabel}</Link>
-            </Button>
-          )}
+          <div className="flex flex-col items-end gap-2">
+            {isOutOfStock ? (
+              <Button disabled variant="secondary">
+                Tạm hết hàng
+              </Button>
+            ) : (
+              <Button
+                variant={selected ? "primary" : "secondary"}
+                onClick={() => toggleProduct(product)}
+              >
+                {selected ? "Đã chọn" : "Chọn sản phẩm"}
+              </Button>
+            )}
+            <button
+              type="button"
+              className="text-sm font-medium text-[var(--color-accent)] transition hover:opacity-80"
+              onClick={() => openQuickOrder("card")}
+            >
+              {actionLabel}
+            </button>
+          </div>
         </div>
       </div>
     </Card>

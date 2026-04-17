@@ -1,13 +1,12 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { ConcernScroller } from "@/components/site/concern-scroller";
 import { PageSection } from "@/components/site/page-section";
 import { ProductCard } from "@/components/site/product-card";
+import { ProductDetailActions } from "@/components/site/product-detail-actions";
 import { ProductGallery } from "@/components/site/product-gallery";
 import { StorefrontCta } from "@/components/site/storefront-cta";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { getCatalogProductBySlug, listCatalogProducts } from "@/services/products";
 
@@ -86,14 +85,7 @@ export default async function ProductDetailPage({
               <ConcernScroller concerns={product.concerns} />
             </div>
 
-            <div className="flex flex-wrap gap-3">
-              <Button variant="secondary" disabled={product.stockStatus === "out_of_stock"}>
-                {product.stockStatus === "out_of_stock" ? "Tạm hết hàng" : "Chọn sản phẩm"}
-              </Button>
-              <Button asChild>
-                <Link href="/products?featured=true">Xem thêm gợi ý</Link>
-              </Button>
-            </div>
+            <ProductDetailActions product={product} />
           </Card>
         </div>
       </PageSection>

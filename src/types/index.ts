@@ -45,6 +45,15 @@ export interface Product {
   updatedAt: string | null;
 }
 
+export interface SelectedProduct {
+  id: string;
+  slug: string;
+  name: string;
+  price: number;
+  imageUrl: string;
+  stockStatus: ProductStockStatus;
+}
+
 export interface ProductCatalogQuery {
   q?: string;
   category?: string;
@@ -73,4 +82,10 @@ export interface ProductDetailResponse {
 
 export interface PublicSettingsResponse {
   settings: PublicSettings;
+}
+
+export interface QuickOrderFormValues {
+  phone: string;
+  name: string;
+  note: string;
 }

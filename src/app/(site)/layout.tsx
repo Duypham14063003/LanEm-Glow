@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { QuickOrderShell } from "@/components/site/quick-order-shell";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { getPublicSettings } from "@/services/settings";
@@ -24,15 +25,17 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
 
   return (
     <div className="min-h-screen bg-transparent">
-      <SiteHeader phone={settings.brandPhone} primaryCtaLabel={settings.primaryCtaLabel} />
-      <div className="flex min-h-[calc(100vh-80px)] flex-col">
-        <main className="flex-1">{children}</main>
-        <SiteFooter
-          phone={settings.brandPhone}
-          zaloUrl={settings.zaloUrl}
-          announcement={settings.publicAnnouncement}
-        />
-      </div>
+      <QuickOrderShell>
+        <SiteHeader phone={settings.brandPhone} primaryCtaLabel={settings.primaryCtaLabel} />
+        <div className="flex min-h-[calc(100vh-80px)] flex-col">
+          <main className="flex-1 pb-24 md:pb-0">{children}</main>
+          <SiteFooter
+            phone={settings.brandPhone}
+            zaloUrl={settings.zaloUrl}
+            announcement={settings.publicAnnouncement}
+          />
+        </div>
+      </QuickOrderShell>
     </div>
   );
 }
