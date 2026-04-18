@@ -24,7 +24,9 @@ catalog normalization
             │      └── lightweight "has video" treatment
             │
             └── product detail gallery
-                   └── TikTok media item first, images after
+                   ├── unified media carousel
+                   ├── video poster first, images after
+                   └── modal playback for TikTok
 ```
 
 ## Data Model
@@ -66,13 +68,14 @@ Recommended behavior:
 
 - keep the primary product image as the default visual
 - if `tiktokUrl` exists, show a small video-related affordance such as badge, overlay label, or icon
-- on hover-capable devices, reveal a preview treatment without forcing a heavy multi-card autoplay experience
+- do not embed or autoplay TikTok in listing cards
+- direct users toward the product detail page for the full media experience
 
 To keep performance predictable:
 
 - do not eagerly embed TikTok iframes for every card in a listing
-- prefer lazy interaction for richer preview behavior
-- mobile should use a tap-driven path instead of hover-only behavior
+- do not rely on hover-only interaction for understanding media availability
+- mobile and desktop cards should behave consistently as teaser surfaces
 
 ### Product detail gallery
 
@@ -80,10 +83,30 @@ The detail page is the correct place for the full product media experience.
 
 If `tiktokUrl` exists:
 
-- place the TikTok media item first in the media stack
+- place the TikTok media item first in the media sequence
 - then render the product's main image and gallery images
+- expose one unified left/right browsing pattern rather than stacking video and images as separate blocks
 
-If the embed cannot be rendered or loaded:
+Recommended structure:
+
+```text
+Main media frame
+├── media[0] = video poster
+├── media[1] = main image
+├── media[2..n] = gallery images
+└── controls = swipe / arrows / thumbnails / dots
+
+Selecting video poster
+└── opens modal with TikTok playback
+```
+
+Why poster-first instead of inline iframe-first:
+
+- a TikTok iframe can capture gestures and CTA behavior in ways that feel unlike a commerce gallery
+- marketplace-style product media should preserve predictable left/right navigation
+- the modal keeps TikTok playback available without letting the third-party surface dominate gallery interaction
+
+If TikTok playback cannot be rendered or loaded:
 
 - preserve a clear fallback link to open the TikTok content externally
 - do not block the image gallery
@@ -95,11 +118,17 @@ This change should favor resilient TikTok support over the most aggressive autop
 Recommended progression:
 
 1. Normalize and store the external TikTok URL
-2. Render a dedicated media block on the detail page
-3. Use a lightweight embed or framed preview where practical
-4. Always keep an external-open fallback
+2. Represent TikTok as the first media item in a unified gallery
+3. Use a poster/teaser surface in the gallery itself
+4. Open TikTok playback inside a modal or dedicated playback layer
+5. Always keep an external-open fallback
 
-For the card experience, richer preview should be isolated and lazy so catalog performance remains acceptable.
+This allows the storefront to feel closer to a marketplace product gallery:
+
+- one hero frame
+- left/right media browsing
+- thumbnails or dots for quick jumps
+- controlled playback when the user explicitly chooses video
 
 ## Admin Experience
 
@@ -129,11 +158,15 @@ No separate TikTok API endpoint is needed in this milestone. The existing produc
 
 ### Embed fragility
 
-TikTok embeds are more fragile than static images and may behave differently across browsers or environments. The implementation should always support a fallback link and avoid making storefront rendering depend entirely on successful embed initialization.
+TikTok embeds are more fragile than static images and may behave differently across browsers or environments. The implementation should always support a fallback link and avoid making the gallery itself depend on successful embed initialization.
 
 ### Listing performance
 
-Naively embedding video into every product card would make listing pages heavy. The design should keep listing pages image-first and interaction-driven.
+Naively embedding video into every product card would make listing pages heavy. The design should keep listing pages image-first and teaser-only.
+
+### Gesture ownership
+
+Inline third-party iframes can interfere with swipe and pointer interactions. A modal playback step is the safest way to preserve left/right product media browsing.
 
 ### Sheet schema drift
 

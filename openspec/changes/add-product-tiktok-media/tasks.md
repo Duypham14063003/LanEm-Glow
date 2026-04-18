@@ -15,11 +15,12 @@
 ## 3. Storefront Product Media
 
 - [x] Update product cards to indicate when TikTok media is available.
-- [x] Add a lightweight hover-capable preview treatment that does not require eager embeds for all cards.
-- [x] Update the product detail media presentation so TikTok media appears before product images.
-- [x] Provide a graceful fallback when TikTok media cannot be embedded or previewed.
+- [ ] Replace any inline card preview treatment with a lightweight teaser-only treatment for TikTok-backed products.
+- [ ] Rework the product detail media area into a unified left/right gallery pattern that treats video as the first media item.
+- [ ] Add a video poster or media tile that opens TikTok playback in a controlled modal or playback layer.
+- [ ] Keep graceful fallback behavior when TikTok playback cannot be embedded or must open externally.
 
 ## 4. Verification
 
-- [x] Add or update tests for product normalization, admin product mutation behavior, and storefront media rendering paths.
-- [x] Verify `npm run type-check`, `npm run lint`, and `npm test`.
+- [ ] Add or update tests for product normalization, admin product mutation behavior, and storefront media rendering paths.
+- [ ] Verify `npm run type-check`, `npm run lint`, and `npm test`.

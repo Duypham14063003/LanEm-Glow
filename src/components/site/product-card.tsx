@@ -1,11 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import Link from "next/link";
 import { PlayCircle } from "lucide-react";
 
 import { trackEvent } from "@/lib/analytics";
-import { buildTikTokEmbedUrl } from "@/lib/tiktok";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -32,28 +30,11 @@ export function ProductCard({
   const { openQuickOrder } = useQuickOrder();
   const isOutOfStock = product.stockStatus === "out_of_stock";
   const selected = isSelected(product.id);
-  const [isPreviewVisible, setIsPreviewVisible] = useState(false);
-  const tikTokEmbedUrl = useMemo(() => buildTikTokEmbedUrl(product.tiktokUrl), [product.tiktokUrl]);
-  const showTikTokPreview = Boolean(product.tiktokUrl && isPreviewVisible && tikTokEmbedUrl);
 
   return (
     <Card className="flex h-full flex-col overflow-hidden p-0">
-      <div
-        className="group relative aspect-[4/3] overflow-hidden bg-[linear-gradient(135deg,#fff,#fbe4ea)]"
-        onMouseEnter={() => setIsPreviewVisible(true)}
-        onMouseLeave={() => setIsPreviewVisible(false)}
-        onFocus={() => setIsPreviewVisible(true)}
-        onBlur={() => setIsPreviewVisible(false)}
-      >
-        {showTikTokPreview ? (
-          <iframe
-            src={tikTokEmbedUrl ?? undefined}
-            title={`${product.name} TikTok preview`}
-            className="h-full w-full border-0"
-            allow="encrypted-media"
-            loading="lazy"
-          />
-        ) : product.imageUrl ? (
+      <div className="group relative aspect-[4/3] overflow-hidden bg-[linear-gradient(135deg,#fff,#fbe4ea)]">
+        {product.imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={product.imageUrl}
@@ -69,13 +50,7 @@ export function ProductCard({
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/80">
                 TikTok review
               </p>
-              <p className="text-sm font-medium">
-                {showTikTokPreview
-                  ? "Đang xem preview"
-                  : tikTokEmbedUrl
-                    ? "Hover để xem preview video"
-                    : "Bấm vào chi tiết để xem video đầy đủ"}
-              </p>
+              <p className="text-sm font-medium">Xem video ở trang chi tiết sản phẩm</p>
             </div>
             <PlayCircle className="size-9 shrink-0 text-white" aria-hidden="true" />
           </div>
