@@ -15,6 +15,7 @@ export interface RawProductRow extends RawSheetRow {
   compare_at_price: string;
   image_url: string;
   gallery_urls: string;
+  tiktok_url: string;
   status: string;
   stock_status: string;
   is_featured: string;
@@ -36,6 +37,7 @@ export interface Product {
   compareAtPrice: number | null;
   imageUrl: string;
   galleryUrls: string[];
+  tiktokUrl: string | null;
   status: ProductStatus;
   stockStatus: ProductStockStatus;
   isFeatured: boolean;
@@ -83,6 +85,7 @@ export interface ProductAdminMutationInput {
   compareAtPrice: number | null;
   imageUrl: string;
   galleryUrls: string[];
+  tiktokUrl: string | null;
   status: ProductStatus;
   stockStatus: ProductStockStatus;
   isFeatured: boolean;

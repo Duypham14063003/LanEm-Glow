@@ -160,6 +160,16 @@ function isValidOrderStatus(value: string): value is OrderStatus {
   }
 }
 
+function normalizeOrderPhoneForRead(value: string): string {
+  try {
+    return normalizeVietnamPhone(value);
+  } catch {
+    const trimmed = value.trim();
+    const digitsOnly = trimmed.replace(/\D/g, "");
+    return digitsOnly || trimmed;
+  }
+}
+
 export function normalizeOrderPayload(input: unknown): NormalizedOrderRequestPayload {
   if (!input || typeof input !== "object") {
     throw new OrderSubmissionError("Yêu cầu tạo đơn không hợp lệ.", {
@@ -198,7 +208,7 @@ type NormalizedExistingOrder = {
 export function normalizeOrderRow(row: RawOrderRow): NormalizedExistingOrder {
   return {
     createdAt: row.created_at.trim(),
-    phone: normalizeVietnamPhone(row.phone),
+    phone: normalizeOrderPhoneForRead(row.phone),
     selectedProductIds: normalizeProductIdSet(parseDelimitedList(row.selected_product_ids)),
     status: ensureOrderStatus(row.status.trim().toLowerCase()),
   };
@@ -208,7 +218,7 @@ export function normalizeOrderListItem(row: RawOrderRow): OrderAdminListItem {
   return {
     orderId: row.order_id.trim(),
     createdAt: row.created_at.trim(),
-    phone: normalizeVietnamPhone(row.phone),
+    phone: normalizeOrderPhoneForRead(row.phone),
     customerName: row.customer_name.trim(),
     selectedProductIds: normalizeProductIdSet(parseDelimitedList(row.selected_product_ids)),
     selectedProductNames: parseDelimitedList(row.selected_product_names),
@@ -402,7 +412,7 @@ function buildUpdatedRow(
   const snapshot: OrderRowSnapshot = {
     orderId: currentRow.order_id.trim(),
     createdAt: currentRow.created_at.trim(),
-    phone: normalizeVietnamPhone(currentRow.phone),
+    phone: normalizeOrderPhoneForRead(currentRow.phone),
     customerName: currentRow.customer_name.trim(),
     selectedProductIds: normalizeProductIdSet(parseDelimitedList(currentRow.selected_product_ids)),
     selectedProductNames: parseDelimitedList(currentRow.selected_product_names),

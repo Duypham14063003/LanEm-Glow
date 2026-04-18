@@ -1,17 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { OrderAdminError, updateAdminOrder } from "@/services/orders";
+import { getUpdateAdminOrderHandler } from "@/app/api/orders/[id]/handlers";
+import { OrderAdminError } from "@/services/orders";
 import type { OrderAdminUpdateResponse, OrderErrorResponse } from "@/types";
-
-let updateAdminOrderHandler = updateAdminOrder;
-
-export function setUpdateAdminOrderHandlerForTesting(handler: typeof updateAdminOrder) {
-  updateAdminOrderHandler = handler;
-}
-
-export function resetUpdateAdminOrderHandlerForTesting() {
-  updateAdminOrderHandler = updateAdminOrder;
-}
 
 export async function PATCH(
   request: NextRequest,
@@ -33,7 +24,7 @@ export async function PATCH(
   }
 
   try {
-    const order = await updateAdminOrderHandler(id, payload);
+    const order = await getUpdateAdminOrderHandler()(id, payload);
     const response: OrderAdminUpdateResponse = { order };
     return NextResponse.json(response);
   } catch (error) {

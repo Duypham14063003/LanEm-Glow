@@ -1,4 +1,5 @@
 import { invalidateCache } from "@/lib/cache";
+import { normalizeTikTokUrl } from "@/lib/tiktok";
 import {
   isProductStatus,
   isProductStockStatus,
@@ -35,6 +36,7 @@ const PRODUCT_REQUIRED_HEADERS = [
   "compare_at_price",
   "image_url",
   "gallery_urls",
+  "tiktok_url",
   "status",
   "stock_status",
   "is_featured",
@@ -189,6 +191,21 @@ function normalizeOptionalNumberValue(value: unknown): number | null {
   return parseOptionalNumber(normalized);
 }
 
+function normalizeOptionalTikTokUrl(value: unknown): string | null {
+  if (typeof value !== "string" || !value.trim()) {
+    return null;
+  }
+
+  try {
+    return normalizeTikTokUrl(value);
+  } catch {
+    throw new ProductAdminError("TikTok URL không hợp lệ.", {
+      statusCode: 400,
+      code: "INVALID_PRODUCT_PAYLOAD",
+    });
+  }
+}
+
 function normalizeStatus(value: unknown): ProductStatus {
   const normalized = typeof value === "string" ? value.trim().toLowerCase() : "";
 
@@ -240,6 +257,7 @@ export function normalizeProductAdminInput(input: unknown): ProductAdminMutation
     compareAtPrice: normalizeOptionalNumberValue(payload.compareAtPrice),
     imageUrl: normalizeRequiredText(payload.imageUrl, "Ảnh đại diện"),
     galleryUrls: normalizeUniqueList(payload.galleryUrls, "galleryUrls"),
+    tiktokUrl: normalizeOptionalTikTokUrl(payload.tiktokUrl),
     status: normalizeStatus(payload.status),
     stockStatus: normalizeStockStatus(payload.stockStatus),
     isFeatured: normalizeBoolean(payload.isFeatured),
@@ -340,6 +358,7 @@ function toSheetRow(input: ProductAdminMutationInput, timestamps: { createdAt: s
     input.compareAtPrice === null ? "" : `${input.compareAtPrice}`,
     input.imageUrl,
     input.galleryUrls.join("|"),
+    input.tiktokUrl ?? "",
     input.status,
     input.stockStatus,
     input.isFeatured ? "true" : "false",
@@ -490,6 +509,7 @@ export async function archiveAdminProduct(
     compareAtPrice: current.compareAtPrice,
     imageUrl: current.imageUrl,
     galleryUrls: current.galleryUrls,
+    tiktokUrl: current.tiktokUrl,
     status: "inactive",
     stockStatus: current.stockStatus,
     isFeatured: current.isFeatured,

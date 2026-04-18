@@ -26,6 +26,7 @@ const product: ProductAdminListItem = {
   compareAtPrice: 490000,
   imageUrl: "https://example.com/serum.jpg",
   galleryUrls: ["https://example.com/1.jpg"],
+  tiktokUrl: null,
   status: "active",
   stockStatus: "in_stock",
   isFeatured: true,

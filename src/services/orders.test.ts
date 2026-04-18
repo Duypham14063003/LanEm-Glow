@@ -27,6 +27,7 @@ const productFixtures: Product[] = [
     compareAtPrice: null,
     imageUrl: "https://example.com/serum.jpg",
     galleryUrls: [],
+    tiktokUrl: null,
     status: "active",
     stockStatus: "in_stock",
     isFeatured: true,
@@ -47,6 +48,7 @@ const productFixtures: Product[] = [
     compareAtPrice: null,
     imageUrl: "https://example.com/toner.jpg",
     galleryUrls: [],
+    tiktokUrl: null,
     status: "active",
     stockStatus: "preorder",
     isFeatured: false,
@@ -231,6 +233,15 @@ test("normalizeOrderListItem converts raw order row into admin-friendly fields",
   assert.deepEqual(item.selectedProductIds, ["SERUM-01", "TONER-02"]);
   assert.equal(item.itemCount, 2);
   assert.equal(item.duplicateFlag, false);
+});
+
+test("normalizeOrderListItem tolerates legacy invalid phone values for admin reads", () => {
+  const item = normalizeOrderListItem({
+    ...existingOrderRow,
+    phone: "+1 (555) 123-4567",
+  });
+
+  assert.equal(item.phone, "15551234567");
 });
 
 test("listAdminOrders filters by duplicate flag and search query", async () => {

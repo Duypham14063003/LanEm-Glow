@@ -42,6 +42,7 @@ type ProductFormValues = {
   compareAtPrice: string;
   imageUrl: string;
   galleryUrls: string;
+  tiktokUrl: string;
   status: ProductStatus;
   stockStatus: ProductStockStatus;
   isFeatured: boolean;
@@ -61,6 +62,7 @@ const emptyForm: ProductFormValues = {
   compareAtPrice: "",
   imageUrl: "",
   galleryUrls: "",
+  tiktokUrl: "",
   status: "active",
   stockStatus: "in_stock",
   isFeatured: false,
@@ -102,6 +104,7 @@ function toFormValues(product: ProductAdminListItem | null): ProductFormValues {
     compareAtPrice: product.compareAtPrice === null ? "" : `${product.compareAtPrice}`,
     imageUrl: product.imageUrl,
     galleryUrls: product.galleryUrls.join(", "),
+    tiktokUrl: product.tiktokUrl ?? "",
     status: product.status,
     stockStatus: product.stockStatus,
     isFeatured: product.isFeatured,
@@ -123,6 +126,7 @@ function toPayload(values: ProductFormValues): ProductAdminMutationInput | Recor
     compareAtPrice: values.compareAtPrice,
     imageUrl: values.imageUrl,
     galleryUrls: values.galleryUrls,
+    tiktokUrl: values.tiktokUrl,
     status: values.status,
     stockStatus: values.stockStatus,
     isFeatured: values.isFeatured,
@@ -601,6 +605,14 @@ export function AdminProductsWorkspace({
                   </span>
                 </div>
               </div>
+            </Field>
+            <Field className="sm:col-span-2" label="TikTok URL">
+              <Input
+                value={formValues.tiktokUrl}
+                onChange={(event) => handleFieldChange("tiktokUrl", event.target.value)}
+                disabled={isSaving}
+                placeholder="https://www.tiktok.com/@youraccount/video/..."
+              />
             </Field>
             <Field label="Trạng thái">
               <select

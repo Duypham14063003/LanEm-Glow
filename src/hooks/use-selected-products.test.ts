@@ -20,6 +20,7 @@ const product: Product = {
   compareAtPrice: null,
   imageUrl: "https://example.com/p1.jpg",
   galleryUrls: [],
+  tiktokUrl: null,
   status: "active",
   stockStatus: "in_stock",
   isFeatured: true,

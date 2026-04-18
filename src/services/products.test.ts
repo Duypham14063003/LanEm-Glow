@@ -16,6 +16,7 @@ const baseRow: RawProductRow = {
   compare_at_price: "490000",
   image_url: "https://example.com/serum.jpg",
   gallery_urls: "https://example.com/1.jpg|https://example.com/2.jpg",
+  tiktok_url: "https://www.tiktok.com/@lanemglow/video/7481234567890123456",
   status: "active",
   stock_status: "in_stock",
   is_featured: "true",
@@ -37,8 +38,18 @@ test("normalizeProductRow converts raw product values into typed fields", () => 
     "https://example.com/1.jpg",
     "https://example.com/2.jpg",
   ]);
+  assert.equal(product.tiktokUrl, "https://www.tiktok.com/@lanemglow/video/7481234567890123456");
   assert.deepEqual(product.concerns, ["phuc hoi", "da nhay cam"]);
   assert.deepEqual(product.searchKeywords, ["serum", "barrier", "phuc hoi"]);
+});
+
+test("normalizeProductRow neutralizes invalid TikTok URLs from sheet rows", () => {
+  const product = normalizeProductRow({
+    ...baseRow,
+    tiktok_url: "notaurl",
+  });
+
+  assert.equal(product.tiktokUrl, null);
 });
 
 test("normalizeProductRow rejects invalid stock status", () => {

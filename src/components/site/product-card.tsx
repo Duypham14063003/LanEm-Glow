@@ -1,8 +1,11 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import Link from "next/link";
+import { PlayCircle } from "lucide-react";
 
 import { trackEvent } from "@/lib/analytics";
+import { buildTikTokEmbedUrl } from "@/lib/tiktok";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -29,22 +32,57 @@ export function ProductCard({
   const { openQuickOrder } = useQuickOrder();
   const isOutOfStock = product.stockStatus === "out_of_stock";
   const selected = isSelected(product.id);
+  const [isPreviewVisible, setIsPreviewVisible] = useState(false);
+  const tikTokEmbedUrl = useMemo(() => buildTikTokEmbedUrl(product.tiktokUrl), [product.tiktokUrl]);
+  const showTikTokPreview = Boolean(product.tiktokUrl && isPreviewVisible && tikTokEmbedUrl);
 
   return (
     <Card className="flex h-full flex-col overflow-hidden p-0">
-      <Link href={href} className="block">
-        <div className="aspect-[4/3] bg-[linear-gradient(135deg,#fff,#fbe4ea)]">
-          {product.imageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={product.imageUrl}
-              alt={product.name}
-              className="h-full w-full object-cover"
-              loading="lazy"
-            />
-          ) : null}
-        </div>
-      </Link>
+      <div
+        className="group relative aspect-[4/3] overflow-hidden bg-[linear-gradient(135deg,#fff,#fbe4ea)]"
+        onMouseEnter={() => setIsPreviewVisible(true)}
+        onMouseLeave={() => setIsPreviewVisible(false)}
+        onFocus={() => setIsPreviewVisible(true)}
+        onBlur={() => setIsPreviewVisible(false)}
+      >
+        {showTikTokPreview ? (
+          <iframe
+            src={tikTokEmbedUrl ?? undefined}
+            title={`${product.name} TikTok preview`}
+            className="h-full w-full border-0"
+            allow="encrypted-media"
+            loading="lazy"
+          />
+        ) : product.imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+            loading="lazy"
+          />
+        ) : null}
+
+        {product.tiktokUrl ? (
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 bg-gradient-to-t from-[rgba(67,52,58,0.7)] via-[rgba(67,52,58,0.22)] to-transparent p-4 text-white">
+            <div className="space-y-1">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/80">
+                TikTok review
+              </p>
+              <p className="text-sm font-medium">
+                {showTikTokPreview
+                  ? "Đang xem preview"
+                  : tikTokEmbedUrl
+                    ? "Hover để xem preview video"
+                    : "Bấm vào chi tiết để xem video đầy đủ"}
+              </p>
+            </div>
+            <PlayCircle className="size-9 shrink-0 text-white" aria-hidden="true" />
+          </div>
+        ) : null}
+
+        <Link href={href} className="absolute inset-0" aria-label={`Xem chi tiết ${product.name}`} />
+      </div>
 
       <div className="flex flex-1 flex-col gap-4 p-5">
         <div className="flex items-start justify-between gap-3">
@@ -62,6 +100,7 @@ export function ProductCard({
         </div>
 
         <div className="flex flex-wrap gap-2">
+          {product.tiktokUrl ? <Badge variant="info">Có video TikTok</Badge> : null}
           {product.concerns.slice(0, 2).map((concern) => (
             <Badge key={concern} variant="neutral">
               {concern}

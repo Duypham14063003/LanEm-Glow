@@ -3,11 +3,11 @@ import test from "node:test";
 
 import { NextRequest } from "next/server";
 
+import { PATCH } from "@/app/api/orders/[id]/route";
 import {
-  PATCH,
   resetUpdateAdminOrderHandlerForTesting,
   setUpdateAdminOrderHandlerForTesting,
-} from "@/app/api/orders/[id]/route";
+} from "@/app/api/orders/[id]/handlers";
 import { OrderAdminError } from "@/services/orders";
 import type { OrderAdminListItem } from "@/types";
 

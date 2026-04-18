@@ -1,5 +1,6 @@
 import { withCache } from "@/lib/cache";
 import { assertRequiredHeaders, readSheetRows } from "@/lib/sheets";
+import { parseOptionalTikTokUrl } from "@/lib/tiktok";
 import {
   isProductStatus,
   isProductStockStatus,
@@ -24,6 +25,7 @@ const PRODUCT_REQUIRED_HEADERS = [
   "compare_at_price",
   "image_url",
   "gallery_urls",
+  "tiktok_url",
   "status",
   "stock_status",
   "is_featured",
@@ -69,6 +71,7 @@ export function normalizeProductRow(row: RawProductRow): Product {
     compareAtPrice: parseOptionalNumber(row.compare_at_price),
     imageUrl: row.image_url.trim(),
     galleryUrls: parseDelimitedList(row.gallery_urls),
+    tiktokUrl: parseOptionalTikTokUrl(row.tiktok_url),
     status,
     stockStatus: stockStatusRaw,
     isFeatured: parseBoolean(row.is_featured),

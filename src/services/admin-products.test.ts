@@ -24,6 +24,7 @@ const baseRow: RawProductRow = {
   compare_at_price: "490000",
   image_url: "https://example.com/serum.jpg",
   gallery_urls: "https://example.com/1.jpg|https://example.com/2.jpg",
+  tiktok_url: "https://www.tiktok.com/@lanemglow/video/7481234567890123456",
   status: "active",
   stock_status: "in_stock",
   is_featured: "true",
@@ -52,13 +53,14 @@ function buildDependencies(rows: Array<{ rowNumber: number; row: RawProductRow }
           compare_at_price: row[8] ?? "",
           image_url: row[9] ?? "",
           gallery_urls: row[10] ?? "",
-          status: row[11] ?? "",
-          stock_status: row[12] ?? "",
-          is_featured: row[13] ?? "",
-          display_order: row[14] ?? "",
-          search_keywords: row[15] ?? "",
-          created_at: row[16] ?? "",
-          updated_at: row[17] ?? "",
+          tiktok_url: row[11] ?? "",
+          status: row[12] ?? "",
+          stock_status: row[13] ?? "",
+          is_featured: row[14] ?? "",
+          display_order: row[15] ?? "",
+          search_keywords: row[16] ?? "",
+          created_at: row[17] ?? "",
+          updated_at: row[18] ?? "",
         },
       });
     },
@@ -80,13 +82,14 @@ function buildDependencies(rows: Array<{ rowNumber: number; row: RawProductRow }
           compare_at_price: row[8] ?? "",
           image_url: row[9] ?? "",
           gallery_urls: row[10] ?? "",
-          status: row[11] ?? "",
-          stock_status: row[12] ?? "",
-          is_featured: row[13] ?? "",
-          display_order: row[14] ?? "",
-          search_keywords: row[15] ?? "",
-          created_at: row[16] ?? "",
-          updated_at: row[17] ?? "",
+          tiktok_url: row[11] ?? "",
+          status: row[12] ?? "",
+          stock_status: row[13] ?? "",
+          is_featured: row[14] ?? "",
+          display_order: row[15] ?? "",
+          search_keywords: row[16] ?? "",
+          created_at: row[17] ?? "",
+          updated_at: row[18] ?? "",
         },
       };
     },
@@ -106,6 +109,7 @@ test("normalizeProductAdminInput normalizes admin product payload", () => {
     compareAtPrice: "",
     imageUrl: "https://example.com/new.jpg",
     galleryUrls: "https://example.com/1.jpg, https://example.com/2.jpg",
+    tiktokUrl: "https://www.tiktok.com/@lanemglow/video/7482222222222222222",
     status: "active",
     stockStatus: "preorder",
     isFeatured: true,
@@ -117,6 +121,33 @@ test("normalizeProductAdminInput normalizes admin product payload", () => {
   assert.deepEqual(payload.concerns, ["phuc hoi", "da nhay cam"]);
   assert.deepEqual(payload.searchKeywords, ["serum", "calming"]);
   assert.equal(payload.compareAtPrice, null);
+  assert.equal(payload.tiktokUrl, "https://www.tiktok.com/@lanemglow/video/7482222222222222222");
+});
+
+test("normalizeProductAdminInput rejects invalid TikTok URL payloads", () => {
+  assert.throws(
+    () =>
+      normalizeProductAdminInput({
+        productId: "SERUM-02",
+        slug: "Serum moi",
+        name: "Serum Moi",
+        shortDescription: "Mo ta ngan",
+        description: "Mo ta dai",
+        category: "Serum",
+        concerns: "phuc hoi",
+        price: "520000",
+        compareAtPrice: "",
+        imageUrl: "https://example.com/new.jpg",
+        galleryUrls: "https://example.com/1.jpg",
+        tiktokUrl: "https://youtube.com/watch?v=abc",
+        status: "active",
+        stockStatus: "in_stock",
+        isFeatured: false,
+        displayOrder: "3",
+        searchKeywords: "serum",
+      }),
+    /TikTok URL không hợp lệ/i
+  );
 });
 
 test("parseProductAdminQuery rejects unsupported product status filter", () => {
@@ -152,6 +183,7 @@ test("createAdminProduct rejects duplicate product ids and slugs", async () => {
           compareAtPrice: "",
           imageUrl: "https://example.com/new.jpg",
           galleryUrls: "https://example.com/new-1.jpg",
+          tiktokUrl: null,
           status: "active",
           stockStatus: "in_stock",
           isFeatured: false,
@@ -178,6 +210,7 @@ test("createAdminProduct appends a new product row and returns normalized produc
       compareAtPrice: "560000",
       imageUrl: "https://example.com/new.jpg",
       galleryUrls: "https://example.com/new-1.jpg,https://example.com/new-2.jpg",
+      tiktokUrl: "https://www.tiktok.com/@lanemglow/video/7483333333333333333",
       status: "active",
       stockStatus: "in_stock",
       isFeatured: false,
@@ -189,6 +222,7 @@ test("createAdminProduct appends a new product row and returns normalized produc
 
   assert.equal(product.id, "SERUM-02");
   assert.equal(product.rowNumber, 3);
+  assert.equal(product.tiktokUrl, "https://www.tiktok.com/@lanemglow/video/7483333333333333333");
   assert.equal(product.updatedAt, "2026-04-19T08:00:00.000Z");
 });
 
@@ -207,6 +241,7 @@ test("updateAdminProduct preserves immutable product id and updates mutable fiel
       compareAtPrice: "",
       imageUrl: "https://example.com/new.jpg",
       galleryUrls: "https://example.com/new-1.jpg",
+      tiktokUrl: null,
       status: "inactive",
       stockStatus: "preorder",
       isFeatured: false,
@@ -241,6 +276,7 @@ test("updateAdminProduct rejects attempts to change immutable product id", async
           compareAtPrice: "",
           imageUrl: "https://example.com/new.jpg",
           galleryUrls: "https://example.com/new-1.jpg",
+          tiktokUrl: null,
           status: "active",
           stockStatus: "in_stock",
           isFeatured: false,

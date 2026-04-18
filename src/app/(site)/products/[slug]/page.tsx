@@ -81,6 +81,7 @@ export default async function ProductDetailPage({
             name={product.name}
             imageUrl={product.imageUrl}
             galleryUrls={product.galleryUrls}
+            tiktokUrl={product.tiktokUrl}
           />
 
           <Card className="space-y-5 sm:space-y-6">
