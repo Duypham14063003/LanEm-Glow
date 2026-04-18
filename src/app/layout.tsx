@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { Be_Vietnam_Pro, Cormorant_Garamond } from "next/font/google";
+import { Be_Vietnam_Pro } from "next/font/google";
 
+import logoImage from "@/assets/logo.png";
 import { buildMetadata, getSiteUrl } from "@/lib/metadata";
 
 import "./globals.css";
@@ -11,14 +12,13 @@ const fontSans = Be_Vietnam_Pro({
   weight: ["400", "500", "600", "700"],
 });
 
-const fontHeading = Cormorant_Garamond({
-  subsets: ["latin", "vietnamese"],
-  variable: "--font-heading",
-  weight: ["400", "500", "600", "700"],
-});
-
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
+  icons: {
+    icon: [{ url: logoImage.src, type: "image/png" }],
+    shortcut: [{ url: logoImage.src, type: "image/png" }],
+    apple: [{ url: logoImage.src, type: "image/png" }],
+  },
   ...buildMetadata({
     title: "LanEm Glow | Skincare storefront tinh gọn cho mobile",
     description:
@@ -34,7 +34,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi">
-      <body className={`${fontSans.variable} ${fontHeading.variable}`}>{children}</body>
+      <body className={fontSans.variable}>{children}</body>
     </html>
   );
 }

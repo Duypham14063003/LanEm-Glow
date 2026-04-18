@@ -62,12 +62,66 @@ export interface ProductCatalogQuery {
   stockStatus?: ProductStockStatus;
 }
 
+export interface ProductAdminQuery {
+  q?: string;
+  status?: ProductStatus;
+}
+
+export interface ProductAdminListItem extends Product {
+  rowNumber: number;
+}
+
+export interface ProductAdminMutationInput {
+  productId: string;
+  slug: string;
+  name: string;
+  shortDescription: string;
+  description: string;
+  category: string;
+  concerns: string[];
+  price: number;
+  compareAtPrice: number | null;
+  imageUrl: string;
+  galleryUrls: string[];
+  status: ProductStatus;
+  stockStatus: ProductStockStatus;
+  isFeatured: boolean;
+  displayOrder: number;
+  searchKeywords: string[];
+}
+
+export interface ProductAdminListResponse {
+  items: ProductAdminListItem[];
+  total: number;
+  query: ProductAdminQuery;
+}
+
+export interface ProductAdminMutationResponse {
+  product: ProductAdminListItem;
+}
+
+export interface ProductAdminArchiveResponse {
+  product: ProductAdminListItem;
+}
+
 export interface PublicSettings {
   brandPhone: string | null;
   zaloUrl: string | null;
   publicAnnouncement: string | null;
   primaryCtaLabel: string | null;
   secondaryCtaLabel: string | null;
+}
+
+export interface AdminSettingsMutationInput {
+  brandPhone?: string;
+  zaloUrl?: string;
+  publicAnnouncement?: string;
+  primaryCtaLabel?: string;
+  secondaryCtaLabel?: string;
+}
+
+export interface AdminSettingsResponse {
+  settings: PublicSettings;
 }
 
 export interface CatalogListResponse {
@@ -184,6 +238,15 @@ export interface OrderAdminPatchPayload {
   adminNote?: string;
 }
 
+export interface OrderAdminCreateInput {
+  phone: string;
+  customerName?: string;
+  selectedProductIds: string[];
+  note?: string;
+  sourcePage?: string;
+  sourceCampaign?: string;
+}
+
 export interface OrderAdminListResponse {
   items: OrderAdminListItem[];
   total: number;
@@ -191,6 +254,10 @@ export interface OrderAdminListResponse {
 }
 
 export interface OrderAdminUpdateResponse {
+  order: OrderAdminListItem;
+}
+
+export interface OrderAdminCreateResponse {
   order: OrderAdminListItem;
 }
 

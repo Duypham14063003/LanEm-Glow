@@ -101,6 +101,45 @@ export function OrderDetailPanel({ initialOrder }: { initialOrder: OrderAdminLis
     }
   };
 
+  const handleArchive = async () => {
+    setStatus("cancelled");
+    setIsSaving(true);
+    setMessage(null);
+    setError(null);
+
+    try {
+      const response = await fetch(`/api/orders/${encodeURIComponent(order.orderId)}`, {
+        method: "PATCH",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          status: "cancelled",
+          adminNote,
+        }),
+      });
+
+      const payload = (await response.json()) as
+        | { order: OrderAdminListItem }
+        | { error?: string };
+
+      if (!response.ok) {
+        setError("error" in payload ? payload.error ?? "Không thể lưu thay đổi đơn hàng." : "Không thể lưu thay đổi đơn hàng.");
+        return;
+      }
+
+      const nextOrder = (payload as { order: OrderAdminListItem }).order;
+      setOrder(nextOrder);
+      setStatus(nextOrder.status);
+      setAdminNote(nextOrder.adminNote);
+      setMessage("Đã lưu đơn hàng ở trạng thái cancelled.");
+    } catch {
+      setError("Không thể kết nối để cập nhật đơn hàng. Vui lòng thử lại.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <Card className="space-y-5 p-4 sm:p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -183,9 +222,14 @@ export function OrderDetailPanel({ initialOrder }: { initialOrder: OrderAdminLis
       {message ? <p className="text-sm text-[var(--color-success)]">{message}</p> : null}
       {error ? <p className="text-sm text-[var(--color-danger)]">{error}</p> : null}
 
-      <Button onClick={handleSave} loading={isSaving}>
-        Lưu thay đổi
-      </Button>
+      <div className="flex flex-wrap gap-3">
+        <Button onClick={handleSave} loading={isSaving}>
+          Lưu thay đổi
+        </Button>
+        <Button variant="secondary" onClick={handleArchive} disabled={isSaving || order.status === "cancelled"}>
+          Đánh dấu hủy
+        </Button>
+      </div>
     </Card>
   );
 }

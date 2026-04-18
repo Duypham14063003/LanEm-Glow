@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  createAdminOrder,
   listAdminOrders,
   isDuplicateOrderCandidate,
   normalizeOrderListItem,
@@ -300,4 +301,33 @@ test("updateAdminOrder returns not found for missing order id", async () => {
       ),
     (error: unknown) => error instanceof OrderAdminError && error.code === "ORDER_NOT_FOUND"
   );
+});
+
+test("createAdminOrder creates an internal order row and returns normalized order detail", async () => {
+  const appendedRows: string[][] = [];
+
+  const order = await createAdminOrder(
+    {
+      phone: "0912345678",
+      customerName: "Lan",
+      selectedProductIds: ["SERUM-01"],
+      note: "Khach tao boi admin",
+      sourcePage: "admin_manual",
+      sourceCampaign: "hotline",
+    },
+    {
+      appendRow: async (_tabName, row) => {
+        appendedRows.push(row);
+      },
+      getProducts: async () => [productFixtures[0]],
+      readOrders: async () => [],
+      now: () => new Date("2026-04-18T10:30:00.000Z"),
+    }
+  );
+
+  assert.equal(order.phone, "0912345678");
+  assert.equal(order.status, "new");
+  assert.equal(order.sourcePage, "admin_manual");
+  assert.equal(appendedRows.length, 1);
+  assert.equal(appendedRows[0]?.[10], "admin_manual");
 });

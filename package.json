@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "type-check": "tsc --noEmit",
-    "test": "tsx --test src/services/products.test.ts src/services/orders.test.ts src/lib/notifications.test.ts src/lib/rate-limit.test.ts src/lib/metadata.test.ts src/lib/analytics.test.ts src/app/api/products/route.test.ts src/app/api/orders/route.test.ts src/app/api/orders/\\[id\\]/route.test.ts src/app/api/settings/public/route.test.ts src/app/\\(site\\)/page.test.ts src/app/\\(site\\)/products/page.test.ts src/hooks/use-selected-products.test.ts src/hooks/use-quick-order.test.ts"
+    "test": "tsx --test src/services/products.test.ts src/services/orders.test.ts src/services/settings.test.ts src/services/admin-products.test.ts src/services/admin-product-image-upload.test.ts src/lib/notifications.test.ts src/lib/rate-limit.test.ts src/lib/metadata.test.ts src/lib/analytics.test.ts src/app/api/products/route.test.ts src/app/api/orders/route.test.ts src/app/api/orders/\\[id\\]/route.test.ts src/app/api/admin/orders/route.test.ts src/app/api/admin/settings/route.test.ts src/app/api/admin/products/route.test.ts src/app/api/admin/products/\\[id\\]/route.test.ts src/app/api/admin/uploads/product-image/route.test.ts src/app/api/settings/public/route.test.ts src/app/\\(site\\)/page.test.ts src/app/\\(site\\)/products/page.test.ts src/hooks/use-selected-products.test.ts src/hooks/use-quick-order.test.ts"
   },
   "engines": {
     "node": ">=20.0.0"

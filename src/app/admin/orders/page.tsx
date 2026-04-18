@@ -1,7 +1,9 @@
+import { AdminOrderCreatePanel } from "@/components/admin/admin-order-create-panel";
 import { AdminTopbar } from "@/components/admin/admin-topbar";
 import { OrderDetailPanel } from "@/components/admin/order-detail-panel";
 import { OrdersTable } from "@/components/admin/orders-table";
 import { Input } from "@/components/ui/input";
+import { getCatalogProducts } from "@/services/products";
 import { listAdminOrders, parseOrderAdminQuery } from "@/services/orders";
 
 type OrdersPageProps = {
@@ -21,7 +23,10 @@ export default async function AdminOrdersPage({ searchParams }: OrdersPageProps)
     dateFrom: getFirst(params.dateFrom),
     dateTo: getFirst(params.dateTo),
   });
-  const items = await listAdminOrders(query);
+  const [items, products] = await Promise.all([
+    listAdminOrders(query),
+    getCatalogProducts({ skipCache: true }),
+  ]);
   const selectedOrderId = getFirst(params.selectedOrderId);
   const selectedOrder =
     items.find((item) => item.orderId === selectedOrderId) ?? items[0] ?? null;
@@ -96,7 +101,8 @@ export default async function AdminOrdersPage({ searchParams }: OrdersPageProps)
             <OrdersTable items={items} selectedOrderId={selectedOrder?.orderId} />
           </div>
 
-          <div className="xl:sticky xl:top-24 xl:self-start">
+          <div className="space-y-5 xl:sticky xl:top-24 xl:self-start">
+            <AdminOrderCreatePanel products={products} />
             <OrderDetailPanel initialOrder={selectedOrder} />
           </div>
         </div>

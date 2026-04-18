@@ -15,6 +15,7 @@ import {
 import { notifyAdminOfNewOrder } from "@/lib/notifications";
 import { getCatalogProducts } from "@/services/products";
 import type {
+  OrderAdminCreateInput,
   NormalizedOrderRequestPayload,
   NotificationDeliveryResult,
   OrderAdminListItem,
@@ -348,6 +349,15 @@ export function normalizeOrderPatchPayload(input: unknown): OrderAdminPatchPaylo
   };
 }
 
+export function normalizeAdminOrderCreatePayload(input: unknown): NormalizedOrderRequestPayload {
+  const normalized = normalizeOrderPayload(input as OrderAdminCreateInput);
+
+  return {
+    ...normalized,
+    sourcePage: normalized.sourcePage || "admin_manual",
+  };
+}
+
 export async function listAdminOrders(
   query: OrderAdminQuery,
   overrides: Partial<OrderServiceDependencies> = {}
@@ -534,6 +544,69 @@ export async function updateAdminOrder(
       !rowEntry.row.processed_at.trim()
         ? dependencies.now().toISOString()
         : rowEntry.row.processed_at,
+  });
+}
+
+export async function createAdminOrder(
+  payload: unknown,
+  overrides: Partial<OrderServiceDependencies> = {}
+): Promise<OrderAdminListItem> {
+  const dependencies = {
+    ...defaultDependencies,
+    ...overrides,
+  };
+
+  const normalizedPayload = normalizeAdminOrderCreatePayload(payload);
+  const now = dependencies.now();
+  const currentProducts = await dependencies.getProducts({ skipCache: true });
+  const selectedProducts = selectProductsForOrder(currentProducts, normalizedPayload.selectedProductIds);
+  const existingOrders = (await dependencies.readOrders()).map((row) => normalizeOrderRow(row));
+  const duplicate = isDuplicateOrderCandidate(
+    {
+      phone: normalizedPayload.phone,
+      selectedProductIds: normalizedPayload.selectedProductIds,
+      createdAt: now,
+    },
+    existingOrders,
+    getDuplicateWindowMinutes()
+  );
+
+  const snapshot: OrderRowSnapshot = {
+    orderId: buildOrderId(now),
+    createdAt: now.toISOString(),
+    phone: normalizedPayload.phone,
+    customerName: normalizedPayload.customerName,
+    selectedProductIds: normalizedPayload.selectedProductIds,
+    selectedProductNames: selectedProducts.map((product) => product.name),
+    itemCount: selectedProducts.length,
+    customerNote: normalizedPayload.note,
+    status: duplicate ? "duplicate" : "new",
+    adminNote: "",
+    sourcePage: normalizedPayload.sourcePage || "admin_manual",
+    sourceCampaign: normalizedPayload.sourceCampaign,
+    duplicateFlag: duplicate,
+    clientFingerprint: "",
+    processedAt: "",
+  };
+
+  await dependencies.appendRow(ORDERS_SHEET, buildOrderRow(snapshot));
+
+  return normalizeOrderListItem({
+    order_id: snapshot.orderId,
+    created_at: snapshot.createdAt,
+    phone: snapshot.phone,
+    customer_name: snapshot.customerName,
+    selected_product_ids: snapshot.selectedProductIds.join("|"),
+    selected_product_names: snapshot.selectedProductNames.join("|"),
+    item_count: String(snapshot.itemCount),
+    customer_note: snapshot.customerNote,
+    status: snapshot.status,
+    admin_note: snapshot.adminNote,
+    source_page: snapshot.sourcePage,
+    source_campaign: snapshot.sourceCampaign,
+    duplicate_flag: String(snapshot.duplicateFlag),
+    client_fingerprint: snapshot.clientFingerprint,
+    processed_at: snapshot.processedAt,
   });
 }
 

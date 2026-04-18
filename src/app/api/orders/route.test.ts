@@ -3,16 +3,15 @@ import test from "node:test";
 
 import { NextRequest } from "next/server";
 
+import { GET, POST } from "@/app/api/orders/route";
 import {
-  GET,
-  POST,
   resetConsumeRateLimitHandlerForTesting,
   resetListAdminOrdersHandlerForTesting,
   resetSubmitQuickOrderHandlerForTesting,
   setConsumeRateLimitHandlerForTesting,
   setListAdminOrdersHandlerForTesting,
   setSubmitQuickOrderHandlerForTesting,
-} from "@/app/api/orders/route";
+} from "@/app/api/orders/handlers";
 import { OrderAdminError, OrderSubmissionError } from "@/services/orders";
 import type { OrderAdminListItem } from "@/types";
 

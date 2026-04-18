@@ -1,47 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { consumeRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { getRateLimitKey } from "@/lib/rate-limit";
 import {
   OrderAdminError,
   OrderRateLimitError,
   OrderSubmissionError,
-  listAdminOrders,
   parseOrderAdminQuery,
-  submitQuickOrder,
 } from "@/services/orders";
 import type {
   OrderAdminListResponse,
   OrderErrorResponse,
   OrderSubmissionResult,
 } from "@/types";
-
-let submitQuickOrderHandler = submitQuickOrder;
-let listAdminOrdersHandler = listAdminOrders;
-let consumeRateLimitHandler = consumeRateLimit;
-
-export function setSubmitQuickOrderHandlerForTesting(handler: typeof submitQuickOrder) {
-  submitQuickOrderHandler = handler;
-}
-
-export function resetSubmitQuickOrderHandlerForTesting() {
-  submitQuickOrderHandler = submitQuickOrder;
-}
-
-export function setListAdminOrdersHandlerForTesting(handler: typeof listAdminOrders) {
-  listAdminOrdersHandler = handler;
-}
-
-export function resetListAdminOrdersHandlerForTesting() {
-  listAdminOrdersHandler = listAdminOrders;
-}
-
-export function setConsumeRateLimitHandlerForTesting(handler: typeof consumeRateLimit) {
-  consumeRateLimitHandler = handler;
-}
-
-export function resetConsumeRateLimitHandlerForTesting() {
-  consumeRateLimitHandler = consumeRateLimit;
-}
+import {
+  getConsumeRateLimitHandler,
+  getListAdminOrdersHandler,
+  getSubmitQuickOrderHandler,
+} from "@/app/api/orders/handlers";
 
 export async function GET(request: NextRequest) {
   try {
@@ -52,7 +27,7 @@ export async function GET(request: NextRequest) {
       dateFrom: request.nextUrl.searchParams.get("dateFrom") ?? undefined,
       dateTo: request.nextUrl.searchParams.get("dateTo") ?? undefined,
     });
-    const items = await listAdminOrdersHandler(query);
+    const items = await getListAdminOrdersHandler()(query);
     const response: OrderAdminListResponse = {
       items,
       total: items.length,
@@ -80,7 +55,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const rateLimit = consumeRateLimitHandler(getRateLimitKey(request.headers));
+  const rateLimit = getConsumeRateLimitHandler()(getRateLimitKey(request.headers));
 
   if (!rateLimit.allowed) {
     const response: OrderErrorResponse = {
@@ -110,7 +85,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const result: OrderSubmissionResult = await submitQuickOrderHandler(payload);
+    const result: OrderSubmissionResult = await getSubmitQuickOrderHandler()(payload);
     return NextResponse.json(result, { status: 201 });
   } catch (error) {
     if (error instanceof OrderSubmissionError) {

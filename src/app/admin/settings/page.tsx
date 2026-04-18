@@ -1,18 +1,18 @@
+import { AdminSettingsWorkspace } from "@/components/admin/admin-settings-workspace";
 import { AdminTopbar } from "@/components/admin/admin-topbar";
-import { EmptyState } from "@/components/ui/empty-state";
+import { getAdminSettings } from "@/services/settings";
 
-export default function AdminSettingsPage() {
+export default async function AdminSettingsPage() {
+  const settings = await getAdminSettings();
+
   return (
     <div>
       <AdminTopbar
         title="Cài đặt"
-        description="Cấu hình email nhận đơn, duplicate window và cache sẽ được đưa vào admin ở các milestone tiếp theo."
+        description="Quản lý các cấu hình storefront đang được public site sử dụng trực tiếp."
       />
       <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6">
-        <EmptyState
-          title="Cài đặt admin sẽ đến ở milestone sau"
-          description="Hiện tại những cấu hình này vẫn được quản lý qua biến môi trường và Google Sheets."
-        />
+        <AdminSettingsWorkspace initialSettings={settings} />
       </div>
     </div>
   );
