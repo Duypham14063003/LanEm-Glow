@@ -1,5 +1,6 @@
 "use client";
 
+import { trackEvent } from "@/lib/analytics";
 import { Button } from "@/components/ui/button";
 import { useQuickOrder } from "@/hooks/use-quick-order";
 import { useSelectedProducts } from "@/hooks/use-selected-products";
@@ -16,11 +17,29 @@ export function ProductDetailActions({ product }: { product: Product }) {
       <Button
         variant={selected ? "primary" : "secondary"}
         disabled={isOutOfStock}
-        onClick={() => toggleProduct(product)}
+        onClick={() => {
+          toggleProduct(product);
+          trackEvent("product_selected", {
+            productId: product.id,
+            slug: product.slug,
+            selected: !selected,
+            source: "product_detail",
+          });
+        }}
       >
         {isOutOfStock ? "Tạm hết hàng" : selected ? "Đã chọn" : "Chọn sản phẩm"}
       </Button>
-      <Button onClick={() => openQuickOrder("detail")}>Để lại số để được tư vấn</Button>
+      <Button
+        onClick={() => {
+          trackEvent("quick_order_opened", {
+            source: "detail",
+            productId: product.id,
+          });
+          openQuickOrder("detail");
+        }}
+      >
+        Để lại số để được tư vấn
+      </Button>
     </div>
   );
 }

@@ -1,5 +1,7 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { AnalyticsPageView } from "@/components/analytics/analytics-page-view";
 import { ConcernScroller } from "@/components/site/concern-scroller";
 import { PageSection } from "@/components/site/page-section";
 import { ProductCard } from "@/components/site/product-card";
@@ -8,6 +10,7 @@ import { ProductGallery } from "@/components/site/product-gallery";
 import { StorefrontCta } from "@/components/site/storefront-cta";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { buildProductMetadata } from "@/lib/metadata";
 import { getCatalogProductBySlug, listCatalogProducts } from "@/services/products";
 
 function formatPrice(value: number) {
@@ -23,6 +26,30 @@ function getStockLabel(stockStatus: string) {
     default:
       return { label: "Tạm hết hàng", variant: "error" as const };
   }
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const product = await getCatalogProductBySlug(slug);
+
+  if (!product) {
+    return buildProductMetadata({
+      name: "Sản phẩm không tồn tại",
+      description: "LanEm Glow",
+      slug,
+    });
+  }
+
+  return buildProductMetadata({
+    name: product.name,
+    description: product.shortDescription,
+    slug: product.slug,
+    imageUrl: product.imageUrl,
+  });
 }
 
 export default async function ProductDetailPage({
@@ -44,22 +71,26 @@ export default async function ProductDetailPage({
 
   return (
     <>
+      <AnalyticsPageView
+        event="product_viewed"
+        payload={{ productId: product.id, slug: product.slug, category: product.category }}
+      />
       <PageSection>
-        <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
+        <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:gap-8">
           <ProductGallery
             name={product.name}
             imageUrl={product.imageUrl}
             galleryUrls={product.galleryUrls}
           />
 
-          <Card className="space-y-6">
+          <Card className="space-y-5 sm:space-y-6">
             <div className="space-y-4">
               <div className="flex flex-wrap items-center gap-3">
                 <Badge variant={stock.variant}>{stock.label}</Badge>
                 {product.isFeatured ? <Badge variant="info">Nổi bật</Badge> : null}
               </div>
               <div className="space-y-3">
-                <h1 className="font-heading text-5xl text-[var(--color-foreground)]">
+                <h1 className="font-heading text-4xl text-[var(--color-foreground)] sm:text-5xl">
                   {product.name}
                 </h1>
                 <p className="text-base text-[var(--color-foreground-soft)]">
@@ -123,7 +154,7 @@ export default async function ProductDetailPage({
                 Có thể bạn cũng sẽ thích
               </h2>
             </div>
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {relatedProducts.map((item) => (
                 <ProductCard key={item.id} product={item} />
               ))}

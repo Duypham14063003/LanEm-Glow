@@ -1,9 +1,13 @@
 import React from "react";
+import type { Metadata } from "next";
+
+import { AnalyticsPageView } from "@/components/analytics/analytics-page-view";
 import { PageSection } from "@/components/site/page-section";
 import { ProductCard } from "@/components/site/product-card";
 import { ProductListFilters } from "@/components/site/product-list-filters";
 import { StorefrontEmptyState } from "@/components/site/storefront-empty-state";
 import { Badge } from "@/components/ui/badge";
+import { buildMetadata } from "@/lib/metadata";
 import { listCatalogProducts, getCatalogProducts } from "@/services/products";
 import type { Product, ProductCatalogQuery } from "@/types";
 
@@ -32,6 +36,13 @@ function parseSearchParams(params: Record<string, string | string[] | undefined>
   };
 }
 
+export const metadata: Metadata = buildMetadata({
+  title: "Danh sách sản phẩm | LanEm Glow",
+  description:
+    "Duyệt catalog skincare của LanEm Glow, tìm theo concern, từ khóa và tình trạng tồn kho để shortlist routine phù hợp.",
+  path: "/products",
+});
+
 export default async function ProductsPage({
   searchParams,
 }: {
@@ -59,11 +70,21 @@ export default async function ProductsPage({
 
   return (
     <>
+      <AnalyticsPageView
+        event={query.q || query.category || query.concern || query.stockStatus ? "catalog_filtered" : "catalog_viewed"}
+        payload={{
+          q: query.q ?? null,
+          category: query.category ?? null,
+          concern: query.concern ?? null,
+          stockStatus: query.stockStatus ?? null,
+          featured: query.featured ?? null,
+        }}
+      />
       <PageSection className="pb-4">
         <div className="space-y-4">
           <Badge variant="info">Catalog</Badge>
           <div className="space-y-3">
-            <h1 className="font-heading text-5xl text-[var(--color-foreground)]">
+            <h1 className="font-heading text-4xl text-[var(--color-foreground)] sm:text-5xl">
               Tìm sản phẩm theo nhu cầu da và texture bạn thích.
             </h1>
             <p className="max-w-3xl text-base text-[var(--color-foreground-soft)] sm:text-lg">
@@ -84,7 +105,7 @@ export default async function ProductsPage({
 
       <PageSection className="pt-0">
         {items.length > 0 ? (
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {items.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}

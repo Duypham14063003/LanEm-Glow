@@ -1,6 +1,8 @@
 import React from "react";
 import Link from "next/link";
+import type { Metadata } from "next";
 
+import { AnalyticsPageView } from "@/components/analytics/analytics-page-view";
 import { ConcernScroller } from "@/components/site/concern-scroller";
 import { HeroCta } from "@/components/site/hero-cta";
 import { PageSection } from "@/components/site/page-section";
@@ -9,6 +11,7 @@ import { StorefrontCta } from "@/components/site/storefront-cta";
 import { TestimonialCard } from "@/components/site/testimonial-card";
 import { TrustStrip } from "@/components/site/trust-strip";
 import { Button } from "@/components/ui/button";
+import { buildMetadata } from "@/lib/metadata";
 import { getCatalogProducts, listCatalogProducts } from "@/services/products";
 import { getPublicSettings } from "@/services/settings";
 
@@ -34,6 +37,13 @@ const testimonials = [
     context: "Chọn serum đầu tiên",
   },
 ];
+
+export const metadata: Metadata = buildMetadata({
+  title: "LanEm Glow | Skincare tinh gọn, chọn nhanh theo nhu cầu da",
+  description:
+    "Khám phá skincare nhẹ nhàng, xem nhanh theo concern và shortlist sản phẩm phù hợp trước khi để lại số để được tư vấn.",
+  path: "/",
+});
 
 async function getHomepageData() {
   try {
@@ -68,6 +78,7 @@ export default async function SiteHomePage() {
 
   return (
     <>
+      <AnalyticsPageView event="catalog_viewed" payload={{ source: "homepage" }} />
       <PageSection className="pb-6 sm:pb-8">
         <HeroCta
           primaryCtaLabel={settings.primaryCtaLabel}
@@ -79,7 +90,7 @@ export default async function SiteHomePage() {
         <TrustStrip />
       </PageSection>
 
-      <PageSection>
+      <PageSection className="pb-10 sm:pb-12">
         <div className="flex items-end justify-between gap-4">
           <div className="space-y-2">
             <p className="text-sm uppercase tracking-[0.16em] text-[var(--color-muted)]">
@@ -114,15 +125,15 @@ export default async function SiteHomePage() {
           </Button>
         </div>
 
-        <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-6 grid gap-4 sm:mt-8 md:grid-cols-2 xl:grid-cols-3">
           {featuredProducts.map((product) => (
             <ProductCard key={product.id} product={product} actionLabel="Xem sản phẩm" />
           ))}
         </div>
       </PageSection>
 
-      <PageSection>
-        <div className="grid gap-5 lg:grid-cols-3">
+      <PageSection className="pt-0">
+        <div className="grid gap-4 lg:grid-cols-3">
           {testimonials.map((testimonial) => (
             <TestimonialCard key={testimonial.author} {...testimonial} />
           ))}

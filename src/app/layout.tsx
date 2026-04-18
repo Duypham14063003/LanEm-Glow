@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Be_Vietnam_Pro, Cormorant_Garamond } from "next/font/google";
 
+import { buildMetadata, getSiteUrl } from "@/lib/metadata";
+
 import "./globals.css";
 
 const fontSans = Be_Vietnam_Pro({
@@ -16,8 +18,13 @@ const fontHeading = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  title: "LanEm Glow",
-  description: "Theme foundation and UI primitives for the LanEm Glow storefront.",
+  metadataBase: new URL(getSiteUrl()),
+  ...buildMetadata({
+    title: "LanEm Glow | Skincare storefront tinh gọn cho mobile",
+    description:
+      "LanEm Glow giúp bạn xem nhanh sản phẩm skincare, chọn theo concern và để lại số để được tư vấn thủ công nhẹ nhàng hơn.",
+    path: "/",
+  }),
 };
 
 export default function RootLayout({

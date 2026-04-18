@@ -19,7 +19,7 @@ export function AdminTopbar({ title, description }: AdminTopbarProps) {
           <p className="mt-1 text-sm text-[var(--color-foreground-soft)]">{description}</p>
         </div>
         <Button asChild variant="secondary" size="sm">
-          <a href="">
+          <a href=".">
             <RefreshCcw className="size-4" aria-hidden="true" />
             Làm mới
           </a>

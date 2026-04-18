@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 
+import { trackEvent } from "@/lib/analytics";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -68,16 +69,31 @@ export function QuickOrderSheet() {
         | { error?: string };
 
       if (!response.ok) {
+        trackEvent("quick_order_submission_failed", {
+          source: source ?? "cta",
+          count: items.length,
+          status: response.status,
+        });
         setSubmitError(
           payload && "error" in payload ? payload.error ?? "Không thể gửi yêu cầu." : "Không thể gửi yêu cầu."
         );
         return;
       }
 
+      trackEvent("quick_order_submitted", {
+        source: source ?? "cta",
+        count: items.length,
+        duplicate: (payload as OrderSubmissionResult).duplicate,
+      });
       setSubmitted(payload as OrderSubmissionResult);
       clearProducts();
       setValues(initialValues);
     } catch {
+      trackEvent("quick_order_submission_failed", {
+        source: source ?? "cta",
+        count: items.length,
+        status: "network_error",
+      });
       setSubmitError("Không thể kết nối để gửi yêu cầu. Vui lòng thử lại sau ít phút.");
     } finally {
       setIsSubmitting(false);
@@ -85,7 +101,11 @@ export function QuickOrderSheet() {
   };
 
   return (
-    <BottomSheet open={isOpen} onOpenChange={(open) => (open ? undefined : handleClose())} title="Quick order">
+    <BottomSheet
+      open={isOpen}
+      onOpenChange={(open) => (open ? undefined : handleClose())}
+      title="Quick order"
+    >
       {submitted ? (
         <div className="space-y-4">
           <p className="text-sm leading-7 text-[var(--color-foreground-soft)]">

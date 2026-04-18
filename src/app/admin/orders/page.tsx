@@ -48,7 +48,7 @@ export default async function AdminOrdersPage({ searchParams }: OrdersPageProps)
         description="Theo dõi lead mới, mở chi tiết và cập nhật trạng thái follow-up ngay trong admin."
       />
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
-        <form className="grid gap-3 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white/80 p-4 shadow-[var(--shadow-card)] md:grid-cols-2 xl:grid-cols-[2fr_1fr_1fr_1fr_auto]">
+        <form className="grid gap-3 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white/80 p-4 shadow-[var(--shadow-card)] xl:grid-cols-[2fr_1fr_1fr_1fr_auto]">
           <Input name="q" defaultValue={query.q ?? ""} placeholder="Tìm theo mã đơn hoặc số điện thoại" />
           <Input name="dateFrom" type="date" defaultValue={query.dateFrom ?? ""} />
           <Input name="dateTo" type="date" defaultValue={query.dateTo ?? ""} />
@@ -86,7 +86,7 @@ export default async function AdminOrdersPage({ searchParams }: OrdersPageProps)
           </div>
         </form>
 
-        <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(340px,0.85fr)]">
+        <div className="mt-6 grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_minmax(340px,0.85fr)] xl:gap-6">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium text-[var(--color-foreground-soft)]">

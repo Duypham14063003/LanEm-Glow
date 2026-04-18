@@ -1,7 +1,11 @@
+"use client";
+
 import Link from "next/link";
 
+import { trackEvent } from "@/lib/analytics";
 import { Chip } from "@/components/ui/chip";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import type { ProductCatalogQuery } from "@/types";
 
 interface ProductListFiltersProps {
@@ -39,22 +43,39 @@ export function ProductListFilters({
   );
 
   return (
-    <div className="space-y-5 rounded-[var(--radius-sheet)] border border-[var(--color-border)] bg-white/90 p-5 shadow-[var(--shadow-card)]">
-      <form action="/products" className="grid gap-3 md:grid-cols-[1fr_auto]">
+    <div className="space-y-5 rounded-[var(--radius-sheet)] border border-[var(--color-border)] bg-white/90 p-4 shadow-[var(--shadow-card)] sm:p-5">
+      <form
+        action="/products"
+        className="grid gap-3 md:grid-cols-[1fr_220px_auto]"
+        onSubmit={() => {
+          trackEvent("catalog_filtered", {
+            q: query.q ?? null,
+            category: query.category ?? null,
+            concern: query.concern ?? null,
+            stockStatus: query.stockStatus ?? null,
+          });
+        }}
+      >
         <Input
           name="q"
           defaultValue={query.q}
           placeholder="Tìm serum, chống nắng, phục hồi barrier..."
           aria-label="Tìm kiếm sản phẩm"
         />
-        <div className="flex gap-3">
-          <Input
-            name="stockStatus"
-            defaultValue={query.stockStatus}
-            placeholder="in_stock / preorder"
-            aria-label="Lọc theo tình trạng tồn kho"
-          />
-        </div>
+        <select
+          name="stockStatus"
+          defaultValue={query.stockStatus ?? ""}
+          aria-label="Lọc theo tình trạng tồn kho"
+          className="h-12 rounded-[var(--radius-input)] border border-[var(--color-border)] bg-white px-4 text-sm text-[var(--color-foreground)]"
+        >
+          <option value="">Tất cả tồn kho</option>
+          <option value="in_stock">Sẵn hàng</option>
+          <option value="preorder">Pre-order</option>
+          <option value="out_of_stock">Tạm hết hàng</option>
+        </select>
+        <Button type="submit" className="w-full md:w-auto">
+          Áp dụng
+        </Button>
       </form>
 
       <div className="space-y-3">
@@ -66,6 +87,13 @@ export function ProductListFilters({
               href={buildFilterHref(query, {
                 concern: query.concern === concern ? undefined : concern,
               })}
+              onClick={() =>
+                trackEvent("catalog_filtered", {
+                  concern: query.concern === concern ? null : concern,
+                  category: query.category ?? null,
+                  q: query.q ?? null,
+                })
+              }
             >
               <Chip active={query.concern === concern}>{concern}</Chip>
             </Link>
@@ -82,11 +110,27 @@ export function ProductListFilters({
               href={buildFilterHref(query, {
                 category: query.category === category ? undefined : category,
               })}
+              onClick={() =>
+                trackEvent("catalog_filtered", {
+                  category: query.category === category ? null : category,
+                  concern: query.concern ?? null,
+                  q: query.q ?? null,
+                })
+              }
             >
               <Chip active={query.category === category}>{category}</Chip>
             </Link>
           ))}
-          <Link href={buildFilterHref(query, { featured: query.featured ? undefined : true })}>
+          <Link
+            href={buildFilterHref(query, { featured: query.featured ? undefined : true })}
+            onClick={() =>
+              trackEvent("catalog_filtered", {
+                featured: query.featured ? null : true,
+                category: query.category ?? null,
+                concern: query.concern ?? null,
+              })
+            }
+          >
             <Chip active={query.featured === true}>Nổi bật</Chip>
           </Link>
         </div>

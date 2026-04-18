@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { trackEvent } from "@/lib/analytics";
 import { formatDateTime } from "@/lib/utils";
 import type { OrderAdminListItem, OrderStatus } from "@/types";
 
@@ -89,6 +90,10 @@ export function OrderDetailPanel({ initialOrder }: { initialOrder: OrderAdminLis
       setStatus(nextOrder.status);
       setAdminNote(nextOrder.adminNote);
       setMessage("Đã lưu thay đổi cho đơn hàng.");
+      trackEvent("admin_order_updated", {
+        orderId: nextOrder.orderId,
+        status: nextOrder.status,
+      });
     } catch {
       setError("Không thể kết nối để cập nhật đơn hàng. Vui lòng thử lại.");
     } finally {
@@ -97,7 +102,7 @@ export function OrderDetailPanel({ initialOrder }: { initialOrder: OrderAdminLis
   };
 
   return (
-    <Card className="space-y-5">
+    <Card className="space-y-5 p-4 sm:p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-xs uppercase tracking-[0.14em] text-[var(--color-muted)]">Chi tiết đơn</p>

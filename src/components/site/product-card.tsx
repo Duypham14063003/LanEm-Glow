@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+import { trackEvent } from "@/lib/analytics";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -91,7 +92,15 @@ export function ProductCard({
             ) : (
               <Button
                 variant={selected ? "primary" : "secondary"}
-                onClick={() => toggleProduct(product)}
+                onClick={() => {
+                  toggleProduct(product);
+                  trackEvent("product_selected", {
+                    productId: product.id,
+                    slug: product.slug,
+                    selected: !selected,
+                    source: "product_card",
+                  });
+                }}
               >
                 {selected ? "Đã chọn" : "Chọn sản phẩm"}
               </Button>
@@ -99,7 +108,13 @@ export function ProductCard({
             <button
               type="button"
               className="text-sm font-medium text-[var(--color-accent)] transition hover:opacity-80"
-              onClick={() => openQuickOrder("card")}
+              onClick={() => {
+                trackEvent("quick_order_opened", {
+                  source: "card",
+                  productId: product.id,
+                });
+                openQuickOrder("card");
+              }}
             >
               {actionLabel}
             </button>
