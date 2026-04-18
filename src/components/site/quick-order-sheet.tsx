@@ -68,7 +68,9 @@ export function QuickOrderSheet() {
         | { error?: string };
 
       if (!response.ok) {
-        setSubmitError(payload && "error" in payload ? payload.error ?? "Không thể gửi yêu cầu." : "Không thể gửi yêu cầu.");
+        setSubmitError(
+          payload && "error" in payload ? payload.error ?? "Không thể gửi yêu cầu." : "Không thể gửi yêu cầu."
+        );
         return;
       }
 
@@ -94,6 +96,9 @@ export function QuickOrderSheet() {
           <p className="text-xs uppercase tracking-[0.16em] text-[var(--color-muted)]">
             Mã tham chiếu: {submitted.orderId}
           </p>
+          {submitted.warning ? (
+            <p className="text-sm text-[var(--color-warning)]">{submitted.warning}</p>
+          ) : null}
           <Button onClick={handleClose}>Đóng</Button>
         </div>
       ) : (

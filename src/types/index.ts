@@ -153,6 +153,59 @@ export interface RawOrderRow extends RawSheetRow {
   processed_at: string;
 }
 
+export interface OrderAdminListItem {
+  orderId: string;
+  createdAt: string;
+  phone: string;
+  customerName: string;
+  selectedProductIds: string[];
+  selectedProductNames: string[];
+  itemCount: number;
+  customerNote: string;
+  status: OrderStatus;
+  adminNote: string;
+  sourcePage: string;
+  sourceCampaign: string;
+  duplicateFlag: boolean;
+  clientFingerprint: string;
+  processedAt: string | null;
+}
+
+export interface OrderAdminQuery {
+  q?: string;
+  status?: OrderStatus;
+  duplicate?: boolean;
+  dateFrom?: string;
+  dateTo?: string;
+}
+
+export interface OrderAdminPatchPayload {
+  status?: OrderStatus;
+  adminNote?: string;
+}
+
+export interface OrderAdminListResponse {
+  items: OrderAdminListItem[];
+  total: number;
+  query: OrderAdminQuery;
+}
+
+export interface OrderAdminUpdateResponse {
+  order: OrderAdminListItem;
+}
+
+export type NotificationDeliveryStatus = "sent" | "skipped" | "failed";
+
+export interface NotificationDeliveryResult {
+  status: NotificationDeliveryStatus;
+  code:
+    | "NOTIFICATION_SENT"
+    | "NOTIFICATION_DISABLED"
+    | "NOTIFICATION_CONFIG_MISSING"
+    | "NOTIFICATION_DELIVERY_FAILED";
+  message: string;
+}
+
 export interface OrderSubmissionResult {
   ok: true;
   orderId: string;
@@ -162,6 +215,8 @@ export interface OrderSubmissionResult {
   itemCount: number;
   createdAt: string;
   message: string;
+  notification: NotificationDeliveryResult;
+  warning?: string;
 }
 
 export interface OrderErrorResponse {

@@ -2,12 +2,16 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  listAdminOrders,
   isDuplicateOrderCandidate,
+  normalizeOrderListItem,
   normalizeOrderPayload,
   OrderSubmissionError,
+  OrderAdminError,
+  updateAdminOrder,
   submitQuickOrder,
 } from "@/services/orders";
-import type { Product, RawOrderRow } from "@/types";
+import type { NotificationDeliveryResult, Product, RawOrderRow } from "@/types";
 
 const productFixtures: Product[] = [
   {
@@ -123,6 +127,7 @@ test("isDuplicateOrderCandidate matches same phone and same product set within d
 
 test("submitQuickOrder classifies duplicate orders and appends structured row", async () => {
   const appendedRows: string[][] = [];
+  const notifications: NotificationDeliveryResult[] = [];
 
   const result = await submitQuickOrder(
     {
@@ -137,6 +142,15 @@ test("submitQuickOrder classifies duplicate orders and appends structured row", 
         appendedRows.push(row);
       },
       getProducts: async () => productFixtures,
+      notifyOrderCreated: async () => {
+        const notification: NotificationDeliveryResult = {
+          status: "sent",
+          code: "NOTIFICATION_SENT",
+          message: "sent",
+        };
+        notifications.push(notification);
+        return notification;
+      },
       readOrders: async () => [existingOrderRow],
       now: () => new Date("2026-04-18T09:20:00.000Z"),
     }
@@ -150,6 +164,8 @@ test("submitQuickOrder classifies duplicate orders and appends structured row", 
   assert.equal(appendedRows[0]?.[5], "Serum Phuc Hoi|Toner Diu Da");
   assert.equal(appendedRows[0]?.[8], "duplicate");
   assert.equal(appendedRows[0]?.[12], "true");
+  assert.equal(result.notification.status, "sent");
+  assert.equal(notifications.length, 1);
 });
 
 test("submitQuickOrder rejects out-of-stock products before writing", async () => {
@@ -168,11 +184,120 @@ test("submitQuickOrder rejects out-of-stock products before writing", async () =
               stockStatus: "out_of_stock",
             },
           ],
+          notifyOrderCreated: async () => ({
+            status: "sent",
+            code: "NOTIFICATION_SENT",
+            message: "sent",
+          }),
           readOrders: async () => [],
           now: () => new Date("2026-04-18T09:20:00.000Z"),
         }
       ),
     (error: unknown) =>
       error instanceof OrderSubmissionError && error.code === "PRODUCT_OUT_OF_STOCK"
+  );
+});
+
+test("submitQuickOrder returns degraded success when notification delivery fails", async () => {
+  const result = await submitQuickOrder(
+    {
+      phone: "0912345678",
+      selectedProductIds: ["SERUM-01"],
+    },
+    {
+      appendRow: async () => undefined,
+      getProducts: async () => [productFixtures[0]],
+      notifyOrderCreated: async () => ({
+        status: "failed",
+        code: "NOTIFICATION_DELIVERY_FAILED",
+        message: "failed",
+      }),
+      readOrders: async () => [],
+      now: () => new Date("2026-04-18T09:20:00.000Z"),
+    }
+  );
+
+  assert.equal(result.ok, true);
+  assert.equal(result.notification.status, "failed");
+  assert.match(result.warning ?? "", /email/i);
+});
+
+test("normalizeOrderListItem converts raw order row into admin-friendly fields", () => {
+  const item = normalizeOrderListItem(existingOrderRow);
+
+  assert.equal(item.orderId, "ORD-20260418-AAAAAA");
+  assert.equal(item.phone, "0912345678");
+  assert.deepEqual(item.selectedProductIds, ["SERUM-01", "TONER-02"]);
+  assert.equal(item.itemCount, 2);
+  assert.equal(item.duplicateFlag, false);
+});
+
+test("listAdminOrders filters by duplicate flag and search query", async () => {
+  const items = await listAdminOrders(
+    {
+      q: "0912",
+      duplicate: true,
+    },
+    {
+      readOrders: async () => [
+        {
+          ...existingOrderRow,
+          duplicate_flag: "true",
+          status: "duplicate",
+        },
+        existingOrderRow,
+      ],
+    }
+  );
+
+  assert.equal(items.length, 1);
+  assert.equal(items[0]?.status, "duplicate");
+  assert.equal(items[0]?.duplicateFlag, true);
+});
+
+test("updateAdminOrder persists mutable fields and sets processed timestamp", async () => {
+  const updatedRows: Array<{ rowNumber: number; row: string[] }> = [];
+
+  const updated = await updateAdminOrder(
+    "ORD-20260418-AAAAAA",
+    {
+      status: "contacted",
+      adminNote: "Da goi xac nhan",
+    },
+    {
+      readOrdersWithIndex: async () => [
+        {
+          rowNumber: 3,
+          row: existingOrderRow,
+        },
+      ],
+      updateRow: async (_tabName, rowNumber, row) => {
+        updatedRows.push({ rowNumber, row });
+      },
+      now: () => new Date("2026-04-18T10:00:00.000Z"),
+    }
+  );
+
+  assert.equal(updated.status, "contacted");
+  assert.equal(updated.adminNote, "Da goi xac nhan");
+  assert.equal(updated.processedAt, "2026-04-18T10:00:00.000Z");
+  assert.equal(updatedRows[0]?.rowNumber, 3);
+  assert.equal(updatedRows[0]?.row[8], "contacted");
+  assert.equal(updatedRows[0]?.row[9], "Da goi xac nhan");
+});
+
+test("updateAdminOrder returns not found for missing order id", async () => {
+  await assert.rejects(
+    () =>
+      updateAdminOrder(
+        "ORD-MISSING",
+        {
+          status: "contacted",
+        },
+        {
+          readOrdersWithIndex: async () => [],
+        }
+      ),
+    (error: unknown) => error instanceof OrderAdminError && error.code === "ORDER_NOT_FOUND"
   );
 });

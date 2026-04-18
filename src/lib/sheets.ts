@@ -50,7 +50,17 @@ function rowToRecord(headers: string[], row: string[]): RawSheetRow {
   }, {});
 }
 
+export interface IndexedSheetRow {
+  rowNumber: number;
+  record: RawSheetRow;
+}
+
 export async function readSheetRows(tabName: string): Promise<RawSheetRow[]> {
+  const indexedRows = await readSheetRowsWithIndex(tabName);
+  return indexedRows.map((row) => row.record);
+}
+
+export async function readSheetRowsWithIndex(tabName: string): Promise<IndexedSheetRow[]> {
   const { client, sheetId } = await getSheetsClient();
   const response = await client.spreadsheets.values.get({
     spreadsheetId: sheetId,
@@ -66,8 +76,15 @@ export async function readSheetRows(tabName: string): Promise<RawSheetRow[]> {
   const headers = headerRow.map(normalizeHeader);
 
   return dataRows
-    .filter((row) => row.some((cell) => `${cell}`.trim().length > 0))
-    .map((row) => rowToRecord(headers, row.map((cell) => `${cell}`)));
+    .map((row, index) => ({
+      rowNumber: index + 2,
+      cells: row.map((cell) => `${cell}`),
+    }))
+    .filter((row) => row.cells.some((cell) => cell.trim().length > 0))
+    .map((row) => ({
+      rowNumber: row.rowNumber,
+      record: rowToRecord(headers, row.cells),
+    }));
 }
 
 export function assertRequiredHeaders(rows: RawSheetRow[], requiredHeaders: string[]) {
@@ -91,6 +108,19 @@ export async function appendSheetRow(tabName: string, row: string[]) {
     range: tabName,
     valueInputOption: "USER_ENTERED",
     insertDataOption: "INSERT_ROWS",
+    requestBody: {
+      values: [row],
+    },
+  });
+}
+
+export async function updateSheetRow(tabName: string, rowNumber: number, row: string[]) {
+  const { client, sheetId } = await getSheetsClient();
+
+  await client.spreadsheets.values.update({
+    spreadsheetId: sheetId,
+    range: `${tabName}!A${rowNumber}`,
+    valueInputOption: "USER_ENTERED",
     requestBody: {
       values: [row],
     },
