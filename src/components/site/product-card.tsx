@@ -50,13 +50,22 @@ export function ProductCard({
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/80">
                 TikTok review
               </p>
-              <p className="text-sm font-medium">Xem video ở trang chi tiết sản phẩm</p>
+              <p className="text-sm font-medium">
+                Xem video ở trang chi tiết sản phẩm
+              </p>
             </div>
-            <PlayCircle className="size-9 shrink-0 text-white" aria-hidden="true" />
+            <PlayCircle
+              className="size-9 shrink-0 text-white"
+              aria-hidden="true"
+            />
           </div>
         ) : null}
 
-        <Link href={href} className="absolute inset-0" aria-label={`Xem chi tiết ${product.name}`} />
+        <Link
+          href={href}
+          className="absolute inset-0"
+          aria-label={`Xem chi tiết ${product.name}`}
+        />
       </div>
 
       <div className="flex flex-1 flex-col gap-4 p-5">
@@ -71,11 +80,12 @@ export function ProductCard({
               {product.shortDescription}
             </p>
           </div>
-          {product.isFeatured ? <Badge variant="info">Nổi bật</Badge> : null}
         </div>
 
         <div className="flex flex-wrap gap-2">
-          {product.tiktokUrl ? <Badge variant="info">Có video TikTok</Badge> : null}
+          {product.tiktokUrl ? (
+            <Badge variant="info">Có video TikTok</Badge>
+          ) : null}
           {product.concerns.slice(0, 2).map((concern) => (
             <Badge key={concern} variant="neutral">
               {concern}
@@ -85,7 +95,9 @@ export function ProductCard({
 
         <div className="mt-auto flex items-end justify-between gap-3">
           <div>
-            <p className="text-xs uppercase tracking-[0.16em] text-[var(--color-muted)]">Giá bán</p>
+            <p className="text-xs uppercase tracking-[0.16em] text-[var(--color-muted)]">
+              Giá bán
+            </p>
             <div className="mt-1 flex items-center gap-2">
               <p className="text-xl font-semibold text-[var(--color-accent)]">
                 {formatPrice(product.price)}đ

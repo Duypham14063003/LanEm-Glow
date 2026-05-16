@@ -15,7 +15,13 @@ import { buildMetadata } from "@/lib/metadata";
 import { getCatalogProducts, listCatalogProducts } from "@/services/products";
 import { getPublicSettings } from "@/services/settings";
 
-const fallbackConcerns = ["da mun", "da kho", "phuc hoi", "lam sang", "chong nang"];
+const fallbackConcerns = [
+  "da mun",
+  "da kho",
+  "phuc hoi",
+  "lam sang",
+  "chong nang",
+];
 
 const testimonials = [
   {
@@ -53,7 +59,11 @@ async function getHomepageData() {
       getCatalogProducts(),
     ]);
 
-    return { settings, featuredProducts: featuredProducts.slice(0, 6), allProducts };
+    return {
+      settings,
+      featuredProducts: featuredProducts.slice(0, 6),
+      allProducts,
+    };
   } catch {
     return {
       settings: {
@@ -72,13 +82,18 @@ async function getHomepageData() {
 export default async function SiteHomePage() {
   const { settings, featuredProducts, allProducts } = await getHomepageData();
   const concernSet = new Set(
-    allProducts.flatMap((product) => product.concerns.map((concern) => concern.toLowerCase()))
+    allProducts.flatMap((product) =>
+      product.concerns.map((concern) => concern.toLowerCase()),
+    ),
   );
   const concerns = [...concernSet].slice(0, 6);
 
   return (
     <>
-      <AnalyticsPageView event="catalog_viewed" payload={{ source: "homepage" }} />
+      <AnalyticsPageView
+        event="catalog_viewed"
+        payload={{ source: "homepage" }}
+      />
       <PageSection className="pb-6 sm:pb-8">
         <HeroCta
           primaryCtaLabel={settings.primaryCtaLabel}
@@ -86,11 +101,11 @@ export default async function SiteHomePage() {
         />
       </PageSection>
 
-      <PageSection className="py-6 sm:py-8">
+      {/* <PageSection className="py-6 sm:py-8">
         <TrustStrip />
-      </PageSection>
+      </PageSection> */}
 
-      <PageSection className="pb-10 sm:pb-12">
+      <PageSection className="pb-5 sm:pb-1">
         <div className="flex items-end justify-between gap-4">
           <div className="space-y-2">
             <p className="text-sm uppercase tracking-[0.16em] text-[var(--color-muted)]">
@@ -103,8 +118,8 @@ export default async function SiteHomePage() {
         </div>
         <div className="mt-6">
           <ConcernScroller
-            concerns={(concerns.length > 0 ? concerns : fallbackConcerns).map((item) =>
-              item.replaceAll("-", " ")
+            concerns={(concerns.length > 0 ? concerns : fallbackConcerns).map(
+              (item) => item.replaceAll("-", " "),
             )}
           />
         </div>
@@ -127,12 +142,16 @@ export default async function SiteHomePage() {
 
         <div className="mt-6 grid gap-4 sm:mt-8 md:grid-cols-2 xl:grid-cols-3">
           {featuredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} actionLabel="Xem sản phẩm" />
+            <ProductCard
+              key={product.id}
+              product={product}
+              actionLabel="Xem sản phẩm"
+            />
           ))}
         </div>
       </PageSection>
 
-      <PageSection className="pt-0">
+      {/* <PageSection className="pt-0">
         <div className="grid gap-4 lg:grid-cols-3">
           {testimonials.map((testimonial) => (
             <TestimonialCard key={testimonial.author} {...testimonial} />
@@ -147,7 +166,7 @@ export default async function SiteHomePage() {
           primaryLabel={settings.primaryCtaLabel}
           secondaryLabel={settings.secondaryCtaLabel}
         />
-      </PageSection>
+      </PageSection> */}
     </>
   );
 }

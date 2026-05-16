@@ -17,9 +17,10 @@ test("ProductGallery places TikTok media before product images when present", ()
   );
 
   assert.match(markup, /Video review TikTok/);
-  assert.match(markup, /embed\/v2\/7481234567890123456/);
+  assert.match(markup, /Chạm để xem video TikTok/);
+  assert.match(markup, /Video<\/span>/);
 
-  const videoIndex = markup.indexOf("embed/v2/7481234567890123456");
+  const videoIndex = markup.indexOf("Chạm để xem video TikTok");
   const imageIndex = markup.indexOf('src="https://example.com/main.jpg"');
 
   assert.notEqual(videoIndex, -1);

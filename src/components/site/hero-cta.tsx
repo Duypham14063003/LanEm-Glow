@@ -14,17 +14,14 @@ export function HeroCta({ primaryCtaLabel, secondaryCtaLabel }: HeroCtaProps) {
     <section className="overflow-hidden rounded-[var(--radius-sheet)] border border-[var(--color-border)] bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.98),rgba(251,228,234,0.88),rgba(255,248,249,1))] shadow-[var(--shadow-card)]">
       <div className="grid gap-8 px-6 py-8 sm:px-8 sm:py-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:px-10">
         <div className="space-y-6">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm text-[var(--color-accent)] shadow-[var(--shadow-soft)]">
-            <Sparkles className="size-4" aria-hidden="true" />
-            Chọn skincare nhẹ nhàng, đáng tin và dễ bắt đầu
-          </div>
           <div className="space-y-4">
             <h1 className="font-heading text-5xl leading-[1.02] tracking-[-0.03em] text-[var(--color-foreground)] sm:text-6xl">
               Làn da cần được lắng nghe trước khi cần thật nhiều bước.
             </h1>
             <p className="max-w-2xl text-base text-[var(--color-foreground-soft)] sm:text-lg">
-              LanEm Glow giúp bạn tìm sản phẩm theo nhu cầu da, xem nhanh những món nổi bật
-              và bắt đầu routine với cảm giác nhẹ, rõ và không bị quá tải.
+              LanEm Glow giúp bạn tìm sản phẩm theo nhu cầu da, xem nhanh những
+              món nổi bật và bắt đầu routine với cảm giác nhẹ, rõ và không bị
+              quá tải.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -32,11 +29,6 @@ export function HeroCta({ primaryCtaLabel, secondaryCtaLabel }: HeroCtaProps) {
               <Link href="/products">
                 {primaryCtaLabel ?? "Xem sản phẩm"}
                 <ArrowRight className="size-4" aria-hidden="true" />
-              </Link>
-            </Button>
-            <Button asChild variant="secondary" size="lg">
-              <Link href="/products?featured=true">
-                {secondaryCtaLabel ?? "Để lại số để được tư vấn"}
               </Link>
             </Button>
           </div>
@@ -59,20 +51,27 @@ export function HeroCta({ primaryCtaLabel, secondaryCtaLabel }: HeroCtaProps) {
                 Glow dịu, không phô trương.
               </p>
               <p className="text-sm text-[var(--color-foreground-soft)]">
-                Ưu tiên những texture dễ layer, cảm giác tin cậy và routine đủ dùng mỗi ngày.
+                Ưu tiên những texture dễ layer, cảm giác tin cậy và routine đủ
+                dùng mỗi ngày.
               </p>
             </div>
             <div className="grid grid-cols-3 gap-3 text-center text-sm">
               <div className="rounded-[var(--radius-card)] bg-white px-3 py-4">
-                <p className="font-semibold text-[var(--color-foreground)]">4.8/5</p>
+                <p className="font-semibold text-[var(--color-foreground)]">
+                  4.8/5
+                </p>
                 <p className="mt-1 text-[var(--color-muted)]">review nhanh</p>
               </div>
               <div className="rounded-[var(--radius-card)] bg-white px-3 py-4">
-                <p className="font-semibold text-[var(--color-foreground)]">12h</p>
+                <p className="font-semibold text-[var(--color-foreground)]">
+                  12h
+                </p>
                 <p className="mt-1 text-[var(--color-muted)]">phản hồi</p>
               </div>
               <div className="rounded-[var(--radius-card)] bg-white px-3 py-4">
-                <p className="font-semibold text-[var(--color-foreground)]">100%</p>
+                <p className="font-semibold text-[var(--color-foreground)]">
+                  100%
+                </p>
                 <p className="mt-1 text-[var(--color-muted)]">mềm mại</p>
               </div>
             </div>

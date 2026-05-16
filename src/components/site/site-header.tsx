@@ -54,17 +54,11 @@ export function SiteHeader({ phone, primaryCtaLabel }: SiteHeaderProps) {
             />
           </form>
           <div className="flex items-center gap-3">
-            {phone ? (
-              <a
-                href={`tel:${phone}`}
-                className="text-sm font-medium text-[var(--color-foreground-soft)] transition hover:text-[var(--color-accent)]"
-              >
-                Hotline {phone}
-              </a>
-            ) : null}
             <div className="hidden lg:block">
               <Button asChild>
-                <Link href="/products">{primaryCtaLabel ?? "Xem sản phẩm"}</Link>
+                <Link href="/products">
+                  {primaryCtaLabel ?? "Xem sản phẩm"}
+                </Link>
               </Button>
             </div>
           </div>
