@@ -101,40 +101,7 @@ export function ProductListFilters({
         </div>
       </div>
 
-      <div className="space-y-3">
-        <p className="text-sm font-medium text-[var(--color-foreground-soft)]">Danh mục</p>
-        <div className="flex flex-wrap gap-2">
-          {categories.map((category) => (
-            <Link
-              key={category}
-              href={buildFilterHref(query, {
-                category: query.category === category ? undefined : category,
-              })}
-              onClick={() =>
-                trackEvent("catalog_filtered", {
-                  category: query.category === category ? null : category,
-                  concern: query.concern ?? null,
-                  q: query.q ?? null,
-                })
-              }
-            >
-              <Chip active={query.category === category}>{category}</Chip>
-            </Link>
-          ))}
-          <Link
-            href={buildFilterHref(query, { featured: query.featured ? undefined : true })}
-            onClick={() =>
-              trackEvent("catalog_filtered", {
-                featured: query.featured ? null : true,
-                category: query.category ?? null,
-                concern: query.concern ?? null,
-              })
-            }
-          >
-            <Chip active={query.featured === true}>Nổi bật</Chip>
-          </Link>
-        </div>
-      </div>
+
 
       {hasFilters ? (
         <div className="pt-1">

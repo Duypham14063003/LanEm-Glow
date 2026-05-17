@@ -1,83 +1,100 @@
+import Image from "next/image";
 import Link from "next/link";
-
-import { ArrowRight, Droplets, Sparkles } from "lucide-react";
+import { Heart } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+
+import bgImage from "@/assets/images/me/backgroud.png";
+import tiktokProfile from "@/assets/images/me/profile_tiktok.png";
+import anh1 from "@/assets/images/me/anh1.jpg";
 
 interface HeroCtaProps {
   primaryCtaLabel: string | null;
   secondaryCtaLabel: string | null;
 }
 
-export function HeroCta({ primaryCtaLabel, secondaryCtaLabel }: HeroCtaProps) {
+export function HeroCta({ primaryCtaLabel }: HeroCtaProps) {
   return (
-    <section className="overflow-hidden rounded-[var(--radius-sheet)] border border-[var(--color-border)] bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.98),rgba(251,228,234,0.88),rgba(255,248,249,1))] shadow-[var(--shadow-card)]">
-      <div className="grid gap-8 px-6 py-8 sm:px-8 sm:py-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:px-10">
-        <div className="space-y-6">
-          <div className="space-y-4">
-            <h1 className="font-heading text-5xl leading-[1.02] tracking-[-0.03em] text-[var(--color-foreground)] sm:text-6xl">
-              Làn da cần được lắng nghe trước khi cần thật nhiều bước.
-            </h1>
-            <p className="max-w-2xl text-base text-[var(--color-foreground-soft)] sm:text-lg">
-              LanEm Glow giúp bạn tìm sản phẩm theo nhu cầu da, xem nhanh những
-              món nổi bật và bắt đầu routine với cảm giác nhẹ, rõ và không bị
-              quá tải.
-            </p>
+    <section className="relative w-full pt-20 pb-16 overflow-hidden min-h-[600px] flex items-center">
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0">
+         <Image 
+            src={bgImage} 
+            alt="Background" 
+            fill 
+            className="object-cover object-center opacity-80" 
+            priority
+         />
+         <div className="absolute inset-0 bg-gradient-to-r from-white/80 to-transparent" />
+      </div>
+
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-8 grid lg:grid-cols-[1fr_1.1fr] gap-12 items-center">
+        {/* Left Content */}
+        <div className="space-y-6 animate-slide-up relative">
+          {/* Decorative heart */}
+          <div className="absolute -right-4 top-12 text-pink-400 rotate-12 opacity-80 hidden md:block">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
           </div>
-          <div className="flex flex-wrap gap-3">
-            <Button asChild size="lg">
-              <Link href="/products">
+
+          <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.15] text-[var(--color-foreground)]">
+            Pass lại makeup <br/>
+            <span className="text-[var(--color-primary-strong)]">chính hãng được</span> <br/>
+            gửi từ các brand
+          </h1>
+          <div className="space-y-1.5 text-base sm:text-lg text-[var(--color-foreground-soft)] font-medium">
+            <p>Hầu hết là new/seal hoặc swatch nhẹ</p>
+            <p>Giá mềm hơn retail 20-50%</p>
+          </div>
+          <div className="pt-4">
+            <Button asChild size="lg" className="rounded-full px-8 h-12 bg-[var(--color-primary-strong)] hover:bg-[var(--color-primary)] text-white shadow-md transition-transform hover:scale-105">
+              <Link href="/products" className="flex items-center gap-2">
                 {primaryCtaLabel ?? "Xem sản phẩm"}
-                <ArrowRight className="size-4" aria-hidden="true" />
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
               </Link>
             </Button>
           </div>
         </div>
 
-        <div className="relative min-h-[320px] overflow-hidden rounded-[calc(var(--radius-sheet)-4px)] bg-[linear-gradient(160deg,rgba(255,255,255,0.9),rgba(247,204,214,0.85),rgba(239,167,182,0.25))] p-6">
-          <div className="absolute -right-10 top-10 h-28 w-28 rounded-full bg-white/60 blur-2xl" />
-          <div className="absolute bottom-0 left-0 h-36 w-36 rounded-full bg-[var(--color-accent-soft)]/80 blur-2xl" />
-          <div className="relative flex h-full flex-col justify-between rounded-[var(--radius-card)] border border-white/60 bg-white/70 p-6 backdrop-blur-sm">
-            <div className="flex items-center justify-between">
-              <div className="rounded-full bg-[var(--color-accent-soft)] p-3 text-[var(--color-accent)]">
-                <Droplets className="size-5" aria-hidden="true" />
-              </div>
-              <span className="text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">
-                Beauty editorial
-              </span>
-            </div>
-            <div className="space-y-3">
-              <p className="font-heading text-3xl text-[var(--color-foreground)]">
-                Glow dịu, không phô trương.
-              </p>
-              <p className="text-sm text-[var(--color-foreground-soft)]">
-                Ưu tiên những texture dễ layer, cảm giác tin cậy và routine đủ
-                dùng mỗi ngày.
-              </p>
-            </div>
-            <div className="grid grid-cols-3 gap-3 text-center text-sm">
-              <div className="rounded-[var(--radius-card)] bg-white px-3 py-4">
-                <p className="font-semibold text-[var(--color-foreground)]">
-                  4.8/5
-                </p>
-                <p className="mt-1 text-[var(--color-muted)]">review nhanh</p>
-              </div>
-              <div className="rounded-[var(--radius-card)] bg-white px-3 py-4">
-                <p className="font-semibold text-[var(--color-foreground)]">
-                  12h
-                </p>
-                <p className="mt-1 text-[var(--color-muted)]">phản hồi</p>
-              </div>
-              <div className="rounded-[var(--radius-card)] bg-white px-3 py-4">
-                <p className="font-semibold text-[var(--color-foreground)]">
-                  100%
-                </p>
-                <p className="mt-1 text-[var(--color-muted)]">mềm mại</p>
-              </div>
-            </div>
+        {/* Right Content - Polaroid Images */}
+        <div className="relative animate-scale-in h-[450px] lg:h-[550px] flex items-center justify-center">
+          
+          {/* First Polaroid (Tiktok Profile) */}
+          <div className="absolute z-10 w-[240px] md:w-[280px] aspect-[3/4] bg-white p-3 pb-8 shadow-2xl rounded-sm -rotate-6 -translate-x-16 transition-transform hover:rotate-0 hover:scale-105 hover:z-30 duration-300">
+             {/* Tape */}
+             <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-6 bg-pink-200/90 rotate-[-4deg] shadow-sm z-20"></div>
+             
+             <div className="relative w-full h-full bg-black overflow-hidden rounded-sm border border-gray-100">
+               <Image
+                 src={tiktokProfile}
+                 alt="Tiktok Profile"
+                 fill
+                 className="object-contain"
+               />
+             </div>
+          </div>
+
+          {/* Second Polaroid (Photo 1) */}
+          <div className="absolute z-20 w-[240px] md:w-[280px] aspect-[3/4] bg-white p-3 pb-8 shadow-2xl rounded-sm rotate-6 translate-x-16 translate-y-8 transition-transform hover:rotate-0 hover:scale-105 hover:z-30 duration-300">
+             {/* Tape */}
+             <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-6 bg-pink-200/90 rotate-[5deg] shadow-sm z-20"></div>
+             
+             <div className="relative w-full h-full bg-gray-100 overflow-hidden rounded-sm border border-gray-100">
+               <Image
+                 src={anh1}
+                 alt="Photo 1"
+                 fill
+                 className="object-cover"
+               />
+             </div>
+          </div>
+
+          {/* Decorative heart floating right */}
+          <div className="absolute -right-8 bottom-20 text-pink-400 -rotate-12 opacity-80 hidden lg:block">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
           </div>
         </div>
       </div>
     </section>
   );
 }
+

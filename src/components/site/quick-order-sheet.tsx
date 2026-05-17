@@ -23,7 +23,7 @@ function formatPrice(value: number) {
 
 export function QuickOrderSheet() {
   const { isOpen, closeQuickOrder, source } = useQuickOrder();
-  const { items, removeProduct, clearProducts } = useSelectedProducts();
+  const { items, removeProduct, clearProducts, updateQuantity } = useSelectedProducts();
   const [values, setValues] = useState<QuickOrderFormValues>(initialValues);
   const [submitted, setSubmitted] = useState<OrderSubmissionResult | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -59,6 +59,7 @@ export function QuickOrderSheet() {
           phone: values.phone,
           customerName: values.name,
           selectedProductIds: items.map((item) => item.id),
+          quantities: Object.fromEntries(items.map((item) => [item.id, item.orderQuantity ?? 1])),
           note: values.note,
           sourcePage: source ?? "cta",
         }),
@@ -156,12 +157,40 @@ export function QuickOrderSheet() {
                       <p className="mt-1 text-sm text-[var(--color-accent)]">
                         {formatPrice(item.price)}đ
                       </p>
+                      <div className="mt-2 flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const q = item.orderQuantity ?? 1;
+                            if (q > 1) {
+                              updateQuantity(item.id, q - 1);
+                            }
+                          }}
+                          disabled={isSubmitting || (item.orderQuantity ?? 1) <= 1}
+                          className="flex size-6 items-center justify-center rounded-full border border-[var(--color-border)] text-lg leading-none disabled:opacity-50"
+                        >
+                          -
+                        </button>
+                        <span className="text-sm w-4 text-center font-medium">
+                          {item.orderQuantity ?? 1}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            updateQuantity(item.id, (item.orderQuantity ?? 1) + 1);
+                          }}
+                          disabled={isSubmitting}
+                          className="flex size-6 items-center justify-center rounded-full border border-[var(--color-border)] text-lg leading-none disabled:opacity-50"
+                        >
+                          +
+                        </button>
+                      </div>
                     </div>
                     <button
                       type="button"
                       onClick={() => removeProduct(item.id)}
                       disabled={isSubmitting}
-                      className="text-sm font-medium text-[var(--color-accent)] transition hover:opacity-80"
+                      className="text-sm self-start font-medium text-[var(--color-accent)] transition hover:opacity-80"
                     >
                       Xóa
                     </button>

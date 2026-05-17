@@ -263,6 +263,7 @@ export function normalizeProductAdminInput(input: unknown): ProductAdminMutation
     isFeatured: normalizeBoolean(payload.isFeatured),
     displayOrder: normalizeRequiredNumberValue(payload.displayOrder, "display_order", "Thứ tự hiển thị"),
     searchKeywords: normalizeUniqueList(payload.searchKeywords, "searchKeywords"),
+    quantity: normalizeOptionalNumberValue(payload.quantity),
   };
 }
 
@@ -366,6 +367,7 @@ function toSheetRow(input: ProductAdminMutationInput, timestamps: { createdAt: s
     input.searchKeywords.join("|"),
     timestamps.createdAt,
     timestamps.updatedAt,
+    input.quantity === null ? "" : `${input.quantity}`,
   ];
 }
 
@@ -515,6 +517,7 @@ export async function archiveAdminProduct(
     isFeatured: current.isFeatured,
     displayOrder: current.displayOrder,
     searchKeywords: current.searchKeywords,
+    quantity: current.quantity,
   };
 
   await dependencies.updateRow(

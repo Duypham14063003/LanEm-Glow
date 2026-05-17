@@ -86,6 +86,16 @@ export default async function ProductDetailPage({
           <Card className="space-y-5 sm:space-y-6">
             <div className="space-y-4">
               <div className="space-y-3">
+                <div className="flex gap-2">
+                  <div className="bg-[var(--color-primary-strong)] text-white text-xs font-bold px-3 py-1 rounded-sm tracking-wide w-fit">
+                    {product.stockStatus === "out_of_stock" ? "HẾT HÀNG" : (product.price > 300000 ? "HOT" : "NEW")}
+                  </div>
+                  {product.searchKeywords?.[0]?.trim() ? (
+                    <div className="bg-[var(--color-accent)] text-white text-xs font-bold px-3 py-1 rounded-sm tracking-wide uppercase w-fit">
+                      {product.searchKeywords[0].trim()}
+                    </div>
+                  ) : null}
+                </div>
                 <h1 className="font-heading text-4xl text-[var(--color-foreground)] sm:text-5xl">
                   {product.name}
                 </h1>
@@ -103,6 +113,11 @@ export default async function ProductDetailPage({
                   </p>
                 ) : null}
               </div>
+              {product.quantity !== null && (
+                <p className="text-sm font-medium text-[var(--color-foreground-soft)]">
+                  Còn lại: <span className="text-[var(--color-foreground)]">{product.quantity}</span> sản phẩm
+                </p>
+              )}
             </div>
 
             <div className="space-y-3">

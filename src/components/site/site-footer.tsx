@@ -17,15 +17,15 @@ export function SiteFooter({ phone, zaloUrl, announcement }: SiteFooterProps) {
         <div className="space-y-4">
           <div>
             <p className="font-heading text-3xl text-[var(--color-foreground)]">LanEm Glow</p>
-            <p className="mt-2 max-w-xl text-sm text-[var(--color-foreground-soft)]">
+            {/* <p className="mt-2 max-w-xl text-sm text-[var(--color-foreground-soft)]">
               Website skincare theo hướng tinh gọn, giúp khách tìm sản phẩm nhanh và để lại
               nhu cầu tư vấn với ít ma sát nhất.
-            </p>
+            </p> */}
           </div>
           {announcement ? (
             <p
               id="privacy"
-              className="rounded-[var(--radius-card)] bg-[var(--color-surface-muted)] px-4 py-3 text-sm text-[var(--color-foreground-soft)]"
+              className=" px-4 py-3 text-sm text-[var(--color-foreground-soft)]"
             >
               {announcement}
             </p>
@@ -56,13 +56,13 @@ export function SiteFooter({ phone, zaloUrl, announcement }: SiteFooterProps) {
             </p>
             <div className="mt-3 space-y-2 text-sm text-[var(--color-foreground-soft)]">
               {phone ? <a href={`tel:${phone}`}>Hotline: {phone}</a> : <p>Tư vấn theo nhu cầu da</p>}
-              {zaloUrl ? (
+              {/* {zaloUrl ? (
                 <a href={zaloUrl} target="_blank" rel="noreferrer">
-                  Chat Zalo
+                  Zalo: {phone}
                 </a>
               ) : (
                 <p>Không cần thanh toán trước</p>
-              )}
+              )} */}
             </div>
           </div>
         </div>

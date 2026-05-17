@@ -2,6 +2,7 @@ import { AdminOrderCreatePanel } from "@/components/admin/admin-order-create-pan
 import { AdminTopbar } from "@/components/admin/admin-topbar";
 import { OrderDetailPanel } from "@/components/admin/order-detail-panel";
 import { OrdersTable } from "@/components/admin/orders-table";
+import { AdminOrderStats } from "@/components/admin/admin-order-stats";
 import { Input } from "@/components/ui/input";
 import { getCatalogProducts } from "@/services/products";
 import { listAdminOrders, parseOrderAdminQuery } from "@/services/orders";
@@ -23,9 +24,10 @@ export default async function AdminOrdersPage({ searchParams }: OrdersPageProps)
     dateFrom: getFirst(params.dateFrom),
     dateTo: getFirst(params.dateTo),
   });
-  const [items, products] = await Promise.all([
+  const [items, products, allOrders] = await Promise.all([
     listAdminOrders(query),
     getCatalogProducts({ skipCache: true }),
+    listAdminOrders({}),
   ]);
   const selectedOrderId = getFirst(params.selectedOrderId);
   const selectedOrder =
@@ -53,8 +55,9 @@ export default async function AdminOrdersPage({ searchParams }: OrdersPageProps)
         description="Theo dõi lead mới, mở chi tiết và cập nhật trạng thái follow-up ngay trong admin."
       />
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+        <AdminOrderStats allOrders={allOrders} products={products} />
+        
         <form className="grid gap-3 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white/80 p-4 shadow-[var(--shadow-card)] xl:grid-cols-[2fr_1fr_1fr_1fr_auto]">
-          <Input name="q" defaultValue={query.q ?? ""} placeholder="Tìm theo mã đơn hoặc số điện thoại" />
           <Input name="dateFrom" type="date" defaultValue={query.dateFrom ?? ""} />
           <Input name="dateTo" type="date" defaultValue={query.dateTo ?? ""} />
           <select
@@ -74,11 +77,10 @@ export default async function AdminOrdersPage({ searchParams }: OrdersPageProps)
           <div className="flex flex-wrap gap-2">
             <a
               href={`/admin/orders?${duplicateQuery.toString()}`}
-              className={`inline-flex min-h-10 items-center justify-center rounded-full border px-4 py-2 text-sm font-medium transition duration-[var(--motion-fast)] ease-[var(--ease-standard)] ${
-                query.duplicate === true
+              className={`inline-flex min-h-10 items-center justify-center rounded-full border px-4 py-2 text-sm font-medium transition duration-[var(--motion-fast)] ease-[var(--ease-standard)] ${query.duplicate === true
                   ? "border-[var(--color-accent)] bg-[var(--color-accent-soft)] text-[var(--color-accent)]"
                   : "border-[var(--color-border)] bg-white text-[var(--color-foreground)] hover:border-[var(--color-primary)] hover:bg-[var(--color-surface-muted)]"
-              }`}
+                }`}
             >
               Chỉ đơn trùng
             </a>

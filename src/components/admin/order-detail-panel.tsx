@@ -155,8 +155,8 @@ export function OrderDetailPanel({ initialOrder }: { initialOrder: OrderAdminLis
         <Info label="Khách hàng" value={order.customerName || "Khách chưa để tên"} />
         <Info label="Tạo lúc" value={formatDateTime(order.createdAt)} />
         <Info label="Đã xử lý" value={formatDateTime(order.processedAt)} />
-        <Info label="Nguồn vào" value={order.sourcePage || "N/A"} />
-        <Info label="Chiến dịch" value={order.sourceCampaign || "N/A"} />
+        {/* <Info label="Nguồn vào" value={order.sourcePage || "N/A"} />
+        <Info label="Chiến dịch" value={order.sourceCampaign || "N/A"} /> */}
       </div>
 
       <section className="space-y-3">
@@ -206,7 +206,7 @@ export function OrderDetailPanel({ initialOrder }: { initialOrder: OrderAdminLis
         </select>
       </section>
 
-      <section className="space-y-3">
+      {/* <section className="space-y-3">
         <label className="text-sm font-semibold uppercase tracking-[0.12em] text-[var(--color-muted)]" htmlFor="admin-note">
           Ghi chú admin
         </label>
@@ -217,7 +217,7 @@ export function OrderDetailPanel({ initialOrder }: { initialOrder: OrderAdminLis
           disabled={isSaving}
           placeholder="Ví dụ: gọi lại sau 9h sáng, khách muốn xác nhận combo..."
         />
-      </section>
+      </section> */}
 
       {message ? <p className="text-sm text-[var(--color-success)]">{message}</p> : null}
       {error ? <p className="text-sm text-[var(--color-danger)]">{error}</p> : null}

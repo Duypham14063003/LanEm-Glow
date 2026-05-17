@@ -79,6 +79,7 @@ export function normalizeProductRow(row: RawProductRow): Product {
     searchKeywords: normalizeKeywords(row.search_keywords),
     createdAt: parseOptionalDateString(row.created_at),
     updatedAt: parseOptionalDateString(row.updated_at),
+    quantity: parseOptionalNumber(row.quantity),
   };
 }
 

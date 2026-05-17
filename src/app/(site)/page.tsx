@@ -53,15 +53,15 @@ export const metadata: Metadata = buildMetadata({
 
 async function getHomepageData() {
   try {
-    const [settings, featuredProducts, allProducts] = await Promise.all([
+    const [settings, activeProducts, allProducts] = await Promise.all([
       getPublicSettings(),
-      listCatalogProducts({ featured: true }),
+      listCatalogProducts({}),
       getCatalogProducts(),
     ]);
 
     return {
       settings,
-      featuredProducts: featuredProducts.slice(0, 6),
+      featuredProducts: activeProducts.slice(0, 4),
       allProducts,
     };
   } catch {
@@ -94,29 +94,27 @@ export default async function SiteHomePage() {
         event="catalog_viewed"
         payload={{ source: "homepage" }}
       />
-      <PageSection className="pb-6 sm:pb-8">
+      <div className="animate-fade-in relative">
         <HeroCta
           primaryCtaLabel={settings.primaryCtaLabel}
           secondaryCtaLabel={settings.secondaryCtaLabel}
         />
-      </PageSection>
-
-      {/* <PageSection className="py-6 sm:py-8">
-        <TrustStrip />
-      </PageSection> */}
-
-      <PageSection className="pb-5 sm:pb-1">
-        <div className="flex items-end justify-between gap-4">
-          <div className="space-y-2">
-            <p className="text-sm uppercase tracking-[0.16em] text-[var(--color-muted)]">
-              Chọn nhanh theo nhu cầu
-            </p>
-            <h2 className="font-heading text-4xl text-[var(--color-foreground)]">
-              Bắt đầu từ concern của làn da
-            </h2>
-          </div>
+        <div className="relative z-20 mx-auto w-full max-w-7xl -mt-6 sm:-mt-12 px-4 sm:px-8 pb-4">
+          <TrustStrip />
         </div>
-        <div className="mt-6">
+      </div>
+
+      <PageSection className="py-6 animate-slide-up" style={{ animationDelay: '0.2s' }}>
+
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+          <h2 className="font-heading text-lg font-bold uppercase tracking-wide text-[var(--color-foreground)]">
+            DANH MỤC NỔI BẬT
+          </h2>
+          <Button asChild variant="link" className="text-sm font-medium p-0 h-auto text-[var(--color-primary-strong)]">
+            <Link href="/categories">Xem tất cả &rarr;</Link>
+          </Button>
+        </div>
+        <div>
           <ConcernScroller
             concerns={(concerns.length > 0 ? concerns : fallbackConcerns).map(
               (item) => item.replaceAll("-", " "),
@@ -125,48 +123,76 @@ export default async function SiteHomePage() {
         </div>
       </PageSection>
 
-      <PageSection>
-        <div className="flex items-end justify-between gap-4">
-          <div className="space-y-2">
-            <p className="text-sm uppercase tracking-[0.16em] text-[var(--color-muted)]">
-              Sản phẩm nổi bật
-            </p>
-            <h2 className="font-heading text-4xl text-[var(--color-foreground)]">
-              Những món skincare được tìm nhiều nhất
-            </h2>
-          </div>
-          <Button asChild variant="ghost">
-            <Link href="/products?featured=true">Xem tất cả</Link>
+      <PageSection className="py-6 animate-slide-up" style={{ animationDelay: '0.4s' }}>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+          <h2 className="font-heading text-lg font-bold uppercase tracking-wide text-[var(--color-foreground)]">
+            SẢN PHẨM
+          </h2>
+          <Button asChild variant="link" className="text-sm font-medium p-0 h-auto text-[var(--color-primary-strong)]">
+            <Link href="/products">Xem tất cả &rarr;</Link>
           </Button>
         </div>
 
-        <div className="mt-6 grid gap-4 sm:mt-8 md:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {featuredProducts.map((product) => (
             <ProductCard
               key={product.id}
               product={product}
-              actionLabel="Xem sản phẩm"
+              actionLabel="View Details"
             />
           ))}
         </div>
       </PageSection>
 
-      {/* <PageSection className="pt-0">
-        <div className="grid gap-4 lg:grid-cols-3">
-          {testimonials.map((testimonial) => (
-            <TestimonialCard key={testimonial.author} {...testimonial} />
-          ))}
+      <PageSection className="py-8 animate-slide-up" style={{ animationDelay: '0.6s' }}>
+        <div className="space-y-6">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <h2 className="font-heading text-lg font-bold uppercase tracking-wide text-[var(--color-foreground)]">
+              FEEDBACK CỦA KHÁCH
+            </h2>
+            <Button asChild variant="link" className="text-sm font-medium p-0 h-auto text-[var(--color-primary-strong)]">
+              <Link href="/#feedback">Xem tất cả &rarr;</Link>
+            </Button>
+          </div>
+          <div className="grid gap-6 lg:grid-cols-3">
+            {testimonials.map((testimonial) => (
+              <TestimonialCard key={testimonial.author} {...testimonial} />
+            ))}
+          </div>
         </div>
       </PageSection>
 
-      <PageSection>
+      <PageSection className="mt-5 py-8 animate-slide-up" style={{ animationDelay: '0.7s' }}>
+        <div className="space-y-6">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <h2 className="font-heading text-lg font-bold uppercase tracking-wide text-[var(--color-foreground)]">
+              VIDEO THỰC TẾ
+            </h2>
+          </div>
+          <div className="overflow-hidden pb-6 pt-2 -mx-4 sm:-mx-6 px-4 sm:px-6">
+            <div className="flex gap-4 sm:gap-6 w-max animate-marquee">
+              {[...[1, 2, 3, 4, 5, 6], ...[1, 2, 3, 4, 5, 6]].map((num, idx) => (
+                <div key={idx} className="relative shrink-0 w-[75vw] sm:w-[280px] lg:w-[320px] aspect-[9/16] rounded-3xl overflow-hidden shadow-sm border border-[var(--color-border)] bg-gray-50">
+                  <video
+                    src={`/videos/video${num}.mp4`}
+                    className="w-full h-full object-cover"
+                    autoPlay muted loop playsInline
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </PageSection>
+
+      <PageSection className="py-8 animate-slide-up" style={{ animationDelay: '0.8s' }}>
         <StorefrontCta
-          title="Khám phá routine phù hợp với da bạn, từng bước một."
-          description="Từ serum phục hồi đến chống nắng hằng ngày, storefront này được dựng để bạn xem nhanh, hiểu nhanh và quyết định với cảm giác nhẹ nhàng hơn."
-          primaryLabel={settings.primaryCtaLabel}
-          secondaryLabel={settings.secondaryCtaLabel}
+          title="Lan Anh"
+          description="Mình làm affiliate & content beauty nên có khá nhiều PR package từ các brand gửi. Những món không dùng tới mình sẽ pass lại với giá mềm hơn store nhưng vẫn đảm bảo chính hãng. Cảm ơn mọi người đã ủng hộ ♡"
+          primaryLabel="Tìm hiểu thêm về mình"
+          secondaryLabel=""
         />
-      </PageSection> */}
+      </PageSection>
     </>
   );
 }

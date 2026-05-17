@@ -48,6 +48,7 @@ type ProductFormValues = {
   isFeatured: boolean;
   displayOrder: string;
   searchKeywords: string;
+  quantity: string;
 };
 
 const emptyForm: ProductFormValues = {
@@ -68,6 +69,7 @@ const emptyForm: ProductFormValues = {
   isFeatured: false,
   displayOrder: "0",
   searchKeywords: "",
+  quantity: "",
 };
 
 function getStatusVariant(status: ProductStatus) {
@@ -110,6 +112,7 @@ function toFormValues(product: ProductAdminListItem | null): ProductFormValues {
     isFeatured: product.isFeatured,
     displayOrder: `${product.displayOrder}`,
     searchKeywords: product.searchKeywords.join(", "),
+    quantity: product.quantity === null ? "" : `${product.quantity}`,
   };
 }
 
@@ -132,6 +135,7 @@ function toPayload(values: ProductFormValues): ProductAdminMutationInput | Recor
     isFeatured: values.isFeatured,
     displayOrder: values.displayOrder,
     searchKeywords: values.searchKeywords,
+    quantity: values.quantity,
   };
 }
 
@@ -203,14 +207,37 @@ export function AdminProductsWorkspace({
     setUploadError(null);
   };
 
+  const generateSlug = (text: string) => {
+    return text
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/đ/g, "d")
+      .replace(/[^a-z0-9\s-]/g, "")
+      .trim()
+      .replace(/\s+/g, "-");
+  };
+
   const handleFieldChange = <K extends keyof ProductFormValues>(
     field: K,
     value: ProductFormValues[K]
   ) => {
-    setFormValues((current) => ({
-      ...current,
-      [field]: value,
-    }));
+    setFormValues((current) => {
+      const next = { ...current, [field]: value };
+      
+      if (mode === "create" && field === "name" && typeof value === "string") {
+        const slug = generateSlug(value);
+        if (slug) {
+          next.slug = slug;
+          next.productId = slug.toUpperCase().replace(/-/g, "_");
+        } else {
+          next.slug = "";
+          next.productId = "";
+        }
+      }
+      
+      return next;
+    });
   };
 
   const handleSave = async () => {
@@ -392,9 +419,9 @@ export function AdminProductsWorkspace({
                     <TableHeaderCell>Sản phẩm</TableHeaderCell>
                     <TableHeaderCell>Danh mục</TableHeaderCell>
                     <TableHeaderCell>Giá</TableHeaderCell>
+                    <TableHeaderCell>Số lượng</TableHeaderCell>
                     <TableHeaderCell>Trạng thái</TableHeaderCell>
                     <TableHeaderCell>Tồn kho</TableHeaderCell>
-                    <TableHeaderCell>Nổi bật</TableHeaderCell>
                     <TableHeaderCell className="text-right">Hành động</TableHeaderCell>
                   </tr>
                 </TableHead>
@@ -423,13 +450,13 @@ export function AdminProductsWorkspace({
                       </TableCell>
                       <TableCell>{item.category}</TableCell>
                       <TableCell>{item.price.toLocaleString("vi-VN")}đ</TableCell>
+                      <TableCell>{item.quantity !== null ? item.quantity : "-"}</TableCell>
                       <TableCell>
                         <Badge variant={getStatusVariant(item.status)}>{item.status}</Badge>
                       </TableCell>
                       <TableCell>
                         <Badge variant={getStockVariant(item.stockStatus)}>{item.stockStatus}</Badge>
                       </TableCell>
-                      <TableCell>{item.isFeatured ? "Có" : "Không"}</TableCell>
                       <TableCell className="text-right">
                         <Button size="sm" variant="secondary" onClick={() => openEdit(item)}>
                           Sửa
@@ -653,26 +680,29 @@ export function AdminProductsWorkspace({
                 disabled={isSaving}
               />
             </Field>
-            <Field label="Keywords">
+            <Field label="Số lượng">
               <Input
+                type="number"
+                min="0"
+                value={formValues.quantity}
+                onChange={(event) => handleFieldChange("quantity", event.target.value)}
+                disabled={isSaving}
+              />
+            </Field>
+            <Field label="Tình trạng SP">
+              <select
+                className="h-12 w-full rounded-[var(--radius-input)] border border-[var(--color-border)] bg-white px-4 text-sm text-[var(--color-foreground)]"
                 value={formValues.searchKeywords}
                 onChange={(event) => handleFieldChange("searchKeywords", event.target.value)}
                 disabled={isSaving}
-                placeholder="serum, barrier, calming"
-              />
+              >
+                <option value="">-- Chọn tình trạng --</option>
+                <option value="nguyên seal">Nguyên seal</option>
+                <option value="test 1 lần">Test 1 lần</option>
+                <option value="used">Used</option>
+              </select>
             </Field>
           </div>
-
-          <label className="flex items-center gap-3 rounded-[16px] border border-[var(--color-border)] bg-white px-4 py-3 text-sm text-[var(--color-foreground)]">
-            <input
-              type="checkbox"
-              checked={formValues.isFeatured}
-              onChange={(event) => handleFieldChange("isFeatured", event.target.checked)}
-              disabled={isSaving}
-              className="size-4 rounded border-[var(--color-border)]"
-            />
-            Hiển thị trong nhóm featured
-          </label>
 
           {message ? <p className="text-sm text-[var(--color-success)]">{message}</p> : null}
           {error ? <p className="text-sm text-[var(--color-danger)]">{error}</p> : null}

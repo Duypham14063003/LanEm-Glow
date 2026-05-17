@@ -6,7 +6,6 @@ import { PageSection } from "@/components/site/page-section";
 import { ProductCard } from "@/components/site/product-card";
 import { ProductListFilters } from "@/components/site/product-list-filters";
 import { StorefrontEmptyState } from "@/components/site/storefront-empty-state";
-import { Badge } from "@/components/ui/badge";
 import { buildMetadata } from "@/lib/metadata";
 import { listCatalogProducts, getCatalogProducts } from "@/services/products";
 import type { Product, ProductCatalogQuery } from "@/types";
@@ -80,18 +79,20 @@ export default async function ProductsPage({
           featured: query.featured ?? null,
         }}
       />
-      <PageSection className="pb-4">
-        <div className="space-y-4">
-          <Badge variant="info">Catalog</Badge>
-          <div className="space-y-3">
-            <h1 className="font-heading text-4xl text-[var(--color-foreground)] sm:text-5xl">
-              Tìm sản phẩm theo nhu cầu da và texture bạn thích.
-            </h1>
-            <p className="max-w-3xl text-base text-[var(--color-foreground-soft)] sm:text-lg">
-              Listing này ưu tiên trải nghiệm xem nhanh trên mobile: lọc theo concern, tìm
-              theo từ khóa, và rút ngắn thời gian chọn món phù hợp.
-            </p>
-          </div>
+      <PageSection className="pb-6 pt-8 sm:pt-12 text-center">
+        <div className="max-w-2xl mx-auto space-y-4 animate-fade-in">
+          <p className="font-heading italic text-[var(--color-primary-strong)] text-lg">
+             {query.featured ? "Best Seller" : "Tất cả sản phẩm"}
+          </p>
+          <h1 className="font-heading text-4xl sm:text-5xl font-medium tracking-tight text-[var(--color-foreground)] uppercase">
+            {query.featured ? "SẢN PHẨM NỔI BẬT" : "TÌM SẢN PHẨM PHÙ HỢP"}
+          </h1>
+          <p className="text-base text-[var(--color-foreground-soft)] sm:text-lg leading-relaxed">
+            {query.featured 
+               ? "Những món makeup và skincare được pass lại nhiều nhất với giá cực kỳ mềm."
+               : "Tìm kiếm sản phẩm theo nhu cầu da và brand yêu thích của bạn. Cam kết chính hãng 100%."
+            }
+          </p>
         </div>
       </PageSection>
 

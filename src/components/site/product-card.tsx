@@ -1,12 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { PlayCircle } from "lucide-react";
+import { Heart, ShoppingCart } from "lucide-react";
 
-import { trackEvent } from "@/lib/analytics";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { useQuickOrder } from "@/hooks/use-quick-order";
 import { useSelectedProducts } from "@/hooks/use-selected-products";
 import type { Product } from "@/types";
@@ -23,130 +19,101 @@ interface ProductCardProps {
 
 export function ProductCard({
   product,
-  actionLabel = "Xem chi tiết",
   href = `/products/${product.slug}`,
 }: ProductCardProps) {
-  const { toggleProduct, isSelected } = useSelectedProducts();
   const { openQuickOrder } = useQuickOrder();
-  const isOutOfStock = product.stockStatus === "out_of_stock";
-  const selected = isSelected(product.id);
+  const { addProduct } = useSelectedProducts();
+
+  // Mocking old price for the design (usually this would come from the API)
+  const oldPrice = product.price * 1.2;
+  const badgeText = product.stockStatus === "out_of_stock" ? "HẾT HÀNG" : (product.price > 300000 ? "HOT" : "NEW");
+
+  const conditionTag = product.searchKeywords?.[0]?.trim();
 
   return (
-    <Card className="flex h-full flex-col overflow-hidden p-0">
-      <div className="group relative aspect-[4/3] overflow-hidden bg-[linear-gradient(135deg,#fff,#fbe4ea)]">
+    <div className="group relative bg-white rounded-3xl p-4 shadow-sm border border-[var(--color-border)] transition-all hover:shadow-md flex flex-col h-full">
+      
+      {/* Top Badges & Icons */}
+      <div className="absolute top-4 left-4 right-4 flex justify-between z-10 pointer-events-none">
+         <div className="flex gap-2">
+           <div className="bg-[var(--color-primary-strong)] text-white text-[10px] font-bold px-2.5 py-1 rounded-sm tracking-wide">
+              {badgeText}
+           </div>
+           {conditionTag ? (
+             <div className="bg-[var(--color-accent)] text-white text-[10px] font-bold px-2.5 py-1 rounded-sm tracking-wide uppercase">
+                {conditionTag}
+             </div>
+           ) : null}
+         </div>
+         <button className="pointer-events-auto text-gray-300 hover:text-[var(--color-primary-strong)] transition-colors">
+            <Heart className="size-5" />
+         </button>
+      </div>
+
+      {/* Image */}
+      <Link href={href} className="relative aspect-square w-full mb-4 mt-2 overflow-hidden flex items-center justify-center">
         {product.imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={product.imageUrl}
             alt={product.name}
-            className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105 rounded-xl"
             loading="lazy"
           />
-        ) : null}
+        ) : (
+          <div className="w-full h-full bg-gray-50 rounded-xl" />
+        )}
+      </Link>
 
-        {product.tiktokUrl ? (
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 bg-gradient-to-t from-[rgba(67,52,58,0.7)] via-[rgba(67,52,58,0.22)] to-transparent p-4 text-white">
-            <div className="space-y-1">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/80">
-                TikTok review
-              </p>
-              <p className="text-sm font-medium">
-                Xem video ở trang chi tiết sản phẩm
-              </p>
+      {/* Info */}
+      <div className="flex flex-col flex-1 justify-between">
+         <Link href={href}>
+            <h3 className="font-heading text-sm font-medium text-[var(--color-foreground)] line-clamp-2 leading-tight group-hover:text-[var(--color-primary-strong)] transition-colors mb-4">
+               {product.name}
+            </h3>
+         </Link>
+         
+         <div className="flex items-end justify-between mt-auto">
+            <div className="flex flex-col">
+               <span className="font-bold text-[var(--color-danger)] text-lg leading-none">
+                  {formatPrice(product.price)}đ
+               </span>
+               <div className="flex items-center gap-2 mt-1">
+                 <span className="text-xs text-[var(--color-muted)] line-through">
+                    {formatPrice(oldPrice)}đ
+                 </span>
+                 {product.quantity !== null && (
+                   <span className="text-xs font-medium text-[var(--color-foreground-soft)]">
+                      Kho: {product.quantity}
+                   </span>
+                 )}
+               </div>
             </div>
-            <PlayCircle
-              className="size-9 shrink-0 text-white"
-              aria-hidden="true"
-            />
-          </div>
-        ) : null}
-
-        <Link
-          href={href}
-          className="absolute inset-0"
-          aria-label={`Xem chi tiết ${product.name}`}
-        />
-      </div>
-
-      <div className="flex flex-1 flex-col gap-4 p-5">
-        <div className="flex items-start justify-between gap-3">
-          <div className="space-y-2">
-            <Link href={href}>
-              <h3 className="text-lg font-semibold text-[var(--color-foreground)]">
-                {product.name}
-              </h3>
-            </Link>
-            <p className="text-sm text-[var(--color-foreground-soft)]">
-              {product.shortDescription}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          {product.tiktokUrl ? (
-            <Badge variant="info">Có video TikTok</Badge>
-          ) : null}
-          {product.concerns.slice(0, 2).map((concern) => (
-            <Badge key={concern} variant="neutral">
-              {concern}
-            </Badge>
-          ))}
-        </div>
-
-        <div className="mt-auto flex items-end justify-between gap-3">
-          <div>
-            <p className="text-xs uppercase tracking-[0.16em] text-[var(--color-muted)]">
-              Giá bán
-            </p>
-            <div className="mt-1 flex items-center gap-2">
-              <p className="text-xl font-semibold text-[var(--color-accent)]">
-                {formatPrice(product.price)}đ
-              </p>
-              {product.compareAtPrice ? (
-                <p className="text-sm text-[var(--color-muted)] line-through">
-                  {formatPrice(product.compareAtPrice)}đ
-                </p>
-              ) : null}
+            
+            <div className="flex gap-2">
+               <button 
+                  onClick={(e) => {
+                     e.preventDefault();
+                     addProduct(product);
+                  }}
+                  className="h-9 w-9 rounded-full border border-[var(--color-primary-strong)] text-[var(--color-primary-strong)] flex items-center justify-center hover:bg-[var(--color-primary-strong)] hover:text-white transition-colors shadow-sm"
+                  title="Thêm vào giỏ"
+               >
+                  <ShoppingCart className="size-4" />
+               </button>
+               <button 
+                  onClick={(e) => {
+                     e.preventDefault();
+                     addProduct(product);
+                     openQuickOrder("card");
+                  }}
+                  className="h-9 px-4 rounded-full bg-[var(--color-primary-strong)] text-white text-xs font-bold flex items-center justify-center hover:bg-[var(--color-primary)] transition-colors shadow-sm whitespace-nowrap"
+               >
+                  Mua ngay
+               </button>
             </div>
-          </div>
-
-          <div className="flex flex-col items-end gap-2">
-            {isOutOfStock ? (
-              <Button disabled variant="secondary">
-                Tạm hết hàng
-              </Button>
-            ) : (
-              <Button
-                variant={selected ? "primary" : "secondary"}
-                onClick={() => {
-                  toggleProduct(product);
-                  trackEvent("product_selected", {
-                    productId: product.id,
-                    slug: product.slug,
-                    selected: !selected,
-                    source: "product_card",
-                  });
-                }}
-              >
-                {selected ? "Đã chọn" : "Chọn sản phẩm"}
-              </Button>
-            )}
-            <button
-              type="button"
-              className="text-sm font-medium text-[var(--color-accent)] transition hover:opacity-80"
-              onClick={() => {
-                trackEvent("quick_order_opened", {
-                  source: "card",
-                  productId: product.id,
-                });
-                openQuickOrder("card");
-              }}
-            >
-              {actionLabel}
-            </button>
-          </div>
-        </div>
+         </div>
       </div>
-    </Card>
+    </div>
   );
 }

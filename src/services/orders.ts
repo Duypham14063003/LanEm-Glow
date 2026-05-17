@@ -188,6 +188,7 @@ export function normalizeOrderPayload(input: unknown): NormalizedOrderRequestPay
       note: (payload.note ?? "").trim(),
       sourcePage: (payload.sourcePage ?? "cta").trim() || "cta",
       sourceCampaign: (payload.sourceCampaign ?? "").trim(),
+      quantities: payload.quantities && typeof payload.quantities === 'object' ? payload.quantities : {},
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Yêu cầu tạo đơn không hợp lệ.";
@@ -587,8 +588,11 @@ export async function createAdminOrder(
     phone: normalizedPayload.phone,
     customerName: normalizedPayload.customerName,
     selectedProductIds: normalizedPayload.selectedProductIds,
-    selectedProductNames: selectedProducts.map((product) => product.name),
-    itemCount: selectedProducts.length,
+    selectedProductNames: selectedProducts.map((product) => {
+      const q = normalizedPayload.quantities[product.id] || 1;
+      return q > 1 ? `${product.name} (x${q})` : product.name;
+    }),
+    itemCount: selectedProducts.reduce((acc, product) => acc + (normalizedPayload.quantities[product.id] || 1), 0),
     customerNote: normalizedPayload.note,
     status: duplicate ? "duplicate" : "new",
     adminNote: "",
@@ -650,8 +654,11 @@ export async function submitQuickOrder(
     phone: normalizedPayload.phone,
     customerName: normalizedPayload.customerName,
     selectedProductIds: normalizedPayload.selectedProductIds,
-    selectedProductNames: selectedProducts.map((product) => product.name),
-    itemCount: selectedProducts.length,
+    selectedProductNames: selectedProducts.map((product) => {
+      const q = normalizedPayload.quantities[product.id] || 1;
+      return q > 1 ? `${product.name} (x${q})` : product.name;
+    }),
+    itemCount: selectedProducts.reduce((acc, product) => acc + (normalizedPayload.quantities[product.id] || 1), 0),
     customerNote: normalizedPayload.note,
     status: duplicate ? "duplicate" : "new",
     adminNote: "",

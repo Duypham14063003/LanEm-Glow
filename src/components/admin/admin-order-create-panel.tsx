@@ -19,6 +19,12 @@ export function AdminOrderCreatePanel({ products }: { products: Product[] }) {
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredProducts = products.filter(product => 
+    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const toggleProduct = (productId: string) => {
     setSelectedProductIds((current) =>
       current.includes(productId)
@@ -100,34 +106,46 @@ export function AdminOrderCreatePanel({ products }: { products: Product[] }) {
         <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[var(--color-muted)]">
           Chọn sản phẩm
         </p>
-        <div className="grid gap-2">
-          {products.map((product) => {
-            const checked = selectedProductIds.includes(product.id);
-            return (
-              <label
-                key={product.id}
-                className={`flex cursor-pointer items-start gap-3 rounded-[16px] border px-4 py-3 ${
-                  checked
-                    ? "border-[var(--color-primary)] bg-[var(--color-surface-muted)]"
-                    : "border-[var(--color-border)] bg-white"
-                }`}
-              >
-                <input
-                  type="checkbox"
-                  checked={checked}
-                  onChange={() => toggleProduct(product.id)}
-                  disabled={isSaving || product.stockStatus === "out_of_stock"}
-                  className="mt-1 size-4"
-                />
-                <div className="min-w-0">
-                  <p className="font-medium text-[var(--color-foreground)]">{product.name}</p>
-                  <p className="text-sm text-[var(--color-foreground-soft)]">
-                    {product.price.toLocaleString("vi-VN")}đ · {product.stockStatus}
-                  </p>
-                </div>
-              </label>
-            );
-          })}
+        <div className="space-y-3">
+          <Input 
+            placeholder="Gõ để tìm kiếm sản phẩm..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            disabled={isSaving}
+          />
+          <div className="grid gap-2 max-h-[300px] overflow-y-auto pr-2">
+            {filteredProducts.length > 0 ? (
+              filteredProducts.map((product) => {
+                const checked = selectedProductIds.includes(product.id);
+                return (
+                  <label
+                    key={product.id}
+                    className={`flex cursor-pointer items-start gap-3 rounded-[16px] border px-4 py-3 ${
+                      checked
+                        ? "border-[var(--color-primary)] bg-[var(--color-surface-muted)]"
+                        : "border-[var(--color-border)] bg-white"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() => toggleProduct(product.id)}
+                      disabled={isSaving || product.stockStatus === "out_of_stock"}
+                      className="mt-1 size-4"
+                    />
+                    <div className="min-w-0">
+                      <p className="font-medium text-[var(--color-foreground)]">{product.name}</p>
+                      <p className="text-sm text-[var(--color-foreground-soft)]">
+                        {product.price.toLocaleString("vi-VN")}đ · {product.stockStatus}
+                      </p>
+                    </div>
+                  </label>
+                );
+              })
+            ) : (
+              <p className="text-sm text-[var(--color-foreground-soft)] py-2 text-center">Không tìm thấy sản phẩm nào.</p>
+            )}
+          </div>
         </div>
       </section>
 

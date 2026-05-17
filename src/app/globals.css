@@ -9,13 +9,13 @@
   --color-secondary: #7a646d;
   --color-accent: #d86c87;
   --color-accent-soft: #fbe4ea;
-  --color-page: #fff8f9;
-  --color-surface: #ffffff;
-  --color-surface-muted: #fff1f4;
-  --color-border: #f1d7de;
-  --color-foreground: #43343a;
-  --color-foreground-soft: #6d5a62;
-  --color-muted: #9c838b;
+  --color-page: #ffffff;
+  --color-surface: #fffdfd;
+  --color-surface-muted: #f9f9f9;
+  --color-border: #eeeeee;
+  --color-foreground: #1a1a1a;
+  --color-foreground-soft: #444444;
+  --color-muted: #888888;
   --color-danger: #d85c63;
   --color-success: #2e9b6f;
   --color-warning: #d9994f;
@@ -60,6 +60,37 @@
   --font-heading: var(--font-heading);
   --color-background: var(--color-page);
   --color-foreground: var(--color-foreground);
+  --animate-fade-in: fade-in 0.6s var(--ease-standard);
+  --animate-slide-up: slide-up 0.8s var(--ease-standard);
+  --animate-scale-in: scale-in 0.5s var(--ease-standard);
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
 }
 
 * {
@@ -83,6 +114,29 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glass-dark {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.hover-lift {
+  transition: transform 0.3s var(--ease-standard), shadow 0.3s var(--ease-standard);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card);
 }
 
 a {

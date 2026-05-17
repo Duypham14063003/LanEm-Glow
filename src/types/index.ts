@@ -23,6 +23,7 @@ export interface RawProductRow extends RawSheetRow {
   search_keywords: string;
   created_at: string;
   updated_at: string;
+  quantity?: string;
 }
 
 export interface Product {
@@ -45,6 +46,7 @@ export interface Product {
   searchKeywords: string[];
   createdAt: string | null;
   updatedAt: string | null;
+  quantity: number | null;
 }
 
 export interface SelectedProduct {
@@ -54,6 +56,7 @@ export interface SelectedProduct {
   price: number;
   imageUrl: string;
   stockStatus: ProductStockStatus;
+  orderQuantity?: number;
 }
 
 export interface ProductCatalogQuery {
@@ -91,6 +94,7 @@ export interface ProductAdminMutationInput {
   isFeatured: boolean;
   displayOrder: number;
   searchKeywords: string[];
+  quantity: number | null;
 }
 
 export interface ProductAdminListResponse {
@@ -163,6 +167,7 @@ export interface OrderRequestPayload {
   note?: string;
   sourcePage?: string;
   sourceCampaign?: string;
+  quantities?: Record<string, number>;
 }
 
 export interface NormalizedOrderRequestPayload {
@@ -172,6 +177,7 @@ export interface NormalizedOrderRequestPayload {
   note: string;
   sourcePage: string;
   sourceCampaign: string;
+  quantities: Record<string, number>;
 }
 
 export interface OrderRowSnapshot {
@@ -248,6 +254,7 @@ export interface OrderAdminCreateInput {
   note?: string;
   sourcePage?: string;
   sourceCampaign?: string;
+  quantities?: Record<string, number>;
 }
 
 export interface OrderAdminListResponse {

@@ -11,6 +11,7 @@ import {
 } from "react";
 
 import type { Product, SelectedProduct } from "@/types";
+import { useToast } from "@/components/ui/toast";
 
 const STORAGE_KEY = "lanem-glow:selected-products";
 
@@ -20,6 +21,7 @@ type SelectedProductsContextValue = {
   addProduct: (product: Product | SelectedProduct) => void;
   removeProduct: (productId: string) => void;
   toggleProduct: (product: Product | SelectedProduct) => void;
+  updateQuantity: (productId: string, quantity: number) => void;
   clearProducts: () => void;
   isSelected: (productId: string) => boolean;
 };
@@ -34,6 +36,7 @@ export function toSelectedProduct(product: Product | SelectedProduct): SelectedP
     price: product.price,
     imageUrl: product.imageUrl,
     stockStatus: product.stockStatus,
+    orderQuantity: ("orderQuantity" in product ? product.orderQuantity : 1) ?? 1,
   };
 }
 
@@ -102,13 +105,23 @@ export function SelectedProductsProvider({ children }: { children: ReactNode }) 
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
   }, [hydrated, items]);
 
+  const { toast } = useToast();
+
   const addProduct = useCallback((product: Product | SelectedProduct) => {
     if (product.stockStatus === "out_of_stock") {
       return;
     }
 
-    setItems((current) => addSelectedProduct(current, product));
-  }, []);
+    setItems((current) => {
+      const isAlreadyInCart = current.some(item => item.id === product.id);
+      
+      if (!isAlreadyInCart) {
+        toast(`Đã thêm ${product.name} vào giỏ hàng`, "success");
+      }
+      
+      return addSelectedProduct(current, product);
+    });
+  }, [toast]);
 
   const removeProduct = useCallback((productId: string) => {
     setItems((current) => removeSelectedProduct(current, productId));
@@ -119,7 +132,23 @@ export function SelectedProductsProvider({ children }: { children: ReactNode }) 
       return;
     }
 
-    setItems((current) => toggleSelectedProduct(current, product));
+    setItems((current) => {
+      const isAlreadyInCart = current.some(item => item.id === product.id);
+      
+      if (!isAlreadyInCart) {
+        toast(`Đã thêm ${product.name} vào giỏ hàng`, "success");
+      }
+      
+      return toggleSelectedProduct(current, product);
+    });
+  }, [toast]);
+
+  const updateQuantity = useCallback((productId: string, quantity: number) => {
+    setItems((current) =>
+      current.map((item) =>
+        item.id === productId ? { ...item, orderQuantity: Math.max(1, quantity) } : item
+      )
+    );
   }, []);
 
   const clearProducts = useCallback(() => {
@@ -138,10 +167,11 @@ export function SelectedProductsProvider({ children }: { children: ReactNode }) 
       addProduct,
       removeProduct,
       toggleProduct,
+      updateQuantity,
       clearProducts,
       isSelected,
     }),
-    [addProduct, clearProducts, isSelected, items, removeProduct, toggleProduct]
+    [addProduct, clearProducts, isSelected, items, removeProduct, toggleProduct, updateQuantity]
   );
 
   return (

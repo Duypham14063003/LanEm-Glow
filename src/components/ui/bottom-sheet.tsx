@@ -46,27 +46,26 @@ export function BottomSheet({
   }
 
   return (
-    <div className="fixed inset-0 z-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 animate-fade-in">
       <button
         type="button"
         aria-label="Đóng quick order"
-        className="absolute inset-0 bg-[rgba(67,52,58,0.36)] backdrop-blur-[2px]"
+        className="absolute inset-0 bg-black/20 backdrop-blur-sm transition-opacity"
         onClick={() => onOpenChange(false)}
       />
       <div
         className={cn(
-          "absolute bottom-0 left-0 right-0 mx-auto w-full max-w-2xl rounded-t-[var(--radius-sheet)] border border-[var(--color-border)] bg-white px-5 pb-6 pt-4 shadow-[0_-24px_60px_rgba(67,52,58,0.18)] transition duration-[var(--motion-base)] ease-[var(--ease-standard)]",
+          "relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-[32px] border border-[var(--color-border)] bg-white p-6 shadow-2xl sm:p-8 animate-scale-in",
           className
         )}
         role="dialog"
         aria-modal="true"
         aria-label={title}
       >
-        <div className="mx-auto mb-4 h-1.5 w-14 rounded-full bg-[var(--color-border)]" />
-        <div className="mb-5 flex items-start justify-between gap-4">
+        <div className="mb-6 flex items-center justify-between gap-4">
           {title ? (
             <div>
-              <p className="font-heading text-3xl text-[var(--color-foreground)]">{title}</p>
+              <h2 className="font-heading text-2xl font-bold tracking-tight text-[var(--color-foreground)]">{title}</h2>
             </div>
           ) : (
             <div />
@@ -75,9 +74,9 @@ export function BottomSheet({
             type="button"
             aria-label="Đóng"
             onClick={() => onOpenChange(false)}
-            className="rounded-full border border-[var(--color-border)] p-2 text-[var(--color-foreground-soft)] transition hover:bg-[var(--color-surface-muted)]"
+            className="rounded-full bg-gray-50/80 hover:bg-[var(--color-accent-soft)] hover:text-[var(--color-primary-strong)] p-2.5 text-[var(--color-foreground-soft)] transition-colors border border-[var(--color-border)] shadow-sm shrink-0"
           >
-            <X className="size-4" aria-hidden="true" />
+            <X className="size-5" aria-hidden="true" />
           </button>
         </div>
         {children}
