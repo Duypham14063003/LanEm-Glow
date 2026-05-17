@@ -5,17 +5,20 @@ import type { RawSheetRow } from "@/types";
 
 const GOOGLE_SCOPES = ["https://www.googleapis.com/auth/spreadsheets"];
 
+function stripQuotes(value: string): string {
+  return value.replace(/^["']|["']$/g, "").trim();
+}
+
 function getSheetsConfig() {
+  const rawEmail = assertRequiredEnv("GOOGLE_SERVICE_ACCOUNT_EMAIL", process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL);
+  const rawKey = assertRequiredEnv("GOOGLE_PRIVATE_KEY", process.env.GOOGLE_PRIVATE_KEY);
+  const rawSheetId = assertRequiredEnv("GOOGLE_SHEET_ID", process.env.GOOGLE_SHEET_ID);
+
   return {
-    clientEmail: assertRequiredEnv(
-      "GOOGLE_SERVICE_ACCOUNT_EMAIL",
-      process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL
-    ),
-    privateKey: assertRequiredEnv("GOOGLE_PRIVATE_KEY", process.env.GOOGLE_PRIVATE_KEY).replace(
-      /\\n/g,
-      "\n"
-    ),
-    sheetId: assertRequiredEnv("GOOGLE_SHEET_ID", process.env.GOOGLE_SHEET_ID),
+    clientEmail: stripQuotes(rawEmail),
+    // Strip surrounding quotes first, then convert literal \n to real newlines
+    privateKey: stripQuotes(rawKey).replace(/\\n/g, "\n"),
+    sheetId: stripQuotes(rawSheetId),
   };
 }
 
