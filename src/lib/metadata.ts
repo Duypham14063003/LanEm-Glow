@@ -5,7 +5,10 @@ function trimTrailingSlash(value: string) {
 }
 
 export function getSiteUrl() {
-  return trimTrailingSlash(process.env.NEXT_PUBLIC_SITE_URL?.trim() || "http://localhost:3000");
+  const raw = process.env.NEXT_PUBLIC_SITE_URL ?? "";
+  // Strip surrounding quotes that may be present in some CI/CD environments
+  const cleaned = raw.trim().replace(/^["']|["']$/g, "");
+  return trimTrailingSlash(cleaned || "http://localhost:3000");
 }
 
 type MetadataInput = {
