@@ -1,28 +1,13 @@
-export const dynamic = 'force-dynamic';
-
 import Link from "next/link";
 import backgroundImage from "@/assets/background.png";
 import { Button } from "@/components/ui/button";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
-import { getPublicSettings } from "@/services/settings";
 import { QuickOrderShell } from "@/components/site/quick-order-shell";
 
-export default async function NotFound() {
-  let settings;
-  try {
-    settings = await getPublicSettings();
-  } catch {
-    settings = {
-      brandPhone: null,
-      zaloUrl: null,
-      publicAnnouncement:
-        "Thông tin được dùng để tư vấn và xác nhận đơn thủ công. Bạn không cần thanh toán online trước.",
-      primaryCtaLabel: "Xem sản phẩm",
-      secondaryCtaLabel: "Nhận tư vấn",
-    };
-  }
-
+// not-found is a special Next.js page — it must be statically renderable.
+// Do NOT fetch from Google Sheets here; use hardcoded fallbacks instead.
+export default function NotFound() {
   return (
     <div className="relative min-h-screen overflow-hidden bg-transparent">
       <div
@@ -47,7 +32,7 @@ export default async function NotFound() {
       <QuickOrderShell>
         <div className="relative z-10 flex min-h-screen flex-col">
           <SiteHeader />
-          
+
           <main className="flex-1 flex flex-col items-center justify-center px-4 text-center py-20 relative">
             <h1 className="font-heading text-[120px] leading-none md:text-[180px] text-[var(--color-primary)] opacity-20 font-bold mb-4">404</h1>
             <h2 className="font-heading text-3xl md:text-4xl text-[var(--color-foreground)] mb-6 -mt-12 md:-mt-20 z-10">Trang không tồn tại</h2>
@@ -60,8 +45,8 @@ export default async function NotFound() {
           </main>
 
           <SiteFooter
-            phone={settings.brandPhone}
-            announcement={settings.publicAnnouncement}
+            phone={null}
+            announcement="Thông tin được dùng để tư vấn và xác nhận đơn thủ công. Bạn không cần thanh toán online trước."
           />
         </div>
       </QuickOrderShell>
