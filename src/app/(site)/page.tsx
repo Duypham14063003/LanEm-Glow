@@ -12,6 +12,7 @@ import { ProductCard } from "@/components/site/product-card";
 import { StorefrontCta } from "@/components/site/storefront-cta";
 import { TestimonialCard } from "@/components/site/testimonial-card";
 import { TrustStrip } from "@/components/site/trust-strip";
+import { BrandStrip } from "@/components/site/brand-strip";
 import { Button } from "@/components/ui/button";
 import { buildMetadata } from "@/lib/metadata";
 import { getCatalogProducts, listCatalogProducts } from "@/services/products";
@@ -102,6 +103,10 @@ export default async function SiteHomePage() {
           <TrustStrip />
         </div>
       </div>
+
+      <PageSection className="py-4 pb-0 animate-slide-up overflow-hidden" style={{ animationDelay: '0.15s' }}>
+        <BrandStrip />
+      </PageSection>
 
       <PageSection className="py-6 animate-slide-up" style={{ animationDelay: '0.2s' }}>
 
