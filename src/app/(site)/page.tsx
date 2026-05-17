@@ -10,6 +10,7 @@ import { HeroCta } from "@/components/site/hero-cta";
 import { PageSection } from "@/components/site/page-section";
 import { ProductCard } from "@/components/site/product-card";
 import { StorefrontCta } from "@/components/site/storefront-cta";
+import { ProfileTrustSection } from "@/components/site/profile-trust-section";
 import { TestimonialCard } from "@/components/site/testimonial-card";
 import { TrustStrip } from "@/components/site/trust-strip";
 import { BrandStrip } from "@/components/site/brand-strip";
@@ -190,12 +191,7 @@ export default async function SiteHomePage() {
       </PageSection>
 
       <PageSection className="py-8 animate-slide-up" style={{ animationDelay: '0.8s' }}>
-        <StorefrontCta
-          title="Lan Anh"
-          description="Mình làm affiliate & content beauty nên có khá nhiều PR package từ các brand gửi. Những món không dùng tới mình sẽ pass lại với giá mềm hơn store nhưng vẫn đảm bảo chính hãng. Cảm ơn mọi người đã ủng hộ ♡"
-          primaryLabel="Tìm hiểu thêm về mình"
-          secondaryLabel=""
-        />
+        <ProfileTrustSection />
       </PageSection>
     </>
   );
