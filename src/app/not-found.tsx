@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import Link from "next/link";
 import backgroundImage from "@/assets/background.png";
 import { Button } from "@/components/ui/button";

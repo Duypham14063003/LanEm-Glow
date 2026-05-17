@@ -2,6 +2,8 @@ import React from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
 
+export const dynamic = 'force-dynamic';
+
 import { AnalyticsPageView } from "@/components/analytics/analytics-page-view";
 import { ConcernScroller } from "@/components/site/concern-scroller";
 import { HeroCta } from "@/components/site/hero-cta";

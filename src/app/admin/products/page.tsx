@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { AdminProductsWorkspace } from "@/components/admin/admin-products-workspace";
 import { AdminTopbar } from "@/components/admin/admin-topbar";
 import { Button } from "@/components/ui/button";

@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { AdminOrderCreatePanel } from "@/components/admin/admin-order-create-panel";
 import { AdminTopbar } from "@/components/admin/admin-topbar";
 import { OrderDetailPanel } from "@/components/admin/order-detail-panel";

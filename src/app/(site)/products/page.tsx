@@ -1,6 +1,8 @@
 import React from "react";
 import type { Metadata } from "next";
 
+export const dynamic = 'force-dynamic';
+
 import { AnalyticsPageView } from "@/components/analytics/analytics-page-view";
 import { PageSection } from "@/components/site/page-section";
 import { ProductCard } from "@/components/site/product-card";

@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { AdminSettingsWorkspace } from "@/components/admin/admin-settings-workspace";
 import { AdminTopbar } from "@/components/admin/admin-topbar";
 import { getAdminSettings } from "@/services/settings";
