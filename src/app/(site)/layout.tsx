@@ -47,12 +47,11 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
       />
       <QuickOrderShell>
         <div className="relative z-10">
-          <SiteHeader phone={settings.brandPhone} primaryCtaLabel={settings.primaryCtaLabel} />
+          <SiteHeader />
           <div className="flex min-h-[calc(100vh-80px)] flex-col">
             <main className="flex-1 pb-24 md:pb-0">{children}</main>
             <SiteFooter
               phone={settings.brandPhone}
-              zaloUrl={settings.zaloUrl}
               announcement={settings.publicAnnouncement}
             />
           </div>

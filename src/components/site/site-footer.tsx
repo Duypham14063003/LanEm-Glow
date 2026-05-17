@@ -1,6 +1,5 @@
 interface SiteFooterProps {
   phone: string | null;
-  zaloUrl: string | null;
   announcement: string | null;
 }
 
@@ -10,17 +9,13 @@ const footerLinks = [
   { label: "Chính sách riêng tư", href: "#privacy" },
 ];
 
-export function SiteFooter({ phone, zaloUrl, announcement }: SiteFooterProps) {
+export function SiteFooter({ phone, announcement }: SiteFooterProps) {
   return (
     <footer className="border-t border-[var(--color-border)] bg-white/80">
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[1.2fr_0.8fr] lg:px-8">
         <div className="space-y-4">
           <div>
             <p className="font-heading text-3xl text-[var(--color-foreground)]">LanEm Glow</p>
-            {/* <p className="mt-2 max-w-xl text-sm text-[var(--color-foreground-soft)]">
-              Website skincare theo hướng tinh gọn, giúp khách tìm sản phẩm nhanh và để lại
-              nhu cầu tư vấn với ít ma sát nhất.
-            </p> */}
           </div>
           {announcement ? (
             <p
@@ -56,13 +51,6 @@ export function SiteFooter({ phone, zaloUrl, announcement }: SiteFooterProps) {
             </p>
             <div className="mt-3 space-y-2 text-sm text-[var(--color-foreground-soft)]">
               {phone ? <a href={`tel:${phone}`}>Hotline: {phone}</a> : <p>Tư vấn theo nhu cầu da</p>}
-              {/* {zaloUrl ? (
-                <a href={zaloUrl} target="_blank" rel="noreferrer">
-                  Zalo: {phone}
-                </a>
-              ) : (
-                <p>Không cần thanh toán trước</p>
-              )} */}
             </div>
           </div>
         </div>

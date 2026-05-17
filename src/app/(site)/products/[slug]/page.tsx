@@ -4,17 +4,11 @@ import { notFound } from "next/navigation";
 import { AnalyticsPageView } from "@/components/analytics/analytics-page-view";
 import { ConcernScroller } from "@/components/site/concern-scroller";
 import { PageSection } from "@/components/site/page-section";
-import { ProductCard } from "@/components/site/product-card";
 import { ProductDetailActions } from "@/components/site/product-detail-actions";
 import { ProductGallery } from "@/components/site/product-gallery";
-import { StorefrontCta } from "@/components/site/storefront-cta";
-import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { buildProductMetadata } from "@/lib/metadata";
-import {
-  getCatalogProductBySlug,
-  listCatalogProducts,
-} from "@/services/products";
+import { getCatalogProductBySlug } from "@/services/products";
 
 function formatPrice(value: number) {
   return new Intl.NumberFormat("vi-VN").format(value);
@@ -56,13 +50,6 @@ export default async function ProductDetailPage({
   if (!product) {
     notFound();
   }
-
-  const sameCategory = await listCatalogProducts({
-    category: product.category,
-  });
-  const relatedProducts = sameCategory
-    .filter((item) => item.slug !== product.slug)
-    .slice(0, 3);
 
   return (
     <>
@@ -142,46 +129,8 @@ export default async function ProductDetailPage({
               {product.description}
             </p>
           </Card>
-
-          {/* <Card className="space-y-4">
-            <h2 className="font-heading text-4xl text-[var(--color-foreground)]">
-              Hướng dẫn chọn nhanh
-            </h2>
-            <ul className="space-y-3 text-sm leading-7 text-[var(--color-foreground-soft)]">
-              <li>Ưu tiên 1-2 món thực sự hợp concern trước khi mở rộng routine.</li>
-              <li>Texture nhẹ, dễ layer thường phù hợp cho người mới bắt đầu.</li>
-              <li>Nếu da đang nhạy cảm, hãy bắt đầu từ phục hồi và chống nắng hằng ngày.</li>
-            </ul>
-          </Card> */}
         </div>
       </PageSection>
-
-      {/* {relatedProducts.length > 0 ? (
-        <PageSection className="pt-0">
-          <div className="space-y-6">
-            <div>
-              <p className="text-sm uppercase tracking-[0.16em] text-[var(--color-muted)]">
-                Liên quan
-              </p>
-              <h2 className="mt-2 font-heading text-4xl text-[var(--color-foreground)]">
-                Có thể bạn cũng sẽ thích
-              </h2>
-            </div>
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {relatedProducts.map((item) => (
-                <ProductCard key={item.id} product={item} />
-              ))}
-            </div>
-          </div>
-        </PageSection>
-      ) : null} */}
-
-      {/* <PageSection className="pt-0">
-        <StorefrontCta
-          title="Muốn xem thêm sản phẩm cùng vibe nhẹ và dễ dùng?"
-          description="Bạn có thể quay lại catalog để xem thêm các món nổi bật, serum phục hồi hoặc chống nắng phù hợp cho routine hằng ngày."
-        />
-      </PageSection> */}
     </>
   );
 }

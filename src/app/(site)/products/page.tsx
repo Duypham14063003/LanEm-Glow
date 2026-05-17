@@ -51,7 +51,6 @@ export default async function ProductsPage({
   const query = parseSearchParams(resolvedSearchParams);
 
   let items: Product[] = [];
-  let categories: string[] = [];
   let concerns: string[] = [];
 
   try {
@@ -61,7 +60,6 @@ export default async function ProductsPage({
     ]);
 
     items = filteredProducts;
-    categories = [...new Set(allProducts.map((product) => product.category.toLowerCase()))];
     concerns = [...new Set(allProducts.flatMap((product) => product.concerns))];
   } catch {
     items = [];
@@ -99,7 +97,6 @@ export default async function ProductsPage({
       <PageSection className="pt-0">
         <ProductListFilters
           query={query}
-          categories={categories}
           concerns={concerns.map((concern) => concern.replaceAll("-", " "))}
         />
       </PageSection>

@@ -27,8 +27,11 @@ export function parseBoolean(value: string): boolean {
   return ["true", "1", "yes", "y"].includes(normalized);
 }
 
-export function parseOptionalNumber(value: string): number | null {
-  const normalized = value.trim();
+export function parseOptionalNumber(value: string | number | undefined | null): number | null {
+  if (value === undefined || value === null) {
+    return null;
+  }
+  const normalized = String(value).trim();
   if (!normalized) {
     return null;
   }
@@ -37,7 +40,7 @@ export function parseOptionalNumber(value: string): number | null {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
-export function parseRequiredNumber(value: string, field: string): number {
+export function parseRequiredNumber(value: string | number | undefined | null, field: string): number {
   const parsed = parseOptionalNumber(value);
 
   if (parsed === null) {

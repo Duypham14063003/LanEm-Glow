@@ -1,14 +1,12 @@
-import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import { Star } from "lucide-react";
 
 interface TestimonialCardProps {
   quote: string;
   author: string;
-  context: string;
 }
 
-export function TestimonialCard({ quote, author, context }: TestimonialCardProps) {
+export function TestimonialCard({ quote, author }: TestimonialCardProps) {
   return (
     <div className="bg-white p-6 rounded-[24px] shadow-sm border border-[var(--color-border)] flex flex-col gap-4 relative min-h-[160px]">
       <div className="flex gap-1">

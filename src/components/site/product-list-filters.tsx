@@ -10,7 +10,6 @@ import type { ProductCatalogQuery } from "@/types";
 
 interface ProductListFiltersProps {
   query: ProductCatalogQuery;
-  categories: string[];
   concerns: string[];
 }
 
@@ -35,7 +34,6 @@ function buildFilterHref(
 
 export function ProductListFilters({
   query,
-  categories,
   concerns,
 }: ProductListFiltersProps) {
   const hasFilters = Boolean(

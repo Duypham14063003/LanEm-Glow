@@ -23,7 +23,7 @@ export interface RawProductRow extends RawSheetRow {
   search_keywords: string;
   created_at: string;
   updated_at: string;
-  quantity?: string;
+  quantity: string;
 }
 
 export interface Product {

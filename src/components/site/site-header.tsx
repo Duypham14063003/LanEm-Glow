@@ -5,14 +5,8 @@ import Link from "next/link";
 import { Search, User, ShoppingBag, MessageCircle } from "lucide-react";
 
 import logoImage from "@/assets/logo.png";
-import { Button } from "@/components/ui/button";
 import { useSelectedProducts } from "@/hooks/use-selected-products";
 import { useQuickOrder } from "@/hooks/use-quick-order";
-
-interface SiteHeaderProps {
-   phone: string | null;
-   primaryCtaLabel: string | null;
-}
 
 // Simple TikTok icon SVG since Lucide doesn't have it natively
 const TikTokIcon = ({ className }: { className?: string }) => (
@@ -21,7 +15,7 @@ const TikTokIcon = ({ className }: { className?: string }) => (
    </svg>
 );
 
-export function SiteHeader({ phone, primaryCtaLabel }: SiteHeaderProps) {
+export function SiteHeader() {
    const { count } = useSelectedProducts();
    const { openQuickOrder } = useQuickOrder();
 

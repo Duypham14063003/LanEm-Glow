@@ -28,19 +28,16 @@ const testimonials = [
     quote:
       "Mình thích cảm giác được gợi ý vừa đủ, không bị ép mua nhiều bước. Xem xong là biết nên bắt đầu từ đâu.",
     author: "Khách hàng skincare tối giản",
-    context: "Routine phục hồi sau treatment",
   },
   {
     quote:
       "Cách trình bày rất nhẹ mắt, nhìn nhanh trên điện thoại vẫn chọn được sản phẩm phù hợp.",
     author: "Khách hàng da nhạy cảm",
-    context: "Tìm kem chống nắng dùng hằng ngày",
   },
   {
     quote:
       "Phần mô tả ngắn gọn nhưng đủ tin cậy, nên mình dễ shortlist vài món rồi quyết định sau.",
     author: "Khách hàng mới bắt đầu skincare",
-    context: "Chọn serum đầu tiên",
   },
 ];
 
@@ -110,7 +107,7 @@ export default async function SiteHomePage() {
           <h2 className="font-heading text-lg font-bold uppercase tracking-wide text-[var(--color-foreground)]">
             DANH MỤC NỔI BẬT
           </h2>
-          <Button asChild variant="link" className="text-sm font-medium p-0 h-auto text-[var(--color-primary-strong)]">
+          <Button asChild variant="ghost" className="text-sm font-medium p-0 h-auto text-[var(--color-primary-strong)]">
             <Link href="/categories">Xem tất cả &rarr;</Link>
           </Button>
         </div>
@@ -128,7 +125,7 @@ export default async function SiteHomePage() {
           <h2 className="font-heading text-lg font-bold uppercase tracking-wide text-[var(--color-foreground)]">
             SẢN PHẨM
           </h2>
-          <Button asChild variant="link" className="text-sm font-medium p-0 h-auto text-[var(--color-primary-strong)]">
+          <Button asChild variant="ghost" className="text-sm font-medium p-0 h-auto text-[var(--color-primary-strong)]">
             <Link href="/products">Xem tất cả &rarr;</Link>
           </Button>
         </div>
@@ -150,7 +147,7 @@ export default async function SiteHomePage() {
             <h2 className="font-heading text-lg font-bold uppercase tracking-wide text-[var(--color-foreground)]">
               FEEDBACK CỦA KHÁCH
             </h2>
-            <Button asChild variant="link" className="text-sm font-medium p-0 h-auto text-[var(--color-primary-strong)]">
+            <Button asChild variant="ghost" className="text-sm font-medium p-0 h-auto text-[var(--color-primary-strong)]">
               <Link href="/#feedback">Xem tất cả &rarr;</Link>
             </Button>
           </div>
