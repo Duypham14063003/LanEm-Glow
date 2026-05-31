@@ -1,4 +1,4 @@
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -77,7 +77,11 @@ export default async function ProductDetailPage({
               <div className="space-y-3">
                 <div className="flex gap-2">
                   <div className="bg-[var(--color-primary-strong)] text-white text-xs font-bold px-3 py-1 rounded-sm tracking-wide w-fit">
-                    {product.stockStatus === "out_of_stock" ? "HẾT HÀNG" : (product.price > 300000 ? "HOT" : "NEW")}
+                    {product.stockStatus === "out_of_stock"
+                      ? "HẾT HÀNG"
+                      : product.price > 300000
+                        ? "HOT"
+                        : "NEW"}
                   </div>
                   {product.searchKeywords?.[0]?.trim() ? (
                     <div className="bg-[var(--color-accent)] text-white text-xs font-bold px-3 py-1 rounded-sm tracking-wide uppercase w-fit">
@@ -104,7 +108,11 @@ export default async function ProductDetailPage({
               </div>
               {product.quantity !== null && (
                 <p className="text-sm font-medium text-[var(--color-foreground-soft)]">
-                  Còn lại: <span className="text-[var(--color-foreground)]">{product.quantity}</span> sản phẩm
+                  Còn lại:{" "}
+                  <span className="text-[var(--color-foreground)]">
+                    {product.quantity}
+                  </span>{" "}
+                  sản phẩm
                 </p>
               )}
             </div>
@@ -121,7 +129,7 @@ export default async function ProductDetailPage({
         </div>
       </PageSection>
 
-      <PageSection className="pt-0">
+      {/* <PageSection className="pt-0">
         <div className="grid gap-6 lg:grid-cols-[1fr_0.9fr]">
           <Card className="space-y-4">
             <h2 className="font-heading text-4xl text-[var(--color-foreground)]">
@@ -132,7 +140,7 @@ export default async function ProductDetailPage({
             </p>
           </Card>
         </div>
-      </PageSection>
+      </PageSection> */}
     </>
   );
 }
