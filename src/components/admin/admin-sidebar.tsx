@@ -9,9 +9,9 @@ import logoImage from "@/assets/logo.png";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/admin/orders", label: "Đơn hàng", icon: ClipboardList },
-  { href: "/admin/products", label: "Sản phẩm", icon: PackageSearch },
-  { href: "/admin/settings", label: "Cài đặt", icon: Settings },
+  { href: "/lananh113388/orders", label: "Đơn hàng", icon: ClipboardList },
+  { href: "/lananh113388/products", label: "Sản phẩm", icon: PackageSearch },
+  { href: "/lananh113388/settings", label: "Cài đặt", icon: Settings },
 ];
 
 export function AdminSidebar() {
@@ -20,7 +20,7 @@ export function AdminSidebar() {
   return (
     <aside className="w-full border-b border-[var(--color-border)] bg-white/90 px-4 py-4 lg:min-h-screen lg:w-[220px] lg:border-b-0 lg:border-r lg:px-5 lg:py-6">
       <div className="flex items-center justify-between gap-4 lg:block">
-        <Link href="/admin/orders" className="min-w-fit">
+        <Link href="/lananh113388/orders" className="min-w-fit">
           <div className="flex items-center gap-3">
             <div className="relative h-11 w-11 overflow-hidden rounded-full border border-[var(--color-border)] bg-white shadow-[0_10px_24px_rgba(15,23,42,0.08)] ring-4 ring-[color:color-mix(in_srgb,white_70%,transparent)]">
               <Image
@@ -47,7 +47,8 @@ export function AdminSidebar() {
       <nav className="mt-4 flex gap-2 overflow-x-auto lg:mt-8 lg:flex-col">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+          const active =
+            pathname === item.href || pathname.startsWith(`${item.href}/`);
 
           return (
             <Link
@@ -57,7 +58,7 @@ export function AdminSidebar() {
                 "inline-flex min-h-11 items-center gap-3 rounded-full px-4 py-3 text-sm font-medium transition duration-[var(--motion-fast)] ease-[var(--ease-standard)]",
                 active
                   ? "bg-[var(--color-accent-soft)] text-[var(--color-accent)]"
-                  : "text-[var(--color-foreground-soft)] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-foreground)]"
+                  : "text-[var(--color-foreground-soft)] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-foreground)]",
               )}
             >
               <Icon className="size-4" aria-hidden="true" />

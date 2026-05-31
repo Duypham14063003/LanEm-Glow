@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 interface SiteFooterProps {
   phone: string | null;
   announcement: string | null;
@@ -6,7 +8,7 @@ interface SiteFooterProps {
 const footerLinks = [
   { label: "Trang chủ", href: "/" },
   { label: "Sản phẩm", href: "/products" },
-  { label: "Chính sách riêng tư", href: "#privacy" },
+  { label: "Cam kết & lưu ý", href: "/cam-ket-luu-y" },
 ];
 
 export function SiteFooter({ phone, announcement }: SiteFooterProps) {
@@ -19,7 +21,6 @@ export function SiteFooter({ phone, announcement }: SiteFooterProps) {
           </div>
           {announcement ? (
             <p
-              id="privacy"
               className=" px-4 py-3 text-sm text-[var(--color-foreground-soft)]"
             >
               {announcement}
@@ -34,13 +35,13 @@ export function SiteFooter({ phone, announcement }: SiteFooterProps) {
             </p>
             <div className="mt-3 space-y-2">
               {footerLinks.map((link) => (
-                <a
+                <Link
                   key={link.label}
                   href={link.href}
                   className="block text-sm text-[var(--color-foreground-soft)] transition hover:text-[var(--color-accent)]"
                 >
                   {link.label}
-                </a>
+                </Link>
               ))}
             </div>
           </div>

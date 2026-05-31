@@ -15,7 +15,7 @@ interface ProductListFiltersProps {
 
 function buildFilterHref(
   query: ProductCatalogQuery,
-  updates: Partial<ProductCatalogQuery>
+  updates: Partial<ProductCatalogQuery>,
 ): string {
   const nextQuery: ProductCatalogQuery = { ...query, ...updates };
   const params = new URLSearchParams();
@@ -37,7 +37,11 @@ export function ProductListFilters({
   concerns,
 }: ProductListFiltersProps) {
   const hasFilters = Boolean(
-    query.q || query.category || query.concern || query.stockStatus || query.featured
+    query.q ||
+    query.category ||
+    query.concern ||
+    query.stockStatus ||
+    query.featured,
   );
 
   return (
@@ -60,7 +64,7 @@ export function ProductListFilters({
           placeholder="Tìm serum, chống nắng, phục hồi barrier..."
           aria-label="Tìm kiếm sản phẩm"
         />
-        <select
+        {/* <select
           name="stockStatus"
           defaultValue={query.stockStatus ?? ""}
           aria-label="Lọc theo tình trạng tồn kho"
@@ -70,14 +74,16 @@ export function ProductListFilters({
           <option value="in_stock">Sẵn hàng</option>
           <option value="preorder">Pre-order</option>
           <option value="out_of_stock">Tạm hết hàng</option>
-        </select>
+        </select> */}
         <Button type="submit" className="w-full md:w-auto">
           Áp dụng
         </Button>
       </form>
 
       <div className="space-y-3">
-        <p className="text-sm font-medium text-[var(--color-foreground-soft)]">Concern nổi bật</p>
+        <p className="text-sm font-medium text-[var(--color-foreground-soft)]">
+          Concern nổi bật
+        </p>
         <div className="flex flex-wrap gap-2">
           {concerns.map((concern) => (
             <Link
@@ -98,8 +104,6 @@ export function ProductListFilters({
           ))}
         </div>
       </div>
-
-
 
       {hasFilters ? (
         <div className="pt-1">

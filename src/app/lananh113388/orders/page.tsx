@@ -1,4 +1,4 @@
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 import { AdminOrderCreatePanel } from "@/components/admin/admin-order-create-panel";
 import { AdminTopbar } from "@/components/admin/admin-topbar";
@@ -17,7 +17,9 @@ function getFirst(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
 }
 
-export default async function AdminOrdersPage({ searchParams }: OrdersPageProps) {
+export default async function AdminOrdersPage({
+  searchParams,
+}: OrdersPageProps) {
   const params = await searchParams;
   const query = parseOrderAdminQuery({
     q: getFirst(params.q),
@@ -58,9 +60,13 @@ export default async function AdminOrdersPage({ searchParams }: OrdersPageProps)
       />
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
         <AdminOrderStats allOrders={allOrders} products={products} />
-        
+
         <form className="grid gap-3 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white/80 p-4 shadow-[var(--shadow-card)] xl:grid-cols-[2fr_1fr_1fr_1fr_auto]">
-          <Input name="dateFrom" type="date" defaultValue={query.dateFrom ?? ""} />
+          <Input
+            name="dateFrom"
+            type="date"
+            defaultValue={query.dateFrom ?? ""}
+          />
           <Input name="dateTo" type="date" defaultValue={query.dateTo ?? ""} />
           <select
             name="status"
@@ -78,11 +84,12 @@ export default async function AdminOrdersPage({ searchParams }: OrdersPageProps)
           </select>
           <div className="flex flex-wrap gap-2">
             <a
-              href={`/admin/orders?${duplicateQuery.toString()}`}
-              className={`inline-flex min-h-10 items-center justify-center rounded-full border px-4 py-2 text-sm font-medium transition duration-[var(--motion-fast)] ease-[var(--ease-standard)] ${query.duplicate === true
+              href={`/lananh113388/orders?${duplicateQuery.toString()}`}
+              className={`inline-flex min-h-10 items-center justify-center rounded-full border px-4 py-2 text-sm font-medium transition duration-[var(--motion-fast)] ease-[var(--ease-standard)] ${
+                query.duplicate === true
                   ? "border-[var(--color-accent)] bg-[var(--color-accent-soft)] text-[var(--color-accent)]"
                   : "border-[var(--color-border)] bg-white text-[var(--color-foreground)] hover:border-[var(--color-primary)] hover:bg-[var(--color-surface-muted)]"
-                }`}
+              }`}
             >
               Chỉ đơn trùng
             </a>
@@ -102,7 +109,10 @@ export default async function AdminOrdersPage({ searchParams }: OrdersPageProps)
                 {items.length} đơn phù hợp
               </p>
             </div>
-            <OrdersTable items={items} selectedOrderId={selectedOrder?.orderId} />
+            <OrdersTable
+              items={items}
+              selectedOrderId={selectedOrder?.orderId}
+            />
           </div>
 
           <div className="space-y-5 xl:sticky xl:top-24 xl:self-start">

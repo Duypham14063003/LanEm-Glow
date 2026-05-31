@@ -21,15 +21,15 @@ export function AdminOrderCreatePanel({ products }: { products: Product[] }) {
 
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredProducts = products.filter(product => 
-    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const toggleProduct = (productId: string) => {
     setSelectedProductIds((current) =>
       current.includes(productId)
         ? current.filter((item) => item !== productId)
-        : [...current, productId]
+        : [...current, productId],
     );
   };
 
@@ -60,14 +60,16 @@ export function AdminOrderCreatePanel({ products }: { products: Product[] }) {
 
       if (!response.ok) {
         setError(
-          "error" in payload ? payload.error ?? "Không thể tạo đơn hàng thủ công." : "Không thể tạo đơn hàng thủ công."
+          "error" in payload
+            ? (payload.error ?? "Không thể tạo đơn hàng thủ công.")
+            : "Không thể tạo đơn hàng thủ công.",
         );
         return;
       }
 
       const orderId = (payload as { order: { orderId: string } }).order.orderId;
       setMessage("Đã tạo đơn hàng mới. Đang chuyển sang chi tiết đơn...");
-      window.location.href = `/admin/orders?selectedOrderId=${encodeURIComponent(orderId)}`;
+      window.location.href = `/lananh113388/orders?selectedOrderId=${encodeURIComponent(orderId)}`;
     } catch {
       setError("Không thể kết nối để tạo đơn hàng. Vui lòng thử lại.");
     } finally {
@@ -78,19 +80,36 @@ export function AdminOrderCreatePanel({ products }: { products: Product[] }) {
   return (
     <Card className="space-y-5 p-4 sm:p-5">
       <div>
-        <p className="text-xs uppercase tracking-[0.14em] text-[var(--color-muted)]">Tạo đơn thủ công</p>
-        <h2 className="mt-1 text-3xl text-[var(--color-foreground)]">Đơn hàng mới</h2>
+        <p className="text-xs uppercase tracking-[0.14em] text-[var(--color-muted)]">
+          Tạo đơn thủ công
+        </p>
+        <h2 className="mt-1 text-3xl text-[var(--color-foreground)]">
+          Đơn hàng mới
+        </h2>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
         <Field label="Số điện thoại">
-          <Input value={phone} onChange={(event) => setPhone(event.target.value)} disabled={isSaving} />
+          <Input
+            value={phone}
+            onChange={(event) => setPhone(event.target.value)}
+            disabled={isSaving}
+          />
         </Field>
         <Field label="Tên khách">
-          <Input value={customerName} onChange={(event) => setCustomerName(event.target.value)} disabled={isSaving} />
+          <Input
+            value={customerName}
+            onChange={(event) => setCustomerName(event.target.value)}
+            disabled={isSaving}
+          />
         </Field>
         <Field className="sm:col-span-2" label="Ghi chú">
-          <Textarea value={note} onChange={(event) => setNote(event.target.value)} disabled={isSaving} className="min-h-24" />
+          <Textarea
+            value={note}
+            onChange={(event) => setNote(event.target.value)}
+            disabled={isSaving}
+            className="min-h-24"
+          />
         </Field>
         <Field className="sm:col-span-2" label="Chiến dịch">
           <Input
@@ -107,8 +126,8 @@ export function AdminOrderCreatePanel({ products }: { products: Product[] }) {
           Chọn sản phẩm
         </p>
         <div className="space-y-3">
-          <Input 
-            placeholder="Gõ để tìm kiếm sản phẩm..." 
+          <Input
+            placeholder="Gõ để tìm kiếm sản phẩm..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             disabled={isSaving}
@@ -130,27 +149,38 @@ export function AdminOrderCreatePanel({ products }: { products: Product[] }) {
                       type="checkbox"
                       checked={checked}
                       onChange={() => toggleProduct(product.id)}
-                      disabled={isSaving || product.stockStatus === "out_of_stock"}
+                      disabled={
+                        isSaving || product.stockStatus === "out_of_stock"
+                      }
                       className="mt-1 size-4"
                     />
                     <div className="min-w-0">
-                      <p className="font-medium text-[var(--color-foreground)]">{product.name}</p>
+                      <p className="font-medium text-[var(--color-foreground)]">
+                        {product.name}
+                      </p>
                       <p className="text-sm text-[var(--color-foreground-soft)]">
-                        {product.price.toLocaleString("vi-VN")}đ · {product.stockStatus}
+                        {product.price.toLocaleString("vi-VN")}đ ·{" "}
+                        {product.stockStatus}
                       </p>
                     </div>
                   </label>
                 );
               })
             ) : (
-              <p className="text-sm text-[var(--color-foreground-soft)] py-2 text-center">Không tìm thấy sản phẩm nào.</p>
+              <p className="text-sm text-[var(--color-foreground-soft)] py-2 text-center">
+                Không tìm thấy sản phẩm nào.
+              </p>
             )}
           </div>
         </div>
       </section>
 
-      {message ? <p className="text-sm text-[var(--color-success)]">{message}</p> : null}
-      {error ? <p className="text-sm text-[var(--color-danger)]">{error}</p> : null}
+      {message ? (
+        <p className="text-sm text-[var(--color-success)]">{message}</p>
+      ) : null}
+      {error ? (
+        <p className="text-sm text-[var(--color-danger)]">{error}</p>
+      ) : null}
 
       <Button onClick={handleSubmit} loading={isSaving}>
         Tạo đơn hàng

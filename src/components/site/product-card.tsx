@@ -26,32 +26,39 @@ export function ProductCard({
 
   // Mocking old price for the design (usually this would come from the API)
   const oldPrice = product.price * 1.2;
-  const badgeText = product.stockStatus === "out_of_stock" ? "HẾT HÀNG" : (product.price > 300000 ? "HOT" : "NEW");
+  const badgeText =
+    product.stockStatus === "out_of_stock"
+      ? "HẾT HÀNG"
+      : product.price > 300000
+        ? "HOT"
+        : "NEW";
 
   const conditionTag = product.searchKeywords?.[0]?.trim();
 
   return (
     <div className="group relative bg-white rounded-3xl p-4 shadow-sm border border-[var(--color-border)] transition-all hover:shadow-md flex flex-col h-full">
-      
       {/* Top Badges & Icons */}
       <div className="absolute top-4 left-4 right-4 flex justify-between z-10 pointer-events-none">
-         <div className="flex gap-2">
-           <div className="bg-[var(--color-primary-strong)] text-white text-[10px] font-bold px-2.5 py-1 rounded-sm tracking-wide">
+        <div className="flex gap-2">
+          {/* <div className="bg-[var(--color-primary-strong)] text-white text-[10px] font-bold px-2.5 py-1 rounded-sm tracking-wide">
               {badgeText}
-           </div>
-           {conditionTag ? (
-             <div className="bg-[var(--color-accent)] text-white text-[10px] font-bold px-2.5 py-1 rounded-sm tracking-wide uppercase">
-                {conditionTag}
-             </div>
-           ) : null}
-         </div>
-         <button className="pointer-events-auto text-gray-300 hover:text-[var(--color-primary-strong)] transition-colors">
-            <Heart className="size-5" />
-         </button>
+           </div> */}
+          {conditionTag ? (
+            <div className="bg-[var(--color-accent)] text-white text-[10px] font-bold px-2.5 py-1 rounded-sm tracking-wide uppercase">
+              {conditionTag}
+            </div>
+          ) : null}
+        </div>
+        <button className="pointer-events-auto text-gray-300 hover:text-[var(--color-primary-strong)] transition-colors">
+          <Heart className="size-5" />
+        </button>
       </div>
 
       {/* Image */}
-      <Link href={href} className="relative aspect-square w-full mb-4 mt-2 overflow-hidden flex items-center justify-center">
+      <Link
+        href={href}
+        className="relative aspect-square w-full mb-4 mt-2 overflow-hidden flex items-center justify-center"
+      >
         {product.imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -67,52 +74,52 @@ export function ProductCard({
 
       {/* Info */}
       <div className="flex flex-col flex-1 justify-between">
-         <Link href={href}>
-            <h3 className="font-heading text-sm font-medium text-[var(--color-foreground)] line-clamp-2 leading-tight group-hover:text-[var(--color-primary-strong)] transition-colors mb-4">
-               {product.name}
-            </h3>
-         </Link>
-         
-         <div className="flex items-end justify-between mt-auto">
-            <div className="flex flex-col">
-               <span className="font-bold text-[var(--color-danger)] text-lg leading-none">
-                  {formatPrice(product.price)}đ
-               </span>
-               <div className="flex items-center gap-2 mt-1">
-                 <span className="text-xs text-[var(--color-muted)] line-through">
-                    {formatPrice(oldPrice)}đ
-                 </span>
-                 {product.quantity !== null && (
-                   <span className="text-xs font-medium text-[var(--color-foreground-soft)]">
-                      Kho: {product.quantity}
-                   </span>
-                 )}
-               </div>
+        <Link href={href}>
+          <h3 className="font-heading text-sm font-medium text-[var(--color-foreground)] line-clamp-2 leading-tight group-hover:text-[var(--color-primary-strong)] transition-colors mb-4">
+            {product.name}
+          </h3>
+        </Link>
+
+        <div className="flex items-end justify-between mt-auto">
+          <div className="flex flex-col">
+            <span className="font-bold text-[var(--color-danger)] text-lg leading-none">
+              {formatPrice(product.price)}đ
+            </span>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="text-xs text-[var(--color-muted)] line-through">
+                {formatPrice(oldPrice)}đ
+              </span>
+              {product.quantity !== null && (
+                <span className="text-xs font-medium text-[var(--color-foreground-soft)]">
+                  Kho: {product.quantity}
+                </span>
+              )}
             </div>
-            
-            <div className="flex gap-2">
-               <button 
-                  onClick={(e) => {
-                     e.preventDefault();
-                     addProduct(product);
-                  }}
-                  className="h-9 w-9 rounded-full border border-[var(--color-primary-strong)] text-[var(--color-primary-strong)] flex items-center justify-center hover:bg-[var(--color-primary-strong)] hover:text-white transition-colors shadow-sm"
-                  title="Thêm vào giỏ"
-               >
-                  <ShoppingCart className="size-4" />
-               </button>
-               <button 
-                  onClick={(e) => {
-                     e.preventDefault();
-                     addProduct(product);
-                     openQuickOrder("card");
-                  }}
-                  className="h-9 px-4 rounded-full bg-[var(--color-primary-strong)] text-white text-xs font-bold flex items-center justify-center hover:bg-[var(--color-primary)] transition-colors shadow-sm whitespace-nowrap"
-               >
-                  Mua ngay
-               </button>
-            </div>
-         </div>
+          </div>
+
+          <div className="flex gap-2">
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                addProduct(product);
+              }}
+              className="h-9 w-9 rounded-full border border-[var(--color-primary-strong)] text-[var(--color-primary-strong)] flex items-center justify-center hover:bg-[var(--color-primary-strong)] hover:text-white transition-colors shadow-sm"
+              title="Thêm vào giỏ"
+            >
+              <ShoppingCart className="size-4" />
+            </button>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                addProduct(product);
+                openQuickOrder("card");
+              }}
+              className="h-9 px-4 rounded-full bg-[var(--color-primary-strong)] text-white text-xs font-bold flex items-center justify-center hover:bg-[var(--color-primary)] transition-colors shadow-sm whitespace-nowrap"
+            >
+              Mua ngay
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

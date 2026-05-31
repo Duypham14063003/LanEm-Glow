@@ -55,7 +55,11 @@ type AdminProductsDependencies = {
   appendRow: (tabName: string, row: string[]) => Promise<void>;
   now: () => Date;
   readProductsWithIndex: () => Promise<IndexedProductRow[]>;
-  updateRow: (tabName: string, rowNumber: number, row: string[]) => Promise<void>;
+  updateRow: (
+    tabName: string,
+    rowNumber: number,
+    row: string[],
+  ) => Promise<void>;
 };
 
 const defaultDependencies: AdminProductsDependencies = {
@@ -70,7 +74,7 @@ const defaultDependencies: AdminProductsDependencies = {
 
     assertRequiredHeaders(
       normalizedRows.map((item) => item.row),
-      [...PRODUCT_REQUIRED_HEADERS]
+      [...PRODUCT_REQUIRED_HEADERS],
     );
 
     return normalizedRows;
@@ -82,7 +86,10 @@ export class ProductAdminError extends Error {
   statusCode: number;
   code: string;
 
-  constructor(message: string, options?: { statusCode?: number; code?: string }) {
+  constructor(
+    message: string,
+    options?: { statusCode?: number; code?: string },
+  ) {
     super(message);
     this.name = "ProductAdminError";
     this.statusCode = options?.statusCode ?? 400;
@@ -121,10 +128,13 @@ function normalizeUniqueList(value: unknown, field: string): string[] {
     .filter(Boolean);
 
   if (field === "concerns" && items.length === 0) {
-    throw new ProductAdminError("Bạn cần nhập ít nhất một concern cho sản phẩm.", {
-      statusCode: 400,
-      code: "INVALID_PRODUCT_PAYLOAD",
-    });
+    throw new ProductAdminError(
+      "Bạn cần nhập ít nhất một concern cho sản phẩm.",
+      {
+        statusCode: 400,
+        code: "INVALID_PRODUCT_PAYLOAD",
+      },
+    );
   }
 
   return Array.from(new Set(items));
@@ -173,8 +183,17 @@ function normalizeBoolean(value: unknown): boolean {
   return false;
 }
 
-function normalizeRequiredNumberValue(value: unknown, field: string, label: string): number {
-  const normalized = typeof value === "number" ? `${value}` : typeof value === "string" ? value : "";
+function normalizeRequiredNumberValue(
+  value: unknown,
+  field: string,
+  label: string,
+): number {
+  const normalized =
+    typeof value === "number"
+      ? `${value}`
+      : typeof value === "string"
+        ? value
+        : "";
 
   try {
     return parseRequiredNumber(normalized, field);
@@ -187,7 +206,12 @@ function normalizeRequiredNumberValue(value: unknown, field: string, label: stri
 }
 
 function normalizeOptionalNumberValue(value: unknown): number | null {
-  const normalized = typeof value === "number" ? `${value}` : typeof value === "string" ? value : "";
+  const normalized =
+    typeof value === "number"
+      ? `${value}`
+      : typeof value === "string"
+        ? value
+        : "";
   return parseOptionalNumber(normalized);
 }
 
@@ -207,7 +231,8 @@ function normalizeOptionalTikTokUrl(value: unknown): string | null {
 }
 
 function normalizeStatus(value: unknown): ProductStatus {
-  const normalized = typeof value === "string" ? value.trim().toLowerCase() : "";
+  const normalized =
+    typeof value === "string" ? value.trim().toLowerCase() : "";
 
   if (!isProductStatus(normalized)) {
     throw new ProductAdminError("Trạng thái sản phẩm không hợp lệ.", {
@@ -219,8 +244,11 @@ function normalizeStatus(value: unknown): ProductStatus {
   return normalized;
 }
 
-function normalizeStockStatus(value: unknown): ProductAdminMutationInput["stockStatus"] {
-  const normalized = typeof value === "string" ? value.trim().toLowerCase() : "";
+function normalizeStockStatus(
+  value: unknown,
+): ProductAdminMutationInput["stockStatus"] {
+  const normalized =
+    typeof value === "string" ? value.trim().toLowerCase() : "";
 
   if (!isProductStockStatus(normalized)) {
     throw new ProductAdminError("Tình trạng tồn kho không hợp lệ.", {
@@ -232,7 +260,9 @@ function normalizeStockStatus(value: unknown): ProductAdminMutationInput["stockS
   return normalized;
 }
 
-export function normalizeProductAdminInput(input: unknown): ProductAdminMutationInput {
+export function normalizeProductAdminInput(
+  input: unknown,
+): ProductAdminMutationInput {
   if (!input || typeof input !== "object") {
     throw new ProductAdminError("Dữ liệu sản phẩm không hợp lệ.", {
       statusCode: 400,
@@ -248,9 +278,9 @@ export function normalizeProductAdminInput(input: unknown): ProductAdminMutation
     name: normalizeRequiredText(payload.name, "Tên sản phẩm"),
     shortDescription: normalizeRequiredText(
       payload.shortDescription,
-      "Mô tả ngắn"
+      "Mô tả ngắn",
     ),
-    description: normalizeRequiredText(payload.description, "Mô tả chi tiết"),
+    // description: normalizeRequiredText(payload.description, "Mô tả chi tiết"),
     category: normalizeRequiredText(payload.category, "Danh mục"),
     concerns: normalizeUniqueList(payload.concerns, "concerns"),
     price: normalizeRequiredNumberValue(payload.price, "price", "Giá bán"),
@@ -261,20 +291,33 @@ export function normalizeProductAdminInput(input: unknown): ProductAdminMutation
     status: normalizeStatus(payload.status),
     stockStatus: normalizeStockStatus(payload.stockStatus),
     isFeatured: normalizeBoolean(payload.isFeatured),
-    displayOrder: normalizeRequiredNumberValue(payload.displayOrder, "display_order", "Thứ tự hiển thị"),
-    searchKeywords: normalizeUniqueList(payload.searchKeywords, "searchKeywords"),
+    displayOrder: normalizeRequiredNumberValue(
+      payload.displayOrder,
+      "display_order",
+      "Thứ tự hiển thị",
+    ),
+    searchKeywords: normalizeUniqueList(
+      payload.searchKeywords,
+      "searchKeywords",
+    ),
     quantity: normalizeOptionalNumberValue(payload.quantity),
   };
 }
 
-function toAdminListItem(rowNumber: number, row: RawProductRow): ProductAdminListItem {
+function toAdminListItem(
+  rowNumber: number,
+  row: RawProductRow,
+): ProductAdminListItem {
   return {
     rowNumber,
     ...normalizeProductRow(row),
   };
 }
 
-function matchesAdminQuery(item: ProductAdminListItem, query: ProductAdminQuery): boolean {
+function matchesAdminQuery(
+  item: ProductAdminListItem,
+  query: ProductAdminQuery,
+): boolean {
   if (query.status && item.status !== query.status) {
     return false;
   }
@@ -301,14 +344,20 @@ function matchesAdminQuery(item: ProductAdminListItem, query: ProductAdminQuery)
   return true;
 }
 
-function sortAdminProducts(items: ProductAdminListItem[]): ProductAdminListItem[] {
+function sortAdminProducts(
+  items: ProductAdminListItem[],
+): ProductAdminListItem[] {
   return [...items].sort((left, right) => {
     if (left.displayOrder !== right.displayOrder) {
       return left.displayOrder - right.displayOrder;
     }
 
-    const leftUpdatedAt = left.updatedAt ? new Date(left.updatedAt).getTime() : 0;
-    const rightUpdatedAt = right.updatedAt ? new Date(right.updatedAt).getTime() : 0;
+    const leftUpdatedAt = left.updatedAt
+      ? new Date(left.updatedAt).getTime()
+      : 0;
+    const rightUpdatedAt = right.updatedAt
+      ? new Date(right.updatedAt).getTime()
+      : 0;
 
     if (leftUpdatedAt !== rightUpdatedAt) {
       return rightUpdatedAt - leftUpdatedAt;
@@ -321,10 +370,11 @@ function sortAdminProducts(items: ProductAdminListItem[]): ProductAdminListItem[
 function assertUniqueProductIdentity(
   items: ProductAdminListItem[],
   input: ProductAdminMutationInput,
-  options?: { ignoreProductId?: string }
+  options?: { ignoreProductId?: string },
 ) {
   const duplicateId = items.find(
-    (item) => item.id === input.productId && item.id !== options?.ignoreProductId
+    (item) =>
+      item.id === input.productId && item.id !== options?.ignoreProductId,
   );
 
   if (duplicateId) {
@@ -335,7 +385,7 @@ function assertUniqueProductIdentity(
   }
 
   const duplicateSlug = items.find(
-    (item) => item.slug === input.slug && item.id !== options?.ignoreProductId
+    (item) => item.slug === input.slug && item.id !== options?.ignoreProductId,
   );
 
   if (duplicateSlug) {
@@ -346,13 +396,16 @@ function assertUniqueProductIdentity(
   }
 }
 
-function toSheetRow(input: ProductAdminMutationInput, timestamps: { createdAt: string; updatedAt: string }): string[] {
+function toSheetRow(
+  input: ProductAdminMutationInput,
+  timestamps: { createdAt: string; updatedAt: string },
+): string[] {
   return [
     input.productId,
     input.slug,
     input.name,
     input.shortDescription,
-    input.description,
+    // input.description,
     input.category,
     input.concerns.join("|"),
     `${input.price}`,
@@ -373,16 +426,20 @@ function toSheetRow(input: ProductAdminMutationInput, timestamps: { createdAt: s
 
 export async function listAdminProducts(
   query: ProductAdminQuery,
-  dependencies: AdminProductsDependencies = defaultDependencies
+  dependencies: AdminProductsDependencies = defaultDependencies,
 ): Promise<ProductAdminListItem[]> {
   const rows = await dependencies.readProductsWithIndex();
-  const items = rows.map((entry) => toAdminListItem(entry.rowNumber, entry.row));
-  return sortAdminProducts(items).filter((item) => matchesAdminQuery(item, query));
+  const items = rows.map((entry) =>
+    toAdminListItem(entry.rowNumber, entry.row),
+  );
+  return sortAdminProducts(items).filter((item) =>
+    matchesAdminQuery(item, query),
+  );
 }
 
 export async function createAdminProduct(
   input: unknown,
-  dependencies: AdminProductsDependencies = defaultDependencies
+  dependencies: AdminProductsDependencies = defaultDependencies,
 ): Promise<ProductAdminListItem> {
   const normalized = normalizeProductAdminInput(input);
   const items = await listAdminProducts({}, dependencies);
@@ -394,7 +451,7 @@ export async function createAdminProduct(
     toSheetRow(normalized, {
       createdAt: nowIso,
       updatedAt: nowIso,
-    })
+    }),
   );
 
   invalidateCache("catalog:all");
@@ -405,10 +462,13 @@ export async function createAdminProduct(
     .find((item) => item.id === normalized.productId);
 
   if (!created) {
-    throw new ProductAdminError("Đã lưu sản phẩm nhưng không thể đọc lại dữ liệu mới.", {
-      statusCode: 500,
-      code: "PRODUCT_WRITE_FAILED",
-    });
+    throw new ProductAdminError(
+      "Đã lưu sản phẩm nhưng không thể đọc lại dữ liệu mới.",
+      {
+        statusCode: 500,
+        code: "PRODUCT_WRITE_FAILED",
+      },
+    );
   }
 
   return created;
@@ -417,7 +477,7 @@ export async function createAdminProduct(
 export async function updateAdminProduct(
   productId: string,
   input: unknown,
-  dependencies: AdminProductsDependencies = defaultDependencies
+  dependencies: AdminProductsDependencies = defaultDependencies,
 ): Promise<ProductAdminListItem> {
   const targetId = productId.trim();
   if (!targetId) {
@@ -429,7 +489,9 @@ export async function updateAdminProduct(
 
   const normalized = normalizeProductAdminInput(input);
   const rows = await dependencies.readProductsWithIndex();
-  const items = rows.map((entry) => toAdminListItem(entry.rowNumber, entry.row));
+  const items = rows.map((entry) =>
+    toAdminListItem(entry.rowNumber, entry.row),
+  );
   const existing = items.find((item) => item.id === targetId);
 
   if (!existing) {
@@ -440,10 +502,13 @@ export async function updateAdminProduct(
   }
 
   if (normalized.productId !== targetId) {
-    throw new ProductAdminError("Không thể thay đổi mã sản phẩm sau khi đã tạo.", {
-      statusCode: 400,
-      code: "IMMUTABLE_PRODUCT_ID",
-    });
+    throw new ProductAdminError(
+      "Không thể thay đổi mã sản phẩm sau khi đã tạo.",
+      {
+        statusCode: 400,
+        code: "IMMUTABLE_PRODUCT_ID",
+      },
+    );
   }
 
   assertUniqueProductIdentity(items, normalized, {
@@ -456,7 +521,7 @@ export async function updateAdminProduct(
     toSheetRow(normalized, {
       createdAt: existing.createdAt ?? dependencies.now().toISOString(),
       updatedAt: dependencies.now().toISOString(),
-    })
+    }),
   );
 
   invalidateCache("catalog:all");
@@ -467,10 +532,13 @@ export async function updateAdminProduct(
     .find((item) => item.id === normalized.productId);
 
   if (!updated) {
-    throw new ProductAdminError("Đã cập nhật nhưng không thể đọc lại sản phẩm.", {
-      statusCode: 500,
-      code: "PRODUCT_WRITE_FAILED",
-    });
+    throw new ProductAdminError(
+      "Đã cập nhật nhưng không thể đọc lại sản phẩm.",
+      {
+        statusCode: 500,
+        code: "PRODUCT_WRITE_FAILED",
+      },
+    );
   }
 
   return updated;
@@ -478,7 +546,7 @@ export async function updateAdminProduct(
 
 export async function archiveAdminProduct(
   productId: string,
-  dependencies: AdminProductsDependencies = defaultDependencies
+  dependencies: AdminProductsDependencies = defaultDependencies,
 ): Promise<ProductAdminListItem> {
   const targetId = productId.trim();
   if (!targetId) {
@@ -489,7 +557,9 @@ export async function archiveAdminProduct(
   }
 
   const rows = await dependencies.readProductsWithIndex();
-  const existing = rows.find((entry) => entry.row.product_id.trim() === targetId);
+  const existing = rows.find(
+    (entry) => entry.row.product_id.trim() === targetId,
+  );
 
   if (!existing) {
     throw new ProductAdminError("Không tìm thấy sản phẩm cần cập nhật.", {
@@ -504,7 +574,7 @@ export async function archiveAdminProduct(
     slug: current.slug,
     name: current.name,
     shortDescription: current.shortDescription,
-    description: current.description,
+    // description: current.description,
     category: current.category,
     concerns: current.concerns,
     price: current.price,
@@ -526,7 +596,7 @@ export async function archiveAdminProduct(
     toSheetRow(archivedInput, {
       createdAt: current.createdAt ?? dependencies.now().toISOString(),
       updatedAt: dependencies.now().toISOString(),
-    })
+    }),
   );
 
   invalidateCache("catalog:all");

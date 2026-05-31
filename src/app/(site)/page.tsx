@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 import { AnalyticsPageView } from "@/components/analytics/analytics-page-view";
 import { ConcernScroller } from "@/components/site/concern-scroller";
@@ -30,17 +30,17 @@ const fallbackConcerns = [
 const testimonials = [
   {
     quote:
-      "Mình thích cảm giác được gợi ý vừa đủ, không bị ép mua nhiều bước. Xem xong là biết nên bắt đầu từ đâu.",
+      "Giá ổn, hàng giống mô tả với shop support siêu nhiệt tình 🥹 Mấy món cũng là đồ hot nhiều người dùng nên mua yên tâm hẳn.",
     author: "Khách hàng skincare tối giản",
   },
   {
     quote:
-      "Cách trình bày rất nhẹ mắt, nhìn nhanh trên điện thoại vẫn chọn được sản phẩm phù hợp.",
+      "Web dễ nhìn cực, đọc thông tin nhanh với lựa đồ không bị rối 😭 Lướt chút là chốt được món hợp luôn.",
     author: "Khách hàng da nhạy cảm",
   },
   {
     quote:
-      "Phần mô tả ngắn gọn nhưng đủ tin cậy, nên mình dễ shortlist vài món rồi quyết định sau.",
+      "Shop hay tặng quà kèm dễ thương ghê 🫶 Giá mềm mà sản phẩm xịn hơn mình nghĩ luôn á.",
     author: "Khách hàng mới bắt đầu skincare",
   },
 ];
@@ -105,17 +105,26 @@ export default async function SiteHomePage() {
         </div>
       </div>
 
-      <PageSection className="py-4 pb-0 animate-slide-up overflow-hidden" style={{ animationDelay: '0.15s' }}>
+      <PageSection
+        className="py-4 pb-0 animate-slide-up overflow-hidden"
+        style={{ animationDelay: "0.15s" }}
+      >
         <BrandStrip />
       </PageSection>
 
-      <PageSection className="py-6 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-
+      <PageSection
+        className="py-6 animate-slide-up"
+        style={{ animationDelay: "0.2s" }}
+      >
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
           <h2 className="font-heading text-lg font-bold uppercase tracking-wide text-[var(--color-foreground)]">
             DANH MỤC NỔI BẬT
           </h2>
-          <Button asChild variant="ghost" className="text-sm font-medium p-0 h-auto text-[var(--color-primary-strong)]">
+          <Button
+            asChild
+            variant="ghost"
+            className="text-sm font-medium p-0 h-auto text-[var(--color-primary-strong)]"
+          >
             <Link href="/categories">Xem tất cả &rarr;</Link>
           </Button>
         </div>
@@ -128,12 +137,19 @@ export default async function SiteHomePage() {
         </div>
       </PageSection>
 
-      <PageSection className="py-6 animate-slide-up" style={{ animationDelay: '0.4s' }}>
+      <PageSection
+        className="py-6 animate-slide-up"
+        style={{ animationDelay: "0.4s" }}
+      >
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
           <h2 className="font-heading text-lg font-bold uppercase tracking-wide text-[var(--color-foreground)]">
             SẢN PHẨM
           </h2>
-          <Button asChild variant="ghost" className="text-sm font-medium p-0 h-auto text-[var(--color-primary-strong)]">
+          <Button
+            asChild
+            variant="ghost"
+            className="text-sm font-medium p-0 h-auto text-[var(--color-primary-strong)]"
+          >
             <Link href="/products">Xem tất cả &rarr;</Link>
           </Button>
         </div>
@@ -149,13 +165,20 @@ export default async function SiteHomePage() {
         </div>
       </PageSection>
 
-      <PageSection className="py-8 animate-slide-up" style={{ animationDelay: '0.6s' }}>
+      <PageSection
+        className="py-8 animate-slide-up"
+        style={{ animationDelay: "0.6s" }}
+      >
         <div className="space-y-6">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <h2 className="font-heading text-lg font-bold uppercase tracking-wide text-[var(--color-foreground)]">
               FEEDBACK CỦA KHÁCH
             </h2>
-            <Button asChild variant="ghost" className="text-sm font-medium p-0 h-auto text-[var(--color-primary-strong)]">
+            <Button
+              asChild
+              variant="ghost"
+              className="text-sm font-medium p-0 h-auto text-[var(--color-primary-strong)]"
+            >
               <Link href="/#feedback">Xem tất cả &rarr;</Link>
             </Button>
           </div>
@@ -167,7 +190,10 @@ export default async function SiteHomePage() {
         </div>
       </PageSection>
 
-      <PageSection className="mt-5 py-8 animate-slide-up" style={{ animationDelay: '0.7s' }}>
+      <PageSection
+        className="mt-5 py-8 animate-slide-up"
+        style={{ animationDelay: "0.7s" }}
+      >
         <div className="space-y-6">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <h2 className="font-heading text-lg font-bold uppercase tracking-wide text-[var(--color-foreground)]">
@@ -176,21 +202,32 @@ export default async function SiteHomePage() {
           </div>
           <div className="overflow-hidden pb-6 pt-2 -mx-4 sm:-mx-6 px-4 sm:px-6">
             <div className="flex gap-4 sm:gap-6 w-max animate-marquee">
-              {[...[1, 2, 3, 4, 5, 6], ...[1, 2, 3, 4, 5, 6]].map((num, idx) => (
-                <div key={idx} className="relative shrink-0 w-[75vw] sm:w-[280px] lg:w-[320px] aspect-[9/16] rounded-3xl overflow-hidden shadow-sm border border-[var(--color-border)] bg-gray-50">
-                  <video
-                    src={`/videos/video${num}.mp4`}
-                    className="w-full h-full object-cover"
-                    autoPlay muted loop playsInline
-                  />
-                </div>
-              ))}
+              {[...[1, 2, 3, 4, 5, 6], ...[1, 2, 3, 4, 5, 6]].map(
+                (num, idx) => (
+                  <div
+                    key={idx}
+                    className="relative shrink-0 w-[75vw] sm:w-[280px] lg:w-[320px] aspect-[9/16] rounded-3xl overflow-hidden shadow-sm border border-[var(--color-border)] bg-gray-50"
+                  >
+                    <video
+                      src={`/videos/video${num}.mp4`}
+                      className="w-full h-full object-cover"
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                    />
+                  </div>
+                ),
+              )}
             </div>
           </div>
         </div>
       </PageSection>
 
-      <PageSection className="py-8 animate-slide-up" style={{ animationDelay: '0.8s' }}>
+      <PageSection
+        className="py-8 animate-slide-up"
+        style={{ animationDelay: "0.8s" }}
+      >
         <ProfileTrustSection />
       </PageSection>
     </>

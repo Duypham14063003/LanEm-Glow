@@ -81,7 +81,7 @@ export interface ProductAdminMutationInput {
   slug: string;
   name: string;
   shortDescription: string;
-  description: string;
+  // description: string;
   category: string;
   concerns: string[];
   price: number;

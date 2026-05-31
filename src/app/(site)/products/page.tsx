@@ -1,7 +1,7 @@
 import React from "react";
 import type { Metadata } from "next";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 import { AnalyticsPageView } from "@/components/analytics/analytics-page-view";
 import { PageSection } from "@/components/site/page-section";
@@ -18,7 +18,9 @@ function getFirstValue(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
 
-function parseSearchParams(params: Record<string, string | string[] | undefined>): ProductCatalogQuery {
+function parseSearchParams(
+  params: Record<string, string | string[] | undefined>,
+): ProductCatalogQuery {
   const q = getFirstValue(params.q)?.trim();
   const category = getFirstValue(params.category)?.trim();
   const concern = getFirstValue(params.concern)?.trim();
@@ -31,7 +33,9 @@ function parseSearchParams(params: Record<string, string | string[] | undefined>
     concern: concern || undefined,
     featured: featured === "true" ? true : undefined,
     stockStatus:
-      stockStatus === "in_stock" || stockStatus === "out_of_stock" || stockStatus === "preorder"
+      stockStatus === "in_stock" ||
+      stockStatus === "out_of_stock" ||
+      stockStatus === "preorder"
         ? stockStatus
         : undefined,
   };
@@ -70,7 +74,11 @@ export default async function ProductsPage({
   return (
     <>
       <AnalyticsPageView
-        event={query.q || query.category || query.concern || query.stockStatus ? "catalog_filtered" : "catalog_viewed"}
+        event={
+          query.q || query.category || query.concern || query.stockStatus
+            ? "catalog_filtered"
+            : "catalog_viewed"
+        }
         payload={{
           q: query.q ?? null,
           category: query.category ?? null,
@@ -82,16 +90,15 @@ export default async function ProductsPage({
       <PageSection className="pb-6 pt-8 sm:pt-12 text-center">
         <div className="max-w-2xl mx-auto space-y-4 animate-fade-in">
           <p className="font-heading italic text-[var(--color-primary-strong)] text-lg">
-             {query.featured ? "Best Seller" : "Tất cả sản phẩm"}
+            {query.featured ? "Best Seller" : "Tất cả sản phẩm"}
           </p>
-          <h1 className="font-heading text-4xl sm:text-5xl font-medium tracking-tight text-[var(--color-foreground)] uppercase">
+          <h1 className="font-heading text-4xl sm:text-5xl font-medium tracking-tight text-[var(--color-foreground)] p-5 uppercase">
             {query.featured ? "SẢN PHẨM NỔI BẬT" : "TÌM SẢN PHẨM PHÙ HỢP"}
           </h1>
           <p className="text-base text-[var(--color-foreground-soft)] sm:text-lg leading-relaxed">
-            {query.featured 
-               ? "Những món makeup và skincare được pass lại nhiều nhất với giá cực kỳ mềm."
-               : "Tìm kiếm sản phẩm theo nhu cầu da và brand yêu thích của bạn. Cam kết chính hãng 100%."
-            }
+            {query.featured
+              ? "Những món makeup và skincare được pass lại nhiều nhất với giá cực kỳ mềm."
+              : "Tìm kiếm sản phẩm theo nhu cầu da và brand yêu thích của bạn. Cam kết chính hãng 100%."}
           </p>
         </div>
       </PageSection>
