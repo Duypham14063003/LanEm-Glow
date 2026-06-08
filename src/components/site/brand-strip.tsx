@@ -25,7 +25,7 @@ import aztkImg from "@/assets/images/brand/makeup/aztk.jpeg";
 import catriceImg from "@/assets/images/brand/makeup/catrice.png";
 import colorkeyImg from "@/assets/images/brand/makeup/Colorkey.jpg";
 import focallureImg from "@/assets/images/brand/makeup/focallure.png";
-import hoaTayTuImg from "@/assets/images/brand/makeup/hoa tây tử .jpeg";
+import hoaTayTuImg from "@/assets/images/brand/makeup/hoa-tay-tu.jpeg";
 import judydollImg from "@/assets/images/brand/makeup/Judydoll.jpg";
 import perfectDiaryImg from "@/assets/images/brand/makeup/perfect diary.webp";
 import pinkflashImg from "@/assets/images/brand/makeup/Pinkflash.jpg";
