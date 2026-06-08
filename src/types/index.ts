@@ -1,5 +1,5 @@
 export type ProductStatus = "active" | "inactive";
-export type ProductStockStatus = "in_stock" | "out_of_stock" | "preorder";
+export type ProductStockStatus = "in_stock" | "out_of_stock";
 
 export type RawSheetRow = Record<string, string>;
 
@@ -10,6 +10,7 @@ export interface RawProductRow extends RawSheetRow {
   short_description: string;
   description: string;
   category: string;
+  brand: string;
   skin_concern: string;
   price: string;
   compare_at_price: string;
@@ -33,6 +34,7 @@ export interface Product {
   shortDescription: string;
   description: string;
   category: string;
+  brand: string;
   concerns: string[];
   price: number;
   compareAtPrice: number | null;
@@ -62,6 +64,7 @@ export interface SelectedProduct {
 export interface ProductCatalogQuery {
   q?: string;
   category?: string;
+  brand?: string;
   concern?: string;
   featured?: boolean;
   stockStatus?: ProductStockStatus;
@@ -69,7 +72,11 @@ export interface ProductCatalogQuery {
 
 export interface ProductAdminQuery {
   q?: string;
+  name?: string;
+  category?: string;
+  concern?: string;
   status?: ProductStatus;
+  brand?: string;
 }
 
 export interface ProductAdminListItem extends Product {
@@ -81,8 +88,9 @@ export interface ProductAdminMutationInput {
   slug: string;
   name: string;
   shortDescription: string;
-  // description: string;
+  description: string;
   category: string;
+  brand: string;
   concerns: string[];
   price: number;
   compareAtPrice: number | null;
@@ -153,12 +161,8 @@ export interface QuickOrderFormValues {
 
 export type OrderStatus =
   | "new"
-  | "contacted"
-  | "confirmed"
-  | "closed"
-  | "cancelled"
-  | "duplicate"
-  | "invalid";
+  | "pass"
+  | "cancel";
 
 export interface OrderRequestPayload {
   phone: string;
@@ -286,7 +290,7 @@ export interface NotificationDeliveryResult {
 export interface OrderSubmissionResult {
   ok: true;
   orderId: string;
-  status: Extract<OrderStatus, "new" | "duplicate">;
+  status: Extract<OrderStatus, "new">;
   duplicate: boolean;
   normalizedPhone: string;
   itemCount: number;

@@ -19,17 +19,10 @@ function getStatusVariant(status: OrderAdminListItem["status"]) {
   switch (status) {
     case "new":
       return "info";
-    case "contacted":
-      return "warning";
-    case "confirmed":
+    case "pass":
       return "success";
-    case "closed":
-      return "neutral";
-    case "cancelled":
-    case "invalid":
+    case "cancel":
       return "error";
-    case "duplicate":
-      return "warning";
     default:
       return "neutral";
   }
@@ -49,7 +42,9 @@ export function OrdersTable({
           <SearchX className="size-6" aria-hidden="true" />
         </div>
         <div className="space-y-1">
-          <p className="font-heading text-2xl text-[var(--color-foreground)]">Chưa có đơn phù hợp</p>
+          <p className="font-heading text-2xl text-[var(--color-foreground)]">
+            Chưa có đơn phù hợp
+          </p>
           <p className="text-sm text-[var(--color-foreground-soft)]">
             Thử đổi bộ lọc hoặc tìm theo số điện thoại, mã đơn hàng.
           </p>
@@ -70,22 +65,37 @@ export function OrdersTable({
                 <TableHeaderCell>Sản phẩm</TableHeaderCell>
                 <TableHeaderCell>Trạng thái</TableHeaderCell>
                 <TableHeaderCell>Thời gian</TableHeaderCell>
-                <TableHeaderCell className="text-right">Chi tiết</TableHeaderCell>
+                <TableHeaderCell className="text-right">
+                  Chi tiết
+                </TableHeaderCell>
               </tr>
             </TableHead>
             <TableBody>
               {items.map((item) => (
-                <TableRow key={item.orderId} className={selectedOrderId === item.orderId ? "bg-[var(--color-surface-muted)]" : undefined}>
+                <TableRow
+                  key={item.orderId}
+                  className={
+                    selectedOrderId === item.orderId
+                      ? "bg-[var(--color-surface-muted)]"
+                      : undefined
+                  }
+                >
                   <TableCell>
                     <div className="space-y-1">
                       <p className="font-semibold">{item.orderId}</p>
-                      {item.duplicateFlag ? <Badge variant="warning">Đơn trùng</Badge> : null}
+                      {item.duplicateFlag ? (
+                        <Badge variant="warning">Đơn trùng</Badge>
+                      ) : null}
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="space-y-1">
-                      <p className="font-medium">{item.customerName || "Khách chưa để tên"}</p>
-                      <p className="text-xs text-[var(--color-foreground-soft)]">{item.phone}</p>
+                      <p className="font-medium">
+                        {item.customerName || "Khách chưa để tên"}
+                      </p>
+                      <p className="text-xs text-[var(--color-foreground-soft)]">
+                        {item.phone}
+                      </p>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -94,7 +104,9 @@ export function OrdersTable({
                     </p>
                   </TableCell>
                   <TableCell>
-                    <Badge variant={getStatusVariant(item.status)}>{item.status}</Badge>
+                    <Badge variant={getStatusVariant(item.status)}>
+                      {item.status}
+                    </Badge>
                   </TableCell>
                   <TableCell>
                     <p className="text-sm text-[var(--color-foreground-soft)]">
@@ -103,7 +115,11 @@ export function OrdersTable({
                   </TableCell>
                   <TableCell className="text-right">
                     <Button asChild size="sm" variant="secondary">
-                      <a href={`/admin/orders?selectedOrderId=${encodeURIComponent(item.orderId)}`}>Mở</a>
+                      <a
+                        href={`/lananh113388/orders?selectedOrderId=${encodeURIComponent(item.orderId)}`}
+                      >
+                        Mở
+                      </a>
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -115,17 +131,31 @@ export function OrdersTable({
 
       <div className="grid gap-4 lg:hidden">
         {items.map((item) => (
-          <Card key={item.orderId} className={selectedOrderId === item.orderId ? "border-[var(--color-primary)]" : undefined}>
+          <Card
+            key={item.orderId}
+            className={
+              selectedOrderId === item.orderId
+                ? "border-[var(--color-primary)]"
+                : undefined
+            }
+          >
             <div className="space-y-3">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="font-semibold text-[var(--color-foreground)]">{item.orderId}</p>
-                  <p className="mt-1 text-sm text-[var(--color-foreground-soft)]">{item.phone}</p>
+                  <p className="font-semibold text-[var(--color-foreground)]">
+                    {item.orderId}
+                  </p>
+                  <p className="mt-1 text-sm text-[var(--color-foreground-soft)]">
+                    {item.phone}
+                  </p>
                 </div>
-                <Badge variant={getStatusVariant(item.status)}>{item.status}</Badge>
+                <Badge variant={getStatusVariant(item.status)}>
+                  {item.status}
+                </Badge>
               </div>
               <p className="text-sm text-[var(--color-foreground-soft)]">
-                {item.customerName || "Khách chưa để tên"} · {item.itemCount} món
+                {item.customerName || "Khách chưa để tên"} · {item.itemCount}{" "}
+                món
               </p>
               <p className="line-clamp-2 text-sm text-[var(--color-foreground-soft)]">
                 {item.selectedProductNames.join(", ")}
@@ -135,7 +165,11 @@ export function OrdersTable({
                   {formatCompactDate(item.createdAt)}
                 </span>
                 <Button asChild size="sm" variant="secondary">
-                  <a href={`/admin/orders?selectedOrderId=${encodeURIComponent(item.orderId)}`}>Xem chi tiết</a>
+                  <a
+                    href={`/admin/orders?selectedOrderId=${encodeURIComponent(item.orderId)}`}
+                  >
+                    Xem chi tiết
+                  </a>
                 </Button>
               </div>
             </div>

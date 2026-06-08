@@ -62,7 +62,7 @@ test("removeSelectedProduct removes only the matching product", () => {
       name: "Serum B",
       price: 120000,
       imageUrl: "https://example.com/p2.jpg",
-      stockStatus: "preorder",
+      stockStatus: "in_stock",
     },
   ];
 

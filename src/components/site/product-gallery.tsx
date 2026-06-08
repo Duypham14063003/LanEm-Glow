@@ -13,13 +13,14 @@ import {
 import { TikTokEmbed } from "@/components/site/tiktok-embed";
 import { Badge } from "@/components/ui/badge";
 import { buildTikTokEmbedUrl } from "@/lib/tiktok";
-import { cn } from "@/lib/utils";
+import { appendVersionToUrl, cn } from "@/lib/utils";
 
 interface ProductGalleryProps {
   name: string;
   imageUrl: string;
   galleryUrls: string[];
   tiktokUrl: string | null;
+  updatedAt?: string | null;
 }
 
 type MediaItem =
@@ -37,6 +38,7 @@ function buildMediaItems(
   imageUrl: string,
   galleryUrls: string[],
   tiktokUrl: string | null,
+  updatedAt: string | null | undefined,
 ): MediaItem[] {
   const items: MediaItem[] = [];
 
@@ -55,7 +57,7 @@ function buildMediaItems(
       type: "image",
       id: `image-${index}`,
       label: index === 0 ? `${name} image chính` : `${name} image ${index + 1}`,
-      url,
+      url: appendVersionToUrl(url, updatedAt),
     });
   });
 
@@ -67,10 +69,11 @@ export function ProductGallery({
   imageUrl,
   galleryUrls,
   tiktokUrl,
+  updatedAt,
 }: ProductGalleryProps) {
   const mediaItems = useMemo(
-    () => buildMediaItems(name, imageUrl, galleryUrls, tiktokUrl),
-    [galleryUrls, imageUrl, name, tiktokUrl],
+    () => buildMediaItems(name, imageUrl, galleryUrls, tiktokUrl, updatedAt),
+    [galleryUrls, imageUrl, name, tiktokUrl, updatedAt],
   );
   const [activeIndex, setActiveIndex] = useState(0);
   const [isVideoOpen, setIsVideoOpen] = useState(false);

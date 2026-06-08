@@ -19,6 +19,7 @@ const product: ProductAdminListItem = {
   shortDescription: "Mo ta ngan",
   description: "Mo ta dai",
   category: "Serum",
+  brand: "La Roche-Posay",
   concerns: ["phuc hoi"],
   price: 420000,
   compareAtPrice: 490000,
@@ -32,6 +33,7 @@ const product: ProductAdminListItem = {
   searchKeywords: ["serum"],
   createdAt: "2026-04-18T10:00:00.000Z",
   updatedAt: "2026-04-18T11:00:00.000Z",
+  quantity: 5,
 };
 
 test("PATCH /api/admin/products/[id] returns 400 for invalid JSON", async () => {

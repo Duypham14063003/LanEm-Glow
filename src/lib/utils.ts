@@ -35,3 +35,21 @@ export function formatCompactDate(value: string | null): string {
     dateStyle: "medium",
   }).format(parsed);
 }
+
+export function appendVersionToUrl(
+  url: string,
+  version: string | null | undefined,
+): string {
+  if (!url || !version) {
+    return url;
+  }
+
+  try {
+    const parsed = new URL(url);
+    parsed.searchParams.set("v", version);
+    return parsed.toString();
+  } catch {
+    const separator = url.includes("?") ? "&" : "?";
+    return `${url}${separator}v=${encodeURIComponent(version)}`;
+  }
+}

@@ -21,7 +21,7 @@ export function AdminOrderStats({
   let totalRevenue = 0;
 
   for (const order of allOrders) {
-    if (order.status === "cancelled" || order.status === "invalid" || order.status === "duplicate") {
+    if (order.status === "cancel" || order.duplicateFlag) {
       continue;
     }
 

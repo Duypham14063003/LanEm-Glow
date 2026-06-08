@@ -11,6 +11,7 @@ import type { ProductCatalogQuery } from "@/types";
 interface ProductListFiltersProps {
   query: ProductCatalogQuery;
   concerns: string[];
+  brands: string[];
 }
 
 function buildFilterHref(
@@ -22,6 +23,7 @@ function buildFilterHref(
 
   if (nextQuery.q) params.set("q", nextQuery.q);
   if (nextQuery.category) params.set("category", nextQuery.category);
+  if (nextQuery.brand) params.set("brand", nextQuery.brand);
   if (nextQuery.concern) params.set("concern", nextQuery.concern);
   if (typeof nextQuery.featured === "boolean") {
     params.set("featured", String(nextQuery.featured));
@@ -35,10 +37,12 @@ function buildFilterHref(
 export function ProductListFilters({
   query,
   concerns,
+  brands,
 }: ProductListFiltersProps) {
   const hasFilters = Boolean(
     query.q ||
     query.category ||
+    query.brand ||
     query.concern ||
     query.stockStatus ||
     query.featured,
@@ -53,6 +57,7 @@ export function ProductListFilters({
           trackEvent("catalog_filtered", {
             q: query.q ?? null,
             category: query.category ?? null,
+            brand: query.brand ?? null,
             concern: query.concern ?? null,
             stockStatus: query.stockStatus ?? null,
           });
@@ -61,20 +66,22 @@ export function ProductListFilters({
         <Input
           name="q"
           defaultValue={query.q}
-          placeholder="Tìm serum, chống nắng, phục hồi barrier..."
+          placeholder="Tìm serum, brand, chống nắng, phục hồi barrier..."
           aria-label="Tìm kiếm sản phẩm"
         />
-        {/* <select
-          name="stockStatus"
-          defaultValue={query.stockStatus ?? ""}
-          aria-label="Lọc theo tình trạng tồn kho"
+        <select
+          name="brand"
+          defaultValue={query.brand ?? ""}
+          aria-label="Lọc theo brand"
           className="h-12 rounded-[var(--radius-input)] border border-[var(--color-border)] bg-white px-4 text-sm text-[var(--color-foreground)]"
         >
-          <option value="">Tất cả tồn kho</option>
-          <option value="in_stock">Sẵn hàng</option>
-          <option value="preorder">Pre-order</option>
-          <option value="out_of_stock">Tạm hết hàng</option>
-        </select> */}
+          <option value="">Tất cả brand</option>
+          {brands.map((brand) => (
+            <option key={brand} value={brand}>
+              {brand}
+            </option>
+          ))}
+        </select>
         <Button type="submit" className="w-full md:w-auto">
           Áp dụng
         </Button>
@@ -95,6 +102,7 @@ export function ProductListFilters({
                 trackEvent("catalog_filtered", {
                   concern: query.concern === concern ? null : concern,
                   category: query.category ?? null,
+                  brand: query.brand ?? null,
                   q: query.q ?? null,
                 })
               }

@@ -3,31 +3,78 @@
 import Image from "next/image";
 import { useRef, useState } from "react";
 
-import pinkflashImg from "@/assets/images/brand/Pinkflash.jpg";
-import axisYImg from "@/assets/images/brand/Axis-Y.jpg";
-import klairsImg from "@/assets/images/brand/Klairs.jpg";
-import laRochePosayImg from "@/assets/images/brand/La Roche-Posay.jpg";
-import ceraveImg from "@/assets/images/brand/cerave.png";
-import garnierImg from "@/assets/images/brand/Garnier.png";
-import simpleImg from "@/assets/images/brand/simple.jpg";
-import colorkeyImg from "@/assets/images/brand/Colorkey.jpg";
-import lorealImg from "@/assets/images/brand/Loreal.jpg";
-import judydollImg from "@/assets/images/brand/Judydoll.jpg";
+import axisYImg from "@/assets/images/brand/skincare/Axis-Y.jpg";
+import caryophyImg from "@/assets/images/brand/skincare/Caryophy.png";
+import ceraveImg from "@/assets/images/brand/skincare/cerave.png";
+import chandoImg from "@/assets/images/brand/skincare/Chando.png";
+import cnpImg from "@/assets/images/brand/skincare/CNP.jpg";
+import cocoonImg from "@/assets/images/brand/skincare/cocoon.webp";
+import garnierImg from "@/assets/images/brand/skincare/Garnier.png";
+import hasolImg from "@/assets/images/brand/skincare/hasol.png";
+import jumisoImg from "@/assets/images/brand/skincare/jumiso.webp";
+import keyshuImg from "@/assets/images/brand/skincare/keyshu.png";
+import klairsImg from "@/assets/images/brand/skincare/Klairs.jpg";
+import laRochePosayImg from "@/assets/images/brand/skincare/La Roche-Posay.jpg";
+import lorealSkincareImg from "@/assets/images/brand/skincare/Loreal.jpg";
+import simpleImg from "@/assets/images/brand/skincare/simple.jpg";
+import svrImg from "@/assets/images/brand/skincare/SVR.png";
 
-const BRANDS = [
-  { name: "Pinkflash", image: pinkflashImg },
+import threeceImg from "@/assets/images/brand/makeup/3ce.jpg";
+import amortalsImg from "@/assets/images/brand/makeup/amortals.jpeg";
+import aztkImg from "@/assets/images/brand/makeup/aztk.jpeg";
+import catriceImg from "@/assets/images/brand/makeup/catrice.png";
+import colorkeyImg from "@/assets/images/brand/makeup/Colorkey.jpg";
+import focallureImg from "@/assets/images/brand/makeup/focallure.png";
+import hoaTayTuImg from "@/assets/images/brand/makeup/hoa tây tử .jpeg";
+import judydollImg from "@/assets/images/brand/makeup/Judydoll.jpg";
+import perfectDiaryImg from "@/assets/images/brand/makeup/perfect diary.webp";
+import pinkflashImg from "@/assets/images/brand/makeup/Pinkflash.jpg";
+import pinkpunkImg from "@/assets/images/brand/makeup/pinkpunk.jpeg";
+import pramyImg from "@/assets/images/brand/makeup/pramy.png";
+import romandImg from "@/assets/images/brand/makeup/romand.png";
+import zeeseaImg from "@/assets/images/brand/makeup/zeesea.webp";
+
+type BrandItem = {
+  name: string;
+  image: Parameters<typeof Image>[0]["src"];
+};
+
+const SKINCARE_BRANDS: BrandItem[] = [
   { name: "Axis-Y", image: axisYImg },
+  { name: "Caryophy", image: caryophyImg },
+  { name: "CeraVe", image: ceraveImg },
+  { name: "Chando", image: chandoImg },
+  { name: "CNP", image: cnpImg },
+  { name: "Cocoon", image: cocoonImg },
+  { name: "Garnier", image: garnierImg },
+  { name: "Hasol", image: hasolImg },
+  { name: "Jumiso", image: jumisoImg },
+  { name: "Keyshu", image: keyshuImg },
   { name: "Klairs", image: klairsImg },
   { name: "La Roche-Posay", image: laRochePosayImg },
-  { name: "CeraVe", image: ceraveImg },
-  { name: "Garnier", image: garnierImg },
+  { name: "L'Oréal", image: lorealSkincareImg },
   { name: "Simple", image: simpleImg },
-  { name: "Colorkey", image: colorkeyImg },
-  { name: "L'Oréal", image: lorealImg },
-  { name: "Judydoll", image: judydollImg },
+  { name: "SVR", image: svrImg },
 ];
 
-function HoloCard({ brand, index }: { brand: typeof BRANDS[0]; index: number }) {
+const MAKEUP_BRANDS: BrandItem[] = [
+  { name: "3CE", image: threeceImg },
+  { name: "Amortals", image: amortalsImg },
+  { name: "AZTK", image: aztkImg },
+  { name: "Catrice", image: catriceImg },
+  { name: "Colorkey", image: colorkeyImg },
+  { name: "Focallure", image: focallureImg },
+  { name: "Hoa Tay Tu", image: hoaTayTuImg },
+  { name: "Judydoll", image: judydollImg },
+  { name: "Perfect Diary", image: perfectDiaryImg },
+  { name: "Pinkflash", image: pinkflashImg },
+  { name: "Pinkpunk", image: pinkpunkImg },
+  { name: "Pramy", image: pramyImg },
+  { name: "Romand", image: romandImg },
+  { name: "Zeesea", image: zeeseaImg },
+];
+
+function HoloCard({ brand, index }: { brand: BrandItem; index: number }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [style, setStyle] = useState({
     rotateX: 0,
@@ -81,7 +128,9 @@ function HoloCard({ brand, index }: { brand: typeof BRANDS[0]; index: number }) 
           transform: style.hovered
             ? `rotateX(${style.rotateX}deg) rotateY(${style.rotateY}deg) scale(1.12) translateZ(10px)`
             : `rotateX(0deg) rotateY(0deg) scale(1) translateZ(0px)`,
-          transition: style.hovered ? "transform 0.08s ease" : "transform 0.5s cubic-bezier(0.22,1,0.36,1)",
+          transition: style.hovered
+            ? "transform 0.08s ease"
+            : "transform 0.5s cubic-bezier(0.22,1,0.36,1)",
           borderRadius: 20,
           overflow: "hidden",
           background: "rgba(255,255,255,0.92)",
@@ -133,7 +182,14 @@ function HoloCard({ brand, index }: { brand: typeof BRANDS[0]; index: number }) 
         )}
 
         {/* Logo */}
-        <div style={{ position: "relative", width: "100%", height: "100%", padding: 16 }}>
+        <div
+          style={{
+            position: "relative",
+            width: "100%",
+            height: "100%",
+            padding: 16,
+          }}
+        >
           <Image
             src={brand.image}
             alt={brand.name}
@@ -152,7 +208,8 @@ function HoloCard({ brand, index }: { brand: typeof BRANDS[0]; index: number }) 
             left: 0,
             right: 0,
             height: style.hovered ? 28 : 0,
-            background: "linear-gradient(to top, rgba(229,141,161,0.9), transparent)",
+            background:
+              "linear-gradient(to top, rgba(229,141,161,0.9), transparent)",
             display: "flex",
             alignItems: "flex-end",
             justifyContent: "center",
@@ -162,7 +219,15 @@ function HoloCard({ brand, index }: { brand: typeof BRANDS[0]; index: number }) 
             borderRadius: "0 0 20px 20px",
           }}
         >
-          <span style={{ fontSize: 10, fontWeight: 700, color: "white", letterSpacing: "0.1em", textTransform: "uppercase" }}>
+          <span
+            style={{
+              fontSize: 10,
+              fontWeight: 700,
+              color: "white",
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+            }}
+          >
             {brand.name}
           </span>
         </div>
@@ -174,30 +239,65 @@ function HoloCard({ brand, index }: { brand: typeof BRANDS[0]; index: number }) 
 export function BrandStrip() {
   return (
     <div className="w-full py-10">
-      <p className="text-center text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)] mb-8">
+      <p className="text-center text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)] mb-10">
         Brands hợp tác
       </p>
 
       {/* Row 1 — scroll right */}
       <div className="overflow-hidden mb-4">
-        <div style={{ display: "flex", gap: 20, width: "max-content", animation: "brand-scroll-right 28s linear infinite" }}
-          onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.animationPlayState = "paused")}
-          onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.animationPlayState = "running")}
+        <div
+          style={{
+            display: "flex",
+            gap: 20,
+            width: "max-content",
+            animation: "brand-scroll-right 28s linear infinite",
+          }}
+          onMouseEnter={(e) =>
+            ((e.currentTarget as HTMLElement).style.animationPlayState =
+              "paused")
+          }
+          onMouseLeave={(e) =>
+            ((e.currentTarget as HTMLElement).style.animationPlayState =
+              "running")
+          }
         >
-          {[...BRANDS, ...BRANDS].map((brand, i) => (
-            <HoloCard key={`r1-${i}`} brand={brand} index={i % BRANDS.length} />
+          {[...SKINCARE_BRANDS, ...SKINCARE_BRANDS].map((brand, i) => (
+            <HoloCard
+              key={`r1-${i}`}
+              brand={brand}
+              index={i % SKINCARE_BRANDS.length}
+            />
           ))}
         </div>
       </div>
 
       {/* Row 2 — scroll left (reverse) */}
       <div className="overflow-hidden">
-        <div style={{ display: "flex", gap: 20, width: "max-content", animation: "brand-scroll-left 24s linear infinite" }}
-          onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.animationPlayState = "paused")}
-          onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.animationPlayState = "running")}
+        <div
+          style={{
+            display: "flex",
+            gap: 20,
+            width: "max-content",
+            animation: "brand-scroll-left 24s linear infinite",
+          }}
+          onMouseEnter={(e) =>
+            ((e.currentTarget as HTMLElement).style.animationPlayState =
+              "paused")
+          }
+          onMouseLeave={(e) =>
+            ((e.currentTarget as HTMLElement).style.animationPlayState =
+              "running")
+          }
         >
-          {[...[...BRANDS].reverse(), ...[...BRANDS].reverse()].map((brand, i) => (
-            <HoloCard key={`r2-${i}`} brand={brand} index={i % BRANDS.length} />
+          {[
+            ...[...MAKEUP_BRANDS].reverse(),
+            ...[...MAKEUP_BRANDS].reverse(),
+          ].map((brand, i) => (
+            <HoloCard
+              key={`r2-${i}`}
+              brand={brand}
+              index={i % MAKEUP_BRANDS.length}
+            />
           ))}
         </div>
       </div>

@@ -11,6 +11,7 @@ const baseRow: RawProductRow = {
   short_description: "Lam diu nhanh",
   description: "Mo ta chi tiet",
   category: "Serum",
+  brand: "La Roche-Posay",
   skin_concern: "Phuc hoi|Da nhay cam",
   price: "420000",
   compare_at_price: "490000",
@@ -24,6 +25,7 @@ const baseRow: RawProductRow = {
   search_keywords: "serum, barrier, phuc hoi",
   created_at: "2026-04-18T10:00:00.000Z",
   updated_at: "2026-04-18T11:00:00.000Z",
+  quantity: "8",
 };
 
 test("normalizeProductRow converts raw product values into typed fields", () => {
@@ -41,6 +43,7 @@ test("normalizeProductRow converts raw product values into typed fields", () => 
   assert.equal(product.tiktokUrl, "https://www.tiktok.com/@lanemglow/video/7481234567890123456");
   assert.deepEqual(product.concerns, ["phuc hoi", "da nhay cam"]);
   assert.deepEqual(product.searchKeywords, ["serum", "barrier", "phuc hoi"]);
+  assert.equal(product.brand, "La Roche-Posay");
 });
 
 test("normalizeProductRow neutralizes invalid TikTok URLs from sheet rows", () => {

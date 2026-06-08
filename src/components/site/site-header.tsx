@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Search, User, ShoppingBag, MessageCircle } from "lucide-react";
+import { ShoppingBag, MessageCircle } from "lucide-react";
 
 import logoImage from "@/assets/logo.png";
 import { useSelectedProducts } from "@/hooks/use-selected-products";

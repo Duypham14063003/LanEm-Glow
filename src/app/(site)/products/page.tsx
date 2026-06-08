@@ -23,6 +23,7 @@ function parseSearchParams(
 ): ProductCatalogQuery {
   const q = getFirstValue(params.q)?.trim();
   const category = getFirstValue(params.category)?.trim();
+  const brand = getFirstValue(params.brand)?.trim();
   const concern = getFirstValue(params.concern)?.trim();
   const featured = getFirstValue(params.featured)?.trim();
   const stockStatus = getFirstValue(params.stockStatus)?.trim();
@@ -30,12 +31,12 @@ function parseSearchParams(
   return {
     q: q || undefined,
     category: category || undefined,
+    brand: brand || undefined,
     concern: concern || undefined,
     featured: featured === "true" ? true : undefined,
     stockStatus:
       stockStatus === "in_stock" ||
-      stockStatus === "out_of_stock" ||
-      stockStatus === "preorder"
+      stockStatus === "out_of_stock"
         ? stockStatus
         : undefined,
   };
@@ -58,6 +59,7 @@ export default async function ProductsPage({
 
   let items: Product[] = [];
   let concerns: string[] = [];
+  let brands: string[] = [];
 
   try {
     const [filteredProducts, allProducts] = await Promise.all([
@@ -67,6 +69,9 @@ export default async function ProductsPage({
 
     items = filteredProducts;
     concerns = [...new Set(allProducts.flatMap((product) => product.concerns))];
+    brands = [...new Set(allProducts.map((product) => product.brand).filter(Boolean))].sort((left, right) =>
+      left.localeCompare(right)
+    );
   } catch {
     items = [];
   }
@@ -75,13 +80,14 @@ export default async function ProductsPage({
     <>
       <AnalyticsPageView
         event={
-          query.q || query.category || query.concern || query.stockStatus
+          query.q || query.category || query.brand || query.concern || query.stockStatus
             ? "catalog_filtered"
             : "catalog_viewed"
         }
         payload={{
           q: query.q ?? null,
           category: query.category ?? null,
+          brand: query.brand ?? null,
           concern: query.concern ?? null,
           stockStatus: query.stockStatus ?? null,
           featured: query.featured ?? null,
@@ -106,6 +112,7 @@ export default async function ProductsPage({
       <PageSection className="pt-0">
         <ProductListFilters
           query={query}
+          brands={brands}
           concerns={concerns.map((concern) => concern.replaceAll("-", " "))}
         />
       </PageSection>

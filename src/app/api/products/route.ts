@@ -17,6 +17,7 @@ function parseProductsQuery(request: NextRequest): ProductCatalogQuery {
   return {
     q: searchParams.get("q")?.trim() || undefined,
     category: searchParams.get("category")?.trim() || undefined,
+    brand: searchParams.get("brand")?.trim() || undefined,
     concern: searchParams.get("concern")?.trim() || undefined,
     featured: parseBooleanQuery(searchParams.get("featured")),
     stockStatus: (searchParams.get("stockStatus")?.trim() as ProductCatalogQuery["stockStatus"]) ||

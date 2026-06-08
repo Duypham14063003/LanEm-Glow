@@ -9,10 +9,11 @@ import {
   parseRequiredNumber,
 } from "@/lib/validation";
 import {
-  appendSheetRow,
+  appendSheetRecord,
   assertRequiredHeaders,
+  readSheetHeaders,
   readSheetRowsWithIndex,
-  updateSheetRow,
+  updateSheetRecord,
 } from "@/lib/sheets";
 import { normalizeProductRow } from "@/services/products";
 import type {
@@ -44,6 +45,7 @@ const PRODUCT_REQUIRED_HEADERS = [
   "search_keywords",
   "created_at",
   "updated_at",
+  "quantity",
 ] as const;
 
 type IndexedProductRow = {
@@ -51,20 +53,24 @@ type IndexedProductRow = {
   row: RawProductRow;
 };
 
+const WRITE_READ_RETRY_DELAYS_MS = [150, 300, 600, 1000];
+
 type AdminProductsDependencies = {
-  appendRow: (tabName: string, row: string[]) => Promise<void>;
+  appendRow: (tabName: string, row: RawProductRow) => Promise<void>;
   now: () => Date;
+  readProductHeaders: () => Promise<string[]>;
   readProductsWithIndex: () => Promise<IndexedProductRow[]>;
   updateRow: (
     tabName: string,
     rowNumber: number,
-    row: string[],
+    row: RawProductRow,
   ) => Promise<void>;
 };
 
 const defaultDependencies: AdminProductsDependencies = {
-  appendRow: appendSheetRow,
+  appendRow: appendSheetRecord,
   now: () => new Date(),
+  readProductHeaders: async () => readSheetHeaders(PRODUCTS_SHEET),
   readProductsWithIndex: async () => {
     const rows = await readSheetRowsWithIndex(PRODUCTS_SHEET);
     const normalizedRows = rows.map((row) => ({
@@ -79,7 +85,7 @@ const defaultDependencies: AdminProductsDependencies = {
 
     return normalizedRows;
   },
-  updateRow: updateSheetRow,
+  updateRow: updateSheetRecord,
 };
 
 export class ProductAdminError extends Error {
@@ -99,13 +105,21 @@ export class ProductAdminError extends Error {
 
 export function parseProductAdminQuery(input: {
   q?: string;
+  name?: string;
+  category?: string;
+  concern?: string;
   status?: string;
+  brand?: string;
 }): ProductAdminQuery {
   const q = input.q?.trim() || undefined;
+  const name = input.name?.trim() || q || undefined;
+  const category = input.category?.trim() || undefined;
+  const concern = input.concern?.trim().toLowerCase() || undefined;
   const status = input.status?.trim().toLowerCase();
+  const brand = input.brand?.trim() || undefined;
 
   if (!status) {
-    return { q };
+    return { q, name, category, concern, brand };
   }
 
   if (!isProductStatus(status)) {
@@ -117,6 +131,10 @@ export function parseProductAdminQuery(input: {
 
   return {
     q,
+    name,
+    category,
+    concern,
+    brand,
     status,
   };
 }
@@ -280,8 +298,12 @@ export function normalizeProductAdminInput(
       payload.shortDescription,
       "Mô tả ngắn",
     ),
-    // description: normalizeRequiredText(payload.description, "Mô tả chi tiết"),
+    description: normalizeRequiredText(
+      payload.description ?? payload.shortDescription,
+      "Mô tả chi tiết",
+    ),
     category: normalizeRequiredText(payload.category, "Danh mục"),
+    brand: normalizeRequiredText(payload.brand, "Brand"),
     concerns: normalizeUniqueList(payload.concerns, "concerns"),
     price: normalizeRequiredNumberValue(payload.price, "price", "Giá bán"),
     compareAtPrice: normalizeOptionalNumberValue(payload.compareAtPrice),
@@ -314,11 +336,55 @@ function toAdminListItem(
   };
 }
 
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function readProductByIdWithRetry(
+  productId: string,
+  dependencies: AdminProductsDependencies,
+): Promise<ProductAdminListItem | null> {
+  const attempts = [0, ...WRITE_READ_RETRY_DELAYS_MS];
+
+  for (const delayMs of attempts) {
+    if (delayMs > 0) {
+      await sleep(delayMs);
+    }
+
+    const rows = await dependencies.readProductsWithIndex();
+    const product = rows
+      .map((entry) => toAdminListItem(entry.rowNumber, entry.row))
+      .find((item) => item.id === productId);
+
+    if (product) {
+      return product;
+    }
+  }
+
+  return null;
+}
+
 function matchesAdminQuery(
   item: ProductAdminListItem,
   query: ProductAdminQuery,
 ): boolean {
+  if (query.name && !item.name.toLowerCase().includes(query.name.toLowerCase())) {
+    return false;
+  }
+
+  if (query.category && item.category.toLowerCase() !== query.category.toLowerCase()) {
+    return false;
+  }
+
+  if (query.concern && !item.concerns.some((concern) => concern.toLowerCase() === query.concern?.toLowerCase())) {
+    return false;
+  }
+
   if (query.status && item.status !== query.status) {
+    return false;
+  }
+
+  if (query.brand && item.brand.toLowerCase() !== query.brand.toLowerCase()) {
     return false;
   }
 
@@ -329,6 +395,7 @@ function matchesAdminQuery(
       item.slug,
       item.name,
       item.category,
+      item.brand,
       item.shortDescription,
       ...item.concerns,
       ...item.searchKeywords,
@@ -399,29 +466,30 @@ function assertUniqueProductIdentity(
 function toSheetRow(
   input: ProductAdminMutationInput,
   timestamps: { createdAt: string; updatedAt: string },
-): string[] {
-  return [
-    input.productId,
-    input.slug,
-    input.name,
-    input.shortDescription,
-    // input.description,
-    input.category,
-    input.concerns.join("|"),
-    `${input.price}`,
-    input.compareAtPrice === null ? "" : `${input.compareAtPrice}`,
-    input.imageUrl,
-    input.galleryUrls.join("|"),
-    input.tiktokUrl ?? "",
-    input.status,
-    input.stockStatus,
-    input.isFeatured ? "true" : "false",
-    `${input.displayOrder}`,
-    input.searchKeywords.join("|"),
-    timestamps.createdAt,
-    timestamps.updatedAt,
-    input.quantity === null ? "" : `${input.quantity}`,
-  ];
+): RawProductRow {
+  return {
+    product_id: input.productId,
+    slug: input.slug,
+    name: input.name,
+    short_description: input.shortDescription,
+    description: input.description,
+    category: input.category,
+    brand: input.brand,
+    skin_concern: input.concerns.join("|"),
+    price: `${input.price}`,
+    compare_at_price: input.compareAtPrice === null ? "" : `${input.compareAtPrice}`,
+    image_url: input.imageUrl,
+    gallery_urls: input.galleryUrls.join("|"),
+    tiktok_url: input.tiktokUrl ?? "",
+    status: input.status,
+    stock_status: input.stockStatus,
+    is_featured: input.isFeatured ? "true" : "false",
+    display_order: `${input.displayOrder}`,
+    search_keywords: input.searchKeywords.join("|"),
+    created_at: timestamps.createdAt,
+    updated_at: timestamps.updatedAt,
+    quantity: input.quantity === null ? "" : `${input.quantity}`,
+  };
 }
 
 export async function listAdminProducts(
@@ -456,10 +524,7 @@ export async function createAdminProduct(
 
   invalidateCache("catalog:all");
 
-  const nextRows = await dependencies.readProductsWithIndex();
-  const created = nextRows
-    .map((entry) => toAdminListItem(entry.rowNumber, entry.row))
-    .find((item) => item.id === normalized.productId);
+  const created = await readProductByIdWithRetry(normalized.productId, dependencies);
 
   if (!created) {
     throw new ProductAdminError(
@@ -515,33 +580,44 @@ export async function updateAdminProduct(
     ignoreProductId: targetId,
   });
 
+  const updatedAt = dependencies.now().toISOString();
+  const createdAt = existing.createdAt ?? updatedAt;
+
   await dependencies.updateRow(
     PRODUCTS_SHEET,
     existing.rowNumber,
     toSheetRow(normalized, {
-      createdAt: existing.createdAt ?? dependencies.now().toISOString(),
-      updatedAt: dependencies.now().toISOString(),
+      createdAt,
+      updatedAt,
     }),
   );
 
   invalidateCache("catalog:all");
 
-  const nextRows = await dependencies.readProductsWithIndex();
-  const updated = nextRows
-    .map((entry) => toAdminListItem(entry.rowNumber, entry.row))
-    .find((item) => item.id === normalized.productId);
-
-  if (!updated) {
-    throw new ProductAdminError(
-      "Đã cập nhật nhưng không thể đọc lại sản phẩm.",
-      {
-        statusCode: 500,
-        code: "PRODUCT_WRITE_FAILED",
-      },
-    );
-  }
-
-  return updated;
+  return {
+    rowNumber: existing.rowNumber,
+    id: normalized.productId,
+    slug: normalized.slug,
+    name: normalized.name,
+    shortDescription: normalized.shortDescription,
+    description: normalized.description,
+    category: normalized.category,
+    brand: normalized.brand,
+    concerns: normalized.concerns,
+    price: normalized.price,
+    compareAtPrice: normalized.compareAtPrice,
+    imageUrl: normalized.imageUrl,
+    galleryUrls: normalized.galleryUrls,
+    tiktokUrl: normalized.tiktokUrl,
+    status: normalized.status,
+    stockStatus: normalized.stockStatus,
+    isFeatured: normalized.isFeatured,
+    displayOrder: normalized.displayOrder,
+    searchKeywords: normalized.searchKeywords,
+    createdAt,
+    updatedAt,
+    quantity: normalized.quantity,
+  };
 }
 
 export async function archiveAdminProduct(
@@ -569,13 +645,15 @@ export async function archiveAdminProduct(
   }
 
   const current = toAdminListItem(existing.rowNumber, existing.row);
+  const updatedAt = dependencies.now().toISOString();
   const archivedInput: ProductAdminMutationInput = {
     productId: current.id,
     slug: current.slug,
     name: current.name,
     shortDescription: current.shortDescription,
-    // description: current.description,
+    description: current.description,
     category: current.category,
+    brand: current.brand,
     concerns: current.concerns,
     price: current.price,
     compareAtPrice: current.compareAtPrice,
@@ -594,8 +672,8 @@ export async function archiveAdminProduct(
     PRODUCTS_SHEET,
     existing.rowNumber,
     toSheetRow(archivedInput, {
-      createdAt: current.createdAt ?? dependencies.now().toISOString(),
-      updatedAt: dependencies.now().toISOString(),
+      createdAt: current.createdAt ?? updatedAt,
+      updatedAt,
     }),
   );
 
@@ -604,6 +682,6 @@ export async function archiveAdminProduct(
   return {
     ...current,
     status: "inactive",
-    updatedAt: dependencies.now().toISOString(),
+    updatedAt,
   };
 }

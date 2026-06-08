@@ -20,7 +20,7 @@ const orderFixture: OrderAdminListItem = {
   selectedProductNames: ["Serum Phuc Hoi"],
   itemCount: 1,
   customerNote: "",
-  status: "contacted",
+  status: "pass",
   adminNote: "Da goi",
   sourcePage: "listing",
   sourceCampaign: "",
@@ -53,7 +53,7 @@ test("PATCH /api/orders/[id] returns updated order payload", async () => {
   const request = new NextRequest("http://localhost:3000/api/orders/ORD-1", {
     method: "PATCH",
     body: JSON.stringify({
-      status: "contacted",
+      status: "pass",
       adminNote: "Da goi",
     }),
     headers: {
@@ -68,7 +68,7 @@ test("PATCH /api/orders/[id] returns updated order payload", async () => {
 
   assert.equal(response.status, 200);
   assert.equal(payload.order.orderId, orderFixture.orderId);
-  assert.equal(payload.order.status, "contacted");
+  assert.equal(payload.order.status, "pass");
 
   resetUpdateAdminOrderHandlerForTesting();
 });
@@ -84,7 +84,7 @@ test("PATCH /api/orders/[id] maps admin update errors", async () => {
   const request = new NextRequest("http://localhost:3000/api/orders/ORD-404", {
     method: "PATCH",
     body: JSON.stringify({
-      status: "contacted",
+      status: "pass",
     }),
     headers: {
       "content-type": "application/json",

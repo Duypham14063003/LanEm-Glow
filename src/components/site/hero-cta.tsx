@@ -4,8 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 import bgImage from "@/assets/images/me/backgroud.png";
-import tiktokProfile from "@/assets/images/me/profile_tiktok.png";
-import anh1 from "@/assets/images/me/anh1.jpg";
+import memeImg from "@/assets/meme.png";
 
 interface HeroCtaProps {
   primaryCtaLabel: string | null;
@@ -84,31 +83,10 @@ export function HeroCta({ primaryCtaLabel }: HeroCtaProps) {
           </div>
         </div>
 
-        {/* Right Content - Polaroid Images */}
+        {/* Right Content - Full Image */}
         <div className="relative animate-scale-in h-[450px] lg:h-[550px] flex items-center justify-center">
-          {/* First Polaroid (Tiktok Profile) */}
-          <div className="absolute z-10 w-[240px] md:w-[280px] aspect-[3/4] bg-white p-3 pb-8 shadow-2xl rounded-sm -rotate-6 -translate-x-16 transition-transform hover:rotate-0 hover:scale-105 hover:z-30 duration-300">
-            {/* Tape */}
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-6 bg-pink-200/90 rotate-[-4deg] shadow-sm z-20"></div>
-
-            <div className="relative w-full h-full bg-black overflow-hidden rounded-sm border border-gray-100">
-              <Image
-                src={tiktokProfile}
-                alt="Tiktok Profile"
-                fill
-                className="object-contain"
-              />
-            </div>
-          </div>
-
-          {/* Second Polaroid (Photo 1) */}
-          <div className="absolute z-20 w-[240px] md:w-[280px] aspect-[3/4] bg-white p-3 pb-8 shadow-2xl rounded-sm rotate-6 translate-x-16 translate-y-8 transition-transform hover:rotate-0 hover:scale-105 hover:z-30 duration-300">
-            {/* Tape */}
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-6 bg-pink-200/90 rotate-[5deg] shadow-sm z-20"></div>
-
-            <div className="relative w-full h-full bg-gray-100 overflow-hidden rounded-sm border border-gray-100">
-              <Image src={anh1} alt="Photo 1" fill className="object-cover" />
-            </div>
+          <div className="relative z-20 w-[500px] md:w-[580px] lg:w-[660px] aspect-[4/5] transition-transform hover:scale-105 duration-300">
+            <Image src={memeImg} alt="Meme" fill className="object-contain" />
           </div>
 
           {/* Decorative heart floating right */}

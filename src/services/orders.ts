@@ -136,19 +136,31 @@ export function normalizeProductIdSet(productIds: string[]): string[] {
 }
 
 function ensureOrderStatus(value: string): OrderStatus {
-  if (
-    value === "new" ||
-    value === "contacted" ||
-    value === "confirmed" ||
-    value === "closed" ||
-    value === "cancelled" ||
-    value === "duplicate" ||
-    value === "invalid"
-  ) {
+  if (value === "new" || value === "pass" || value === "cancel") {
     return value;
   }
 
   throw new Error(`Invalid order status: ${value}`);
+}
+
+function normalizeLegacyOrderStatus(value: string): OrderStatus {
+  switch (value) {
+    case "new":
+      return "new";
+    case "pass":
+    case "contacted":
+    case "confirmed":
+    case "closed":
+      return "pass";
+    case "cancel":
+    case "cancelled":
+    case "invalid":
+      return "cancel";
+    case "duplicate":
+      return "new";
+    default:
+      throw new Error(`Invalid order status: ${value}`);
+  }
 }
 
 function isValidOrderStatus(value: string): value is OrderStatus {
@@ -211,7 +223,7 @@ export function normalizeOrderRow(row: RawOrderRow): NormalizedExistingOrder {
     createdAt: row.created_at.trim(),
     phone: normalizeOrderPhoneForRead(row.phone),
     selectedProductIds: normalizeProductIdSet(parseDelimitedList(row.selected_product_ids)),
-    status: ensureOrderStatus(row.status.trim().toLowerCase()),
+    status: normalizeLegacyOrderStatus(row.status.trim().toLowerCase()),
   };
 }
 
@@ -225,7 +237,7 @@ export function normalizeOrderListItem(row: RawOrderRow): OrderAdminListItem {
     selectedProductNames: parseDelimitedList(row.selected_product_names),
     itemCount: parseRequiredNumber(row.item_count, "item_count"),
     customerNote: row.customer_note.trim(),
-    status: ensureOrderStatus(row.status.trim().toLowerCase()),
+    status: normalizeLegacyOrderStatus(row.status.trim().toLowerCase()),
     adminNote: row.admin_note.trim(),
     sourcePage: row.source_page.trim(),
     sourceCampaign: row.source_campaign.trim(),
@@ -404,7 +416,7 @@ function buildUpdatedRow(
   payload: OrderAdminPatchPayload,
   now: Date
 ): string[] {
-  const nextStatus = payload.status ?? ensureOrderStatus(currentRow.status.trim().toLowerCase());
+  const nextStatus = payload.status ?? normalizeLegacyOrderStatus(currentRow.status.trim().toLowerCase());
   const nextProcessedAt =
     nextStatus !== "new" && !currentRow.processed_at.trim()
       ? now.toISOString()
@@ -439,7 +451,7 @@ export function isDuplicateOrderCandidate(
   const candidateKey = normalizeProductIdSet(candidate.selectedProductIds).join("|");
 
   return existingOrders.some((order) => {
-    if (order.status === "invalid") {
+    if (order.status === "cancel") {
       return false;
     }
 
@@ -594,7 +606,7 @@ export async function createAdminOrder(
     }),
     itemCount: selectedProducts.reduce((acc, product) => acc + (normalizedPayload.quantities[product.id] || 1), 0),
     customerNote: normalizedPayload.note,
-    status: duplicate ? "duplicate" : "new",
+    status: "new",
     adminNote: "",
     sourcePage: normalizedPayload.sourcePage || "admin_manual",
     sourceCampaign: normalizedPayload.sourceCampaign,
@@ -660,7 +672,7 @@ export async function submitQuickOrder(
     }),
     itemCount: selectedProducts.reduce((acc, product) => acc + (normalizedPayload.quantities[product.id] || 1), 0),
     customerNote: normalizedPayload.note,
-    status: duplicate ? "duplicate" : "new",
+    status: "new",
     adminNote: "",
     sourcePage: normalizedPayload.sourcePage,
     sourceCampaign: normalizedPayload.sourceCampaign,
@@ -692,7 +704,7 @@ export async function submitQuickOrder(
   return {
     ok: true,
     orderId: snapshot.orderId,
-    status: duplicate ? "duplicate" : "new",
+    status: "new",
     duplicate,
     normalizedPhone: snapshot.phone,
     itemCount: snapshot.itemCount,

@@ -75,12 +75,8 @@ export default async function AdminOrdersPage({
           >
             <option value="">Tất cả trạng thái</option>
             <option value="new">new</option>
-            <option value="contacted">contacted</option>
-            <option value="confirmed">confirmed</option>
-            <option value="closed">closed</option>
-            <option value="cancelled">cancelled</option>
-            <option value="duplicate">duplicate</option>
-            <option value="invalid">invalid</option>
+            <option value="pass">pass</option>
+            <option value="cancel">cancel</option>
           </select>
           <div className="flex flex-wrap gap-2">
             <a

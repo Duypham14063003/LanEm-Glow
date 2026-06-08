@@ -9,7 +9,6 @@ import { ConcernScroller } from "@/components/site/concern-scroller";
 import { HeroCta } from "@/components/site/hero-cta";
 import { PageSection } from "@/components/site/page-section";
 import { ProductCard } from "@/components/site/product-card";
-import { StorefrontCta } from "@/components/site/storefront-cta";
 import { ProfileTrustSection } from "@/components/site/profile-trust-section";
 import { TestimonialCard } from "@/components/site/testimonial-card";
 import { TrustStrip } from "@/components/site/trust-strip";

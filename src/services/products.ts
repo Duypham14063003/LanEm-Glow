@@ -33,6 +33,7 @@ const PRODUCT_REQUIRED_HEADERS = [
   "search_keywords",
   "created_at",
   "updated_at",
+  "quantity",
 ] as const;
 
 function normalizeProductStatus(value: string): ProductStatus {
@@ -66,6 +67,7 @@ export function normalizeProductRow(row: RawProductRow): Product {
     shortDescription: row.short_description.trim(),
     description: row.description.trim(),
     category: row.category.trim(),
+    brand: row.brand?.trim() ?? "",
     concerns: normalizeConcerns(row.skin_concern),
     price: parseRequiredNumber(row.price, "price"),
     compareAtPrice: parseOptionalNumber(row.compare_at_price),
@@ -105,6 +107,10 @@ function matchesQuery(product: Product, query: ProductCatalogQuery): boolean {
     return false;
   }
 
+  if (query.brand && product.brand.toLowerCase() !== query.brand.toLowerCase()) {
+    return false;
+  }
+
   if (query.concern) {
     const concern = query.concern.toLowerCase();
     if (!product.concerns.some((item) => item === concern)) {
@@ -125,6 +131,7 @@ function matchesQuery(product: Product, query: ProductCatalogQuery): boolean {
     const haystacks = [
       product.name,
       product.category,
+      product.brand,
       product.shortDescription,
       ...product.concerns,
       ...product.searchKeywords,
@@ -150,9 +157,11 @@ async function loadProductsFromSheets(): Promise<Product[]> {
 }
 
 export async function getCatalogProducts(options?: { skipCache?: boolean }): Promise<Product[]> {
-  return withCache("catalog:all", loadProductsFromSheets, {
-    skipCache: options?.skipCache,
-  });
+  if (options?.skipCache === false) {
+    return withCache("catalog:all", loadProductsFromSheets);
+  }
+
+  return loadProductsFromSheets();
 }
 
 export async function listCatalogProducts(

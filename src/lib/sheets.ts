@@ -63,6 +63,17 @@ export async function readSheetRows(tabName: string): Promise<RawSheetRow[]> {
   return indexedRows.map((row) => row.record);
 }
 
+export async function readSheetHeaders(tabName: string): Promise<string[]> {
+  const { client, sheetId } = await getSheetsClient();
+  const response = await client.spreadsheets.values.get({
+    spreadsheetId: sheetId,
+    range: `${tabName}!1:1`,
+  });
+
+  const headerRow = response.data.values?.[0] ?? [];
+  return headerRow.map((cell) => normalizeHeader(`${cell}`));
+}
+
 export async function readSheetRowsWithIndex(tabName: string): Promise<IndexedSheetRow[]> {
   const { client, sheetId } = await getSheetsClient();
   const response = await client.spreadsheets.values.get({
@@ -117,6 +128,15 @@ export async function appendSheetRow(tabName: string, row: string[]) {
   });
 }
 
+export function buildSheetRow(headers: string[], record: RawSheetRow): string[] {
+  return headers.map((header) => record[header] ?? "");
+}
+
+export async function appendSheetRecord(tabName: string, record: RawSheetRow) {
+  const headers = await readSheetHeaders(tabName);
+  await appendSheetRow(tabName, buildSheetRow(headers, record));
+}
+
 export async function updateSheetRow(tabName: string, rowNumber: number, row: string[]) {
   const { client, sheetId } = await getSheetsClient();
 
@@ -128,4 +148,9 @@ export async function updateSheetRow(tabName: string, rowNumber: number, row: st
       values: [row],
     },
   });
+}
+
+export async function updateSheetRecord(tabName: string, rowNumber: number, record: RawSheetRow) {
+  const headers = await readSheetHeaders(tabName);
+  await updateSheetRow(tabName, rowNumber, buildSheetRow(headers, record));
 }

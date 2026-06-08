@@ -18,7 +18,11 @@ export async function GET(request: NextRequest) {
   try {
     const query = parseProductAdminQuery({
       q: request.nextUrl.searchParams.get("q") ?? undefined,
+      name: request.nextUrl.searchParams.get("name") ?? undefined,
+      category: request.nextUrl.searchParams.get("category") ?? undefined,
+      concern: request.nextUrl.searchParams.get("concern") ?? undefined,
       status: request.nextUrl.searchParams.get("status") ?? undefined,
+      brand: request.nextUrl.searchParams.get("brand") ?? undefined,
     });
     const items = await listAdminProductsHandler(query);
     const response: ProductAdminListResponse = {

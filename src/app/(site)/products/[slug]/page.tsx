@@ -70,6 +70,7 @@ export default async function ProductDetailPage({
             imageUrl={product.imageUrl}
             galleryUrls={product.galleryUrls}
             tiktokUrl={product.tiktokUrl}
+            updatedAt={product.updatedAt}
           />
 
           <Card className="space-y-5 sm:space-y-6">
@@ -89,6 +90,11 @@ export default async function ProductDetailPage({
                     </div>
                   ) : null}
                 </div>
+                {product.brand ? (
+                  <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
+                    {product.brand}
+                  </p>
+                ) : null}
                 <h1 className="font-heading text-4xl text-[var(--color-foreground)] sm:text-5xl">
                   {product.name}
                 </h1>

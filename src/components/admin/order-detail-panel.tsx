@@ -13,29 +13,18 @@ import { EmptyState } from "@/components/ui/empty-state";
 
 const orderStatuses: OrderStatus[] = [
   "new",
-  "contacted",
-  "confirmed",
-  "closed",
-  "cancelled",
-  "duplicate",
-  "invalid",
+  "pass",
+  "cancel",
 ];
 
 function getStatusVariant(status: OrderStatus) {
   switch (status) {
     case "new":
       return "info";
-    case "contacted":
-      return "warning";
-    case "confirmed":
+    case "pass":
       return "success";
-    case "closed":
-      return "neutral";
-    case "cancelled":
-    case "invalid":
+    case "cancel":
       return "error";
-    case "duplicate":
-      return "warning";
     default:
       return "neutral";
   }
@@ -101,7 +90,7 @@ export function OrderDetailPanel({ initialOrder }: { initialOrder: OrderAdminLis
   };
 
   const handleArchive = async () => {
-    setStatus("cancelled");
+    setStatus("cancel");
     setIsSaving(true);
     setMessage(null);
     setError(null);
@@ -113,7 +102,7 @@ export function OrderDetailPanel({ initialOrder }: { initialOrder: OrderAdminLis
           "content-type": "application/json",
         },
         body: JSON.stringify({
-          status: "cancelled",
+          status: "cancel",
           adminNote,
         }),
       });
@@ -131,7 +120,7 @@ export function OrderDetailPanel({ initialOrder }: { initialOrder: OrderAdminLis
       setOrder(nextOrder);
       setStatus(nextOrder.status);
       setAdminNote(nextOrder.adminNote);
-      setMessage("Đã lưu đơn hàng ở trạng thái cancelled.");
+      setMessage("Đã lưu đơn hàng ở trạng thái cancel.");
     } catch {
       setError("Không thể kết nối để cập nhật đơn hàng. Vui lòng thử lại.");
     } finally {
@@ -225,7 +214,7 @@ export function OrderDetailPanel({ initialOrder }: { initialOrder: OrderAdminLis
         <Button onClick={handleSave} loading={isSaving}>
           Lưu thay đổi
         </Button>
-        <Button variant="secondary" onClick={handleArchive} disabled={isSaving || order.status === "cancelled"}>
+        <Button variant="secondary" onClick={handleArchive} disabled={isSaving || order.status === "cancel"}>
           Đánh dấu hủy
         </Button>
       </div>

@@ -50,7 +50,7 @@ const productFixtures: Product[] = [
     galleryUrls: [],
     tiktokUrl: null,
     status: "active",
-    stockStatus: "preorder",
+    stockStatus: "in_stock",
     isFeatured: false,
     displayOrder: 2,
     searchKeywords: ["cap am"],
@@ -160,12 +160,12 @@ test("submitQuickOrder classifies duplicate orders and appends structured row", 
   );
 
   assert.equal(result.ok, true);
-  assert.equal(result.status, "duplicate");
+  assert.equal(result.status, "new");
   assert.equal(result.duplicate, true);
   assert.equal(appendedRows.length, 1);
   assert.equal(appendedRows[0]?.[2], "0912345678");
   assert.equal(appendedRows[0]?.[5], "Serum Phuc Hoi|Toner Diu Da");
-  assert.equal(appendedRows[0]?.[8], "duplicate");
+  assert.equal(appendedRows[0]?.[8], "new");
   assert.equal(appendedRows[0]?.[12], "true");
   assert.equal(result.notification.status, "sent");
   assert.equal(notifications.length, 1);
@@ -263,7 +263,7 @@ test("listAdminOrders filters by duplicate flag and search query", async () => {
   );
 
   assert.equal(items.length, 1);
-  assert.equal(items[0]?.status, "duplicate");
+  assert.equal(items[0]?.status, "new");
   assert.equal(items[0]?.duplicateFlag, true);
 });
 
@@ -273,7 +273,7 @@ test("updateAdminOrder persists mutable fields and sets processed timestamp", as
   const updated = await updateAdminOrder(
     "ORD-20260418-AAAAAA",
     {
-      status: "contacted",
+      status: "pass",
       adminNote: "Da goi xac nhan",
     },
     {
@@ -290,11 +290,11 @@ test("updateAdminOrder persists mutable fields and sets processed timestamp", as
     }
   );
 
-  assert.equal(updated.status, "contacted");
+  assert.equal(updated.status, "pass");
   assert.equal(updated.adminNote, "Da goi xac nhan");
   assert.equal(updated.processedAt, "2026-04-18T10:00:00.000Z");
   assert.equal(updatedRows[0]?.rowNumber, 3);
-  assert.equal(updatedRows[0]?.row[8], "contacted");
+  assert.equal(updatedRows[0]?.row[8], "pass");
   assert.equal(updatedRows[0]?.row[9], "Da goi xac nhan");
 });
 
@@ -304,7 +304,7 @@ test("updateAdminOrder returns not found for missing order id", async () => {
       updateAdminOrder(
         "ORD-MISSING",
         {
-          status: "contacted",
+          status: "pass",
         },
         {
           readOrdersWithIndex: async () => [],

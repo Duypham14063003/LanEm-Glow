@@ -5,6 +5,7 @@ import { Heart, ShoppingCart } from "lucide-react";
 
 import { useQuickOrder } from "@/hooks/use-quick-order";
 import { useSelectedProducts } from "@/hooks/use-selected-products";
+import { appendVersionToUrl } from "@/lib/utils";
 import type { Product } from "@/types";
 
 function formatPrice(value: number) {
@@ -24,16 +25,8 @@ export function ProductCard({
   const { openQuickOrder } = useQuickOrder();
   const { addProduct } = useSelectedProducts();
 
-  // Mocking old price for the design (usually this would come from the API)
-  const oldPrice = product.price * 1.2;
-  const badgeText =
-    product.stockStatus === "out_of_stock"
-      ? "HẾT HÀNG"
-      : product.price > 300000
-        ? "HOT"
-        : "NEW";
-
   const conditionTag = product.searchKeywords?.[0]?.trim();
+  const imageSrc = appendVersionToUrl(product.imageUrl, product.updatedAt);
 
   return (
     <div className="group relative bg-white rounded-3xl p-4 shadow-sm border border-[var(--color-border)] transition-all hover:shadow-md flex flex-col h-full">
@@ -62,7 +55,7 @@ export function ProductCard({
         {product.imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={product.imageUrl}
+            src={imageSrc}
             alt={product.name}
             className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105 rounded-xl"
             loading="lazy"
@@ -75,6 +68,11 @@ export function ProductCard({
       {/* Info */}
       <div className="flex flex-col flex-1 justify-between">
         <Link href={href}>
+          {product.brand ? (
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-muted)]">
+              {product.brand}
+            </p>
+          ) : null}
           <h3 className="font-heading text-sm font-medium text-[var(--color-foreground)] line-clamp-2 leading-tight group-hover:text-[var(--color-primary-strong)] transition-colors mb-4">
             {product.name}
           </h3>
@@ -86,9 +84,11 @@ export function ProductCard({
               {formatPrice(product.price)}đ
             </span>
             <div className="flex items-center gap-2 mt-1">
-              <span className="text-xs text-[var(--color-muted)] line-through">
-                {formatPrice(oldPrice)}đ
-              </span>
+              {product.compareAtPrice !== null ? (
+                <span className="text-xs text-[var(--color-muted)] line-through">
+                  {formatPrice(product.compareAtPrice)}đ
+                </span>
+              ) : null}
               {product.quantity !== null && (
                 <span className="text-xs font-medium text-[var(--color-foreground-soft)]">
                   Kho: {product.quantity}

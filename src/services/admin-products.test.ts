@@ -19,6 +19,7 @@ const baseRow: RawProductRow = {
   short_description: "Lam diu nhanh",
   description: "Mo ta chi tiet",
   category: "Serum",
+  brand: "La Roche-Posay",
   skin_concern: "Phuc hoi|Da nhay cam",
   price: "420000",
   compare_at_price: "490000",
@@ -32,65 +33,49 @@ const baseRow: RawProductRow = {
   search_keywords: "serum, barrier, phuc hoi",
   created_at: "2026-04-18T10:00:00.000Z",
   updated_at: "2026-04-18T11:00:00.000Z",
+  quantity: "6",
 };
 
 function buildDependencies(rows: Array<{ rowNumber: number; row: RawProductRow }>) {
   const store = [...rows];
 
   return {
-    appendRow: async (_tabName: string, row: string[]) => {
+    appendRow: async (_tabName: string, row: RawProductRow) => {
       store.push({
         rowNumber: store.length + 2,
-        row: {
-          product_id: row[0] ?? "",
-          slug: row[1] ?? "",
-          name: row[2] ?? "",
-          short_description: row[3] ?? "",
-          description: row[4] ?? "",
-          category: row[5] ?? "",
-          skin_concern: row[6] ?? "",
-          price: row[7] ?? "",
-          compare_at_price: row[8] ?? "",
-          image_url: row[9] ?? "",
-          gallery_urls: row[10] ?? "",
-          tiktok_url: row[11] ?? "",
-          status: row[12] ?? "",
-          stock_status: row[13] ?? "",
-          is_featured: row[14] ?? "",
-          display_order: row[15] ?? "",
-          search_keywords: row[16] ?? "",
-          created_at: row[17] ?? "",
-          updated_at: row[18] ?? "",
-        },
+        row,
       });
     },
     now: () => new Date("2026-04-19T08:00:00.000Z"),
+    readProductHeaders: async () => [
+      "product_id",
+      "slug",
+      "name",
+      "short_description",
+      "description",
+      "category",
+      "brand",
+      "skin_concern",
+      "price",
+      "compare_at_price",
+      "image_url",
+      "gallery_urls",
+      "tiktok_url",
+      "status",
+      "stock_status",
+      "is_featured",
+      "display_order",
+      "search_keywords",
+      "created_at",
+      "updated_at",
+      "quantity",
+    ],
     readProductsWithIndex: async () => store,
-    updateRow: async (_tabName: string, rowNumber: number, row: string[]) => {
+    updateRow: async (_tabName: string, rowNumber: number, row: RawProductRow) => {
       const index = store.findIndex((item) => item.rowNumber === rowNumber);
       store[index] = {
         rowNumber,
-        row: {
-          product_id: row[0] ?? "",
-          slug: row[1] ?? "",
-          name: row[2] ?? "",
-          short_description: row[3] ?? "",
-          description: row[4] ?? "",
-          category: row[5] ?? "",
-          skin_concern: row[6] ?? "",
-          price: row[7] ?? "",
-          compare_at_price: row[8] ?? "",
-          image_url: row[9] ?? "",
-          gallery_urls: row[10] ?? "",
-          tiktok_url: row[11] ?? "",
-          status: row[12] ?? "",
-          stock_status: row[13] ?? "",
-          is_featured: row[14] ?? "",
-          display_order: row[15] ?? "",
-          search_keywords: row[16] ?? "",
-          created_at: row[17] ?? "",
-          updated_at: row[18] ?? "",
-        },
+        row,
       };
     },
   };
@@ -104,6 +89,7 @@ test("normalizeProductAdminInput normalizes admin product payload", () => {
     shortDescription: " phuc hoi nhanh ",
     description: "mo ta",
     category: " Serum ",
+    brand: " La Roche-Posay ",
     concerns: "Phuc Hoi, Phuc Hoi, Da Nhay Cam",
     price: "520000",
     compareAtPrice: "",
@@ -111,13 +97,14 @@ test("normalizeProductAdminInput normalizes admin product payload", () => {
     galleryUrls: "https://example.com/1.jpg, https://example.com/2.jpg",
     tiktokUrl: "https://www.tiktok.com/@lanemglow/video/7482222222222222222",
     status: "active",
-    stockStatus: "preorder",
+    stockStatus: "in_stock",
     isFeatured: true,
     displayOrder: "4",
     searchKeywords: "serum, serum, calming",
   });
 
   assert.equal(payload.slug, "serum-phuc-hoi-moi");
+  assert.equal(payload.brand, "La Roche-Posay");
   assert.deepEqual(payload.concerns, ["phuc hoi", "da nhay cam"]);
   assert.deepEqual(payload.searchKeywords, ["serum", "calming"]);
   assert.equal(payload.compareAtPrice, null);
@@ -134,6 +121,7 @@ test("normalizeProductAdminInput rejects invalid TikTok URL payloads", () => {
         shortDescription: "Mo ta ngan",
         description: "Mo ta dai",
         category: "Serum",
+        brand: "La Roche-Posay",
         concerns: "phuc hoi",
         price: "520000",
         compareAtPrice: "",
@@ -154,11 +142,51 @@ test("parseProductAdminQuery rejects unsupported product status filter", () => {
   assert.throws(() => parseProductAdminQuery({ status: "draft" }), ProductAdminError);
 });
 
+test("parseProductAdminQuery keeps brand filter", () => {
+  const query = parseProductAdminQuery({
+    name: "Serum phuc hoi",
+    brand: "La Roche-Posay",
+    category: "Serum",
+    concern: "phuc hoi",
+  });
+
+  assert.equal(query.name, "Serum phuc hoi");
+  assert.equal(query.brand, "La Roche-Posay");
+  assert.equal(query.category, "Serum");
+  assert.equal(query.concern, "phuc hoi");
+});
+
 test("listAdminProducts filters by query and status", async () => {
   const items = await listAdminProducts(
     {
       q: "serum",
       status: "active",
+    },
+    buildDependencies([{ rowNumber: 2, row: baseRow }])
+  );
+
+  assert.equal(items.length, 1);
+  assert.equal(items[0]?.id, "SERUM-01");
+});
+
+test("listAdminProducts filters by brand", async () => {
+  const items = await listAdminProducts(
+    {
+      brand: "La Roche-Posay",
+    },
+    buildDependencies([{ rowNumber: 2, row: baseRow }])
+  );
+
+  assert.equal(items.length, 1);
+  assert.equal(items[0]?.brand, "La Roche-Posay");
+});
+
+test("listAdminProducts filters by name, category and concern", async () => {
+  const items = await listAdminProducts(
+    {
+      name: "Serum phuc hoi",
+      category: "Serum",
+      concern: "phuc hoi",
     },
     buildDependencies([{ rowNumber: 2, row: baseRow }])
   );
@@ -178,6 +206,7 @@ test("createAdminProduct rejects duplicate product ids and slugs", async () => {
           shortDescription: "Mo ta",
           description: "Chi tiet",
           category: "Serum",
+          brand: "La Roche-Posay",
           concerns: "phuc hoi",
           price: "510000",
           compareAtPrice: "",
@@ -205,6 +234,7 @@ test("createAdminProduct appends a new product row and returns normalized produc
       shortDescription: "Mo ta ngan",
       description: "Mo ta dai",
       category: "Serum",
+      brand: "La Roche-Posay",
       concerns: "phuc hoi, da nhay cam",
       price: "510000",
       compareAtPrice: "560000",
@@ -236,6 +266,7 @@ test("updateAdminProduct preserves immutable product id and updates mutable fiel
       shortDescription: "Mo ta ngan moi",
       description: "Mo ta dai moi",
       category: "Serum",
+      brand: "La Roche-Posay",
       concerns: "phuc hoi",
       price: "430000",
       compareAtPrice: "",
@@ -243,7 +274,7 @@ test("updateAdminProduct preserves immutable product id and updates mutable fiel
       galleryUrls: "https://example.com/new-1.jpg",
       tiktokUrl: null,
       status: "inactive",
-      stockStatus: "preorder",
+      stockStatus: "in_stock",
       isFeatured: false,
       displayOrder: "5",
       searchKeywords: "serum, repair",
@@ -271,6 +302,7 @@ test("updateAdminProduct rejects attempts to change immutable product id", async
           shortDescription: "Mo ta ngan",
           description: "Mo ta dai",
           category: "Serum",
+          brand: "La Roche-Posay",
           concerns: "phuc hoi",
           price: "430000",
           compareAtPrice: "",

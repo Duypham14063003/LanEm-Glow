@@ -4,7 +4,6 @@ const PRODUCT_STATUSES: ProductStatus[] = ["active", "inactive"];
 const PRODUCT_STOCK_STATUSES: ProductStockStatus[] = [
   "in_stock",
   "out_of_stock",
-  "preorder",
 ];
 
 export function isProductStatus(value: string): value is ProductStatus {
